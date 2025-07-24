@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BlocklyWorkspace } from 'react-blockly';
 import * as Blockly from 'blockly';
 import './App.css';
@@ -57,6 +57,22 @@ Blockly.Blocks['style_text_align'] = {
 
 /* --- JSX 파싱 --- */
 export default function App() {
+  useEffect(() => {
+    const handleResize = () => {
+      const workspace = Blockly.getMainWorkspace();
+      if (workspace) {
+        Blockly.svgResize(workspace);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    // 처음 마운트 직후에도 강제로 한 번 resize 호출
+    setTimeout(() => handleResize(), 100);
+
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+  
   const tabs = [
     { name: "화면", color: "#C9E2F1" },
     { name: "스타일", color: "#C9E2F1" },

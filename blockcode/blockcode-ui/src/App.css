@@ -94,6 +94,7 @@ html, body, #root {
   padding: 40px;
   padding-top: 70px;
   position: relative;
+  flex: 0.5;
 }
 
 .title-bar {
@@ -119,7 +120,7 @@ html, body, #root {
 
 /* Blockly 조립 화면 */
 .blockly-box {
-  width: 1053px;
+  width: 100%;
   height: 100%;
   border: 1px solid #A3D5FF;
   border-radius: 10px;
@@ -128,6 +129,7 @@ html, body, #root {
   flex-direction: column;
   padding: 0;
   overflow: hidden;
+  flex: 2.5;
 }
 
 .tool-editor-area {
