@@ -161,7 +161,14 @@ export default function App() {
                   toolboxPosition: 'top',
                   trashcan: true,
                   grid: { spacing: 20, length: 3, colour: '#ccc', snap: true },
-                  zoom: { controls: true, wheel: true }
+                  zoom: { controls: true, wheel: true },
+                  renderer: "zelos",
+                  horizontalLayout: true,
+                  move: {
+                    scrollbars: true,
+                    drag: true,
+                    wheel: true,
+                  }
                 }}
                 onXmlChange={(newXml) => setXmlText(newXml)}
               />
