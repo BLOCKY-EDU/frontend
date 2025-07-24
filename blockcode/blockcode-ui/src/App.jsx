@@ -3,16 +3,68 @@ import { BlocklyWorkspace } from 'react-blockly';
 import * as Blockly from 'blockly';
 import './App.css';
 import blockyLogo from './assets/blocky-logo.png';
+import 'blockly/blocks';
+import 'blockly/javascript';
+import 'blockly/msg/ko';
 
+/* --- 💡 블록 정의 --- */
+Blockly.Blocks['style_background'] = {
+  init: function () {
+    this.appendDummyInput()
+      .appendField("배경 색상")
+      .appendField(new Blockly.FieldDropdown([
+        ["하양", "#ffffff"],
+        ["노랑", "#FFEE95"],
+        ["하늘", "#C9E2F1"],
+        ["핑크", "#FFCDD6"]
+      ]), "COLOR");
+    this.setColour("#FFD700");
+  }
+};
+
+Blockly.Blocks['style_width'] = {
+  init: function () {
+    this.appendDummyInput()
+      .appendField("너비")
+      .appendField(new Blockly.FieldNumber(100, 0, 1000), "WIDTH")
+      .appendField("px");
+    this.setColour("#FFD700");
+  }
+};
+
+Blockly.Blocks['style_height'] = {
+  init: function () {
+    this.appendDummyInput()
+      .appendField("높이")
+      .appendField(new Blockly.FieldNumber(100, 0, 1000), "HEIGHT")
+      .appendField("px");
+    this.setColour("#FFD700");
+  }
+};
+
+Blockly.Blocks['style_text_align'] = {
+  init: function () {
+    this.appendDummyInput()
+      .appendField("텍스트 정렬")
+      .appendField(new Blockly.FieldDropdown([
+        ["왼쪽", "left"],
+        ["가운데", "center"],
+        ["오른쪽", "right"]
+      ]), "ALIGN");
+    this.setColour("#FFD700");
+  }
+};
+
+/* --- JSX 파싱 --- */
 export default function App() {
   const tabs = [
-    { name: "화면", color: "#7EC8E3" },
-    { name: "스타일", color: "#FFD966" },
-    { name: "글쓰기", color: "#A7E57E" },
-    { name: "버튼", color: "#FF9999" },
-    { name: "사진", color: "#BCA0DC" },
-    { name: "목록", color: "#F5B26B" },
-    { name: "이동", color: "#79C2D0" },
+    { name: "화면", color: "#C9E2F1" },
+    { name: "스타일", color: "#C9E2F1" },
+    { name: "글쓰기", color: "#C9E2F1" },
+    { name: "버튼", color: "#C9E2F1" },
+    { name: "사진", color: "#C9E2F1" },
+    { name: "목록", color: "#C9E2F1" },
+    { name: "이동", color: "#C9E2F1" }
   ];
 
   const [xmlText, setXmlText] = useState("");
@@ -39,40 +91,26 @@ export default function App() {
     switch (tab) {
       case "스타일":
         return {
-          kind: "categoryToolbox",
+          kind: "flyoutToolbox",
           contents: [
-            {
-              kind: "category",
-              name: "스타일",
-              colour: "#FFD700",
-              contents: [
-                { kind: "block", type: "style_background" },
-                { kind: "block", type: "style_width" },
-                { kind: "block", type: "style_height" },
-                { kind: "block", type: "style_text_align" }
-              ]
-            }
+            { kind: "block", type: "style_background" },
+            { kind: "block", type: "style_width" },
+            { kind: "block", type: "style_height" },
+            { kind: "block", type: "style_text_align" }
           ]
         };
       case "글쓰기":
         return {
-          kind: "categoryToolbox",
+          kind: "flyoutToolbox",
           contents: [
-            {
-              kind: "category",
-              name: "글쓰기",
-              colour: "#00BFFF",
-              contents: [
-                { kind: "block", type: "text_title" },
-                { kind: "block", type: "text_paragraph" },
-                { kind: "block", type: "checkbox_block" }
-              ]
-            }
+            { kind: "block", type: "text_title" },
+            { kind: "block", type: "text_paragraph" },
+            { kind: "block", type: "checkbox_block" }
           ]
         };
       default:
         return {
-          kind: "categoryToolbox",
+          kind: "flyoutToolbox",
           contents: []
         };
     }
@@ -80,7 +118,6 @@ export default function App() {
 
   return (
     <div className="app-container">
-      {/* 헤더 */}
       <header className="header">
         <div className="logo"><img src={blockyLogo} alt="BLOCKY" /></div>
         <nav className="nav">
@@ -94,64 +131,41 @@ export default function App() {
         </div>
       </header>
 
-      {/* 본문 전체 박스 */}
       <main className="main-box">
-        {/* 나의 화면 */}
         <section className="render-box">
           <div className="title-bar">나의 화면</div>
           <div className="rendered-content">{parseXmlToJSX(xmlText)}</div>
         </section>
 
-        {/* Blockly 조립 화면 */}
-        <section className="blockly-box">
-          {/* 도구 책갈피 UI */}
+        <section className="tool-editor-area">
           <div className="tab-bar">
             {tabs.map((tab) => (
-              <div key={tab.name}>
-                <button
-                  onClick={() => setActiveTab(activeTab === tab.name ? null : tab.name)}
-                  className={`tab-btn ${activeTab === tab.name ? 'active' : ''}`}
-                  style={{ backgroundColor: tab.color }}
-                >
-                  {tab.name}
-                </button>
-
-                {activeTab === tab.name && (
-                  <div className="toolbox-panel">
-                    <div className="toolset">
-                      {tab.name === "스타일" && (
-                        <>
-                          <div className="tool-pill">바깥 여백</div>
-                          <div className="tool-pill">배경 색상</div>
-                          <div className="tool-pill">폭</div>
-                          <div className="tool-pill">정렬</div>
-                        </>
-                      )}
-                      {tab.name === "글쓰기" && (
-                        <>
-                          <div className="tool-pill">제목</div>
-                          <div className="tool-pill">문단</div>
-                          <div className="tool-pill">체크박스</div>
-                        </>
-                      )}
-                    </div>
-                  </div>
-                )}
-              </div>
+              <button
+                key={tab.name}
+                className={`tab-btn ${activeTab === tab.name ? 'active' : ''}`}
+                onClick={() => setActiveTab(activeTab === tab.name ? null : tab.name)}
+                style={{ backgroundColor: activeTab === tab.name ? '#FFEE95' : tab.color }}
+              >
+                {tab.name}
+              </button>
             ))}
           </div>
-          {/* Blockly 에디터 */}
-          <div className="blockly-wrapper">
-            <BlocklyWorkspace
-              toolboxConfiguration={getToolboxJson(activeTab)}
-              initialXml=""
-              className="blockly-editor"
-              workspaceConfiguration={{
-                grid: { spacing: 20, length: 3, colour: '#ccc', snap: true },
-                zoom: { controls: true, wheel: true },
-              }}
-              onXmlChange={(newXml) => setXmlText(newXml)}
-            />
+
+          <div className="blockly-box">
+            <div className="blockly-wrapper">
+              <BlocklyWorkspace
+                toolboxConfiguration={getToolboxJson(activeTab)}
+                initialXml=""
+                className="blockly-editor"
+                workspaceConfiguration={{
+                  toolboxPosition: 'top',
+                  trashcan: true,
+                  grid: { spacing: 20, length: 3, colour: '#ccc', snap: true },
+                  zoom: { controls: true, wheel: true }
+                }}
+                onXmlChange={(newXml) => setXmlText(newXml)}
+              />
+            </div>
           </div>
         </section>
       </main>

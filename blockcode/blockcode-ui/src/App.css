@@ -9,7 +9,7 @@ html, body, #root {
   width: 100%;
   height: 100%;
   font-family: 'Pretendard', 'Noto Sans KR', sans-serif;
-  background: #f9f9f9;
+  background: white;
 }
 
 .app-container {
@@ -22,9 +22,6 @@ html, body, #root {
 
 /* 상단 헤더 */
 .header {
-  position: absolute;
-  top: 0;
-  left: 0;
   width: 100%;
   height: 64px;
   background: #59B3FF;
@@ -33,43 +30,53 @@ html, body, #root {
   justify-content: space-between;
   padding: 0 30px;
   color: white;
-  z-index: 10;
 }
 
 .logo img {
   height: 34px;
 }
 
+.nav {
+  display: flex;
+  gap: 32px;
+  font-size: 20px;
+  font-weight: 700;
+}
+
 .nav span {
-  margin-left: 20px;
-  font-size: 16px;
+  /* margin-left: 20px;
+  font-size: 16px; */
   cursor: pointer;
 }
 
+/* auth 영역 수정 - 로그인하고 회원가입 */
+.auth {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
 .auth button {
-  margin-left: 10px;
-  background: white;
-  color: #59B3FF;
+  background: none;
   border: none;
-  padding: 6px 12px;
-  border-radius: 5px;
-  font-weight: bold;
+  color: white;
+  font-size: 20px;
+  font-weight: 700;
   cursor: pointer;
+  padding: 0;
 }
 
 /* 본문 전체 박스 */
 .main-box {
-  position: absolute;
-  top: 84px;
-  left: 30px;
   display: flex;
   gap: 24px;
-  height: calc(100vh - 100px);
-  width: calc(100% - 60px);
+  padding: 20px 30px;
+  height: calc(100vh - 64px);
+  background: white;
 }
 
 /* 나의 화면 */
-.render-box {
+/* .render-box {
   position: relative;
   flex: 1.2;
   height: 100%;
@@ -78,6 +85,15 @@ html, body, #root {
   background-color: white;
   padding: 40px;
   min-width: 480px;
+} */
+.render-box {
+  width: 783px;
+  border: 2px solid #83C7FF;
+  border-radius: 10px;
+  background: white;
+  padding: 40px;
+  padding-top: 70px;
+  position: relative;
 }
 
 .title-bar {
@@ -85,44 +101,63 @@ html, body, #root {
   top: 0;
   left: 0;
   width: 100%;
-  height: 50px;
-  background-color: #83C7FF;
-  border-radius: 10px 10px 0 0;
-  color: white;
-  font-weight: bold;
+  height: 60px;
+  background: #DEF3FF;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  border: 2px solid #A3D5FF;
+  border-bottom: none;
   display: flex;
   align-items: center;
   padding-left: 30px;
+  font-size: 20px;
+  font-weight: 600;
+  color: #1C1C1C;
 }
 
-.rendered-content {
-  margin-top: 60px;
-}
+
 
 /* Blockly 조립 화면 */
 .blockly-box {
-  position: relative;
-  flex: 1.8;
+  width: 1053px;
   height: 100%;
   border: 1px solid #A3D5FF;
   border-radius: 10px;
   background-color: #F7FCFF;
   display: flex;
   flex-direction: column;
-  padding-top: 60px;
+  padding: 0;
   overflow: hidden;
 }
 
-/* 기존 탭 바 제거 */
+.tool-editor-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 기존 탭 바 제거 -> 다시 생성*/
 .tab-bar {
   display: flex;
-  gap: 8px;
+  gap: 10px;
+  margin-bottom: 12px;
+  margin-left: 10px;
+}
+
+
+.tab-btn {
   padding: 8px 16px;
-  height: 50px;
-  z-index: 5;
-  max-width: 100%; 
-  flex-wrap: wrap;   
-  overflow: hidden;  
+  border-radius: 100px;
+  background-color: #C9E2F1;
+  border: 1px solid #A3D5FF;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.tab-btn.active {
+  background-color: #FFEE95;
 }
 
 /* 도구 책갈피 스타일 */
@@ -133,11 +168,23 @@ html, body, #root {
   padding: 12px;
   overflow-y: auto;
 } */
- .toolbox-panel {
-  padding: 10px;
-  overflow-y: auto;
-  max-height: 240px;
+
+/* tab-container: 책갈피와 블록을 같이 감싸는 박스 */
+.tab-container {
+  position: relative;
+  background-color: #DEF3FF;
+  padding-top: 30px; /* 툴탭이 위로 올라올 수 있도록 공간 확보 */
 }
+
+
+.toolbox-panel {
+  background-color: #DEF3FF;
+  padding: 12px 20px;
+  border-bottom: 1px solid #A3D5FF;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
 
 /* .tool-section {
   background: #ffffff;
@@ -147,9 +194,9 @@ html, body, #root {
   transition: all 0.3s ease;
 } */
 /* 책갈피 섹션 */
-.tool-section {
+/* .tool-section {
   margin-bottom: 6px;
-}
+} */
 
 /* .tab-label {
   padding: 10px 16px;
@@ -168,7 +215,7 @@ html, body, #root {
   border-radius: 8px;
   cursor: pointer;
   margin-bottom: 6px;
-  color: #333;
+  /* color: #333; */
   transition: background 0.2s ease;
 }
 
@@ -181,11 +228,8 @@ html, body, #root {
 } */
  .toolset {
   display: flex;
-  gap: 8px;
+  gap: 10px;
   flex-wrap: wrap;
-  padding: 4px 0 14px 4px;
-  margin-bottom: 6px;
-  border-bottom: 1px solid #ccc;
 }
 
 .toolset.collapsed {
@@ -201,17 +245,24 @@ html, body, #root {
   white-space: nowrap;
 } */
 .tool-pill {
-  background-color: #eee;
-  padding: 6px 12px;
-  border-radius: 20px;
+  background-color: #FFEE95;
+  padding: 6px 14px;
+  border-radius: 100px;
   font-size: 14px;
-  cursor: pointer;
+  font-weight: 600;
+  color: #1C1C1C;
+  border: 1px solid #A3D5FF;
   white-space: nowrap;
+}
+
+.blockly-wrapper {
+  flex: 1;
+  width: 100%;
+  height: 100%;
 }
 
 /* Blockly 영역 */
 .blockly-editor {
-  flex: 1;
   width: 100%;
   height: 100%;
 }
