@@ -7,130 +7,96 @@ import 'blockly/blocks';
 import 'blockly/javascript';
 import 'blockly/msg/ko';
 
-/* --- 💡 블록 정의 --- */
-Blockly.Blocks['style_background'] = {
-  init: function () {
-    this.appendDummyInput()
-      .appendField("배경 색상")
-      .appendField(new Blockly.FieldDropdown([
-        ["하양", "#ffffff"],
-        ["노랑", "#FFEE95"],
-        ["하늘", "#C9E2F1"],
-        ["핑크", "#FFCDD6"]
-      ]), "COLOR");
-    this.setColour("#FFD700");
-  }
-};
+import { getWritingTabToolbox, registerWritingBlocks, parseWritingXmlToJSX } from './tabs/WritingTab';
+import { getImageTabToolbox, registerImageBlocks, parseImageXmlToJSX } from './tabs/ImageTab';
+import { registerLayoutBlocks, getLayoutTabToolbox, parseLayoutXmlToJSX } from './tabs/LayoutTab.jsx';
+import { registerButtonBlocks, getButtonTabToolbox, parseButtonXmlToJSX } from './tabs/ButtonTab.jsx';
+import { registerStyleBlocks, getStyleTabToolbox } from './tabs/StyleTab.jsx';
 
-Blockly.Blocks['style_width'] = {
-  init: function () {
-    this.appendDummyInput()
-      .appendField("너비")
-      .appendField(new Blockly.FieldNumber(100, 0, 1000), "WIDTH")
-      .appendField("px");
-    this.setColour("#FFD700");
-  }
-};
+registerStyleBlocks();
+registerWritingBlocks();
+registerImageBlocks();
+registerLayoutBlocks();
+registerButtonBlocks();
 
-Blockly.Blocks['style_height'] = {
-  init: function () {
-    this.appendDummyInput()
-      .appendField("높이")
-      .appendField(new Blockly.FieldNumber(100, 0, 1000), "HEIGHT")
-      .appendField("px");
-    this.setColour("#FFD700");
-  }
-};
-
-Blockly.Blocks['style_text_align'] = {
-  init: function () {
-    this.appendDummyInput()
-      .appendField("텍스트 정렬")
-      .appendField(new Blockly.FieldDropdown([
-        ["왼쪽", "left"],
-        ["가운데", "center"],
-        ["오른쪽", "right"]
-      ]), "ALIGN");
-    this.setColour("#FFD700");
-  }
-};
-
-/* --- JSX 파싱 --- */
 export default function App() {
+  const tabs = [
+    { name: "화면", color: "#C9E2F1" },
+    { name: "스타일", color: "#FFEE95" },
+    { name: "글쓰기", color: "#FFCCCB" },
+    { name: "버튼", color: "#F4B6C2" },
+    { name: "사진", color: "#C9E2F1" },
+    { name: "목록", color: "#B5D8FF" },
+    { name: "이동", color: "#FFCC99" }
+  ];
+
+  const [activeTab, setActiveTab] = useState("글쓰기");
+  const [tabXmlMap, setTabXmlMap] = useState({});
+  const [jsxOutput, setJsxOutput] = useState([]);
+
   useEffect(() => {
     const handleResize = () => {
       const workspace = Blockly.getMainWorkspace();
-      if (workspace) {
-        Blockly.svgResize(workspace);
-      }
+      if (workspace) Blockly.svgResize(workspace);
     };
-
     window.addEventListener('resize', handleResize);
-
-    // 처음 마운트 직후에도 강제로 한 번 resize 호출
     setTimeout(() => handleResize(), 100);
-
     return () => window.removeEventListener('resize', handleResize);
   }, []);
-  
-  const tabs = [
-    { name: "화면", color: "#C9E2F1" },
-    { name: "스타일", color: "#C9E2F1" },
-    { name: "글쓰기", color: "#C9E2F1" },
-    { name: "버튼", color: "#C9E2F1" },
-    { name: "사진", color: "#C9E2F1" },
-    { name: "목록", color: "#C9E2F1" },
-    { name: "이동", color: "#C9E2F1" }
-  ];
 
-  const [xmlText, setXmlText] = useState("");
-  const [activeTab, setActiveTab] = useState("스타일");
-
-  const parseXmlToJSX = (xml) => {
-    if (!xml) return null;
-    const parser = new DOMParser();
-    const dom = parser.parseFromString(xml, 'text/xml');
-    const blocks = dom.getElementsByTagName('block');
-    const output = [];
-
-    for (let i = 0; i < blocks.length; i++) {
-      const type = blocks[i].getAttribute('type');
-      if (type === 'text_title') output.push(<h3 key={i}>제목</h3>);
-      else if (type === 'text_paragraph') output.push(<p key={i}>문단 텍스트</p>);
-      else if (type === 'checkbox_block') output.push(<label key={i}><input type="checkbox" /> 체크박스 항목</label>);
+  const parseXmlToJSX = (xml, tabName) => {
+    switch (tabName) {
+      case "화면":
+        return parseLayoutXmlToJSX(xml); 
+      case "버튼":
+        return parseButtonXmlToJSX(xml);
+      case "스타일":
+        return parseButtonXmlToJSX(xml); // 필요 시 스타일용 따로 만들기
+      case "글쓰기":
+        return parseWritingXmlToJSX(xml);
+      case "사진":
+        return parseImageXmlToJSX(xml);
+      default:
+        return null;
     }
-
-    return output;
   };
 
   const getToolboxJson = (tab) => {
     switch (tab) {
+      case "화면":
+        return getLayoutTabToolbox();
+      case "버튼":
+        return getButtonTabToolbox();
       case "스타일":
-        return {
-          kind: "flyoutToolbox",
-          contents: [
-            { kind: "block", type: "style_background" },
-            { kind: "block", type: "style_width" },
-            { kind: "block", type: "style_height" },
-            { kind: "block", type: "style_text_align" }
-          ]
-        };
+        return getStyleTabToolbox();
       case "글쓰기":
-        return {
-          kind: "flyoutToolbox",
-          contents: [
-            { kind: "block", type: "text_title" },
-            { kind: "block", type: "text_paragraph" },
-            { kind: "block", type: "checkbox_block" }
-          ]
-        };
+        return getWritingTabToolbox();
+      case "사진":
+        return getImageTabToolbox();
       default:
-        return {
-          kind: "flyoutToolbox",
-          contents: []
-        };
+        return { kind: "flyoutToolbox", contents: [] };
     }
   };
+
+  const handleTabChange = (newTab) => {
+    const workspace = Blockly.getMainWorkspace();
+    if (workspace) {
+      const xml = Blockly.Xml.domToText(Blockly.Xml.workspaceToDom(workspace));
+      setTabXmlMap(prev => ({ ...prev, [activeTab]: xml }));
+    }
+    setActiveTab(newTab);
+  };
+
+  const handleXmlChange = (newXml) => {
+    setTabXmlMap(prev => ({ ...prev, [activeTab]: newXml }));
+  };
+
+  useEffect(() => {
+    const jsxList = Object.entries(tabXmlMap).map(([tab, xml]) => parseXmlToJSX(xml, tab));
+    setJsxOutput(jsxList);
+  }, [tabXmlMap]);
+
+  const initialXml = tabXmlMap[activeTab] || "";
 
   return (
     <div className="app-container">
@@ -150,7 +116,11 @@ export default function App() {
       <main className="main-box">
         <section className="render-box">
           <div className="title-bar">나의 화면</div>
-          <div className="rendered-content">{parseXmlToJSX(xmlText)}</div>
+          <div className="rendered-content">
+            {jsxOutput.map((jsx, idx) => (
+              <React.Fragment key={idx}>{jsx}</React.Fragment>
+            ))}
+          </div>
         </section>
 
         <section className="tool-editor-area">
@@ -159,7 +129,7 @@ export default function App() {
               <button
                 key={tab.name}
                 className={`tab-btn ${activeTab === tab.name ? 'active' : ''}`}
-                onClick={() => setActiveTab(activeTab === tab.name ? null : tab.name)}
+                onClick={() => handleTabChange(tab.name)}
                 style={{ backgroundColor: activeTab === tab.name ? '#FFEE95' : tab.color }}
               >
                 {tab.name}
@@ -171,7 +141,7 @@ export default function App() {
             <div className="blockly-wrapper">
               <BlocklyWorkspace
                 toolboxConfiguration={getToolboxJson(activeTab)}
-                initialXml=""
+                initialXml={initialXml}
                 className="blockly-editor"
                 workspaceConfiguration={{
                   toolboxPosition: 'top',
@@ -180,13 +150,9 @@ export default function App() {
                   zoom: { controls: true, wheel: true },
                   renderer: "zelos",
                   horizontalLayout: true,
-                  move: {
-                    scrollbars: true,
-                    drag: true,
-                    wheel: true,
-                  }
+                  move: { scrollbars: true, drag: true, wheel: true }
                 }}
-                onXmlChange={(newXml) => setXmlText(newXml)}
+                onXmlChange={handleXmlChange}
               />
             </div>
           </div>
