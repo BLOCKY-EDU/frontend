@@ -1,6 +1,5 @@
 import * as Blockly from 'blockly';
 
-/* ✅ 1. 블록 등록 */
 export function registerButtonBlocks() {
   Blockly.Blocks['normal_button'] = {
     init: function () {
