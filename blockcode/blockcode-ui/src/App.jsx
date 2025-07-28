@@ -1,4 +1,4 @@
-/* App.jsx */
+/*App.jsx*/
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { BlocklyWorkspace } from 'react-blockly';
 import * as Blockly from 'blockly';
@@ -57,65 +57,41 @@ export default function App() {
     }
   }, [activeTab]);
 
-  const parseXmlToJSX = (xml, tabName) => {
-    switch (tabName) {
-      case "화면": return parseLayoutXmlToJSX(xml);
-      case "버튼": return parseButtonXmlToJSX(xml);
-      case "스타일": return null; // 스타일은 자체적으로 렌더링하지 않음
-      case "글쓰기": return parseWritingXmlToJSX(xml);
-      case "사진": return parseImageXmlToJSX(xml);
-      case "목록": return parseListXmlToJSX(xml);
-      case "이동": return parseNavigationXmlToJSX(xml);
-      default: return null;
-    }
-  };
+  const parseXmlToJSX = (block) => {
+    const xml = Blockly.Xml.blockToDom(block);
+    const xmlText = Blockly.Xml.domToText(xml);
+    const type = block.type;
 
-  const getToolboxJson = (tab) => {
-    switch (tab) {
-      case "화면": return getLayoutTabToolbox();
-      case "버튼": return getButtonTabToolbox();
-      case "스타일": return getStyleTabToolbox();
-      case "글쓰기": return getWritingTabToolbox();
-      case "사진": return getImageTabToolbox();
-      case "목록": return getListTabToolbox();
-      case "이동": return getNavigationTabToolbox();
-      default: return { kind: "flyoutToolbox", contents: [] };
+    if (["text_title", "text_small_title", "small_content", "recipe_step", "checkbox_block", "toggle_input", "highlight_text"].includes(type)) {
+      return parseWritingXmlToJSX(xmlText);
+    } else if (["normal_button", "submit_button", "text_input", "email_input", "select_box"].includes(type)) {
+      return parseButtonXmlToJSX(xmlText);
+    } else if (["insert_image", "insert_video", "youtube_link"].includes(type)) {
+      return parseImageXmlToJSX(xmlText);
+    } else if (["list_item"].includes(type)) {
+      return parseListXmlToJSX(xmlText);
+    } else if (["navigation_button"].includes(type)) {
+      return parseNavigationXmlToJSX(xmlText);
+    } else if (["container_box"].includes(type)) {
+      return parseLayoutXmlToJSX(xmlText);
     }
+    return null;
   };
 
   const jsxOutput = useMemo(() => {
     const workspace = Blockly.getMainWorkspace();
     if (!workspace) return [];
 
-    const xmlDom = Blockly.Xml.workspaceToDom(workspace);
-    const blockNodes = Array.from(xmlDom.childNodes).filter(node => node.nodeName === 'block');
+    const topBlocks = workspace.getTopBlocks(true);
+
+    // 🟡 연결 여부와 무관하게 y좌표 기준 정렬
+    topBlocks.sort((a, b) => a.getRelativeToSurfaceXY().y - b.getRelativeToSurfaceXY().y);
 
     const jsxList = [];
 
-    blockNodes.forEach((blockNode, index) => {
-      const type = blockNode.getAttribute('type');
-      const blockXml = new XMLSerializer().serializeToString(blockNode);
-
-      let jsx = null;
-
-      if (["text_title", "text_small_title", "small_content", "recipe_step", "checkbox_block", "toggle_input", "highlight_text"].includes(type)) {
-        jsx = parseWritingXmlToJSX(blockXml);
-      } else if (["normal_button", "submit_button", "text_input", "email_input", "select_box"].includes(type)) {
-        jsx = parseButtonXmlToJSX(blockXml);
-      } else if (["insert_image", "insert_video", "youtube_link"].includes(type)) {
-        jsx = parseImageXmlToJSX(blockXml);
-      } else if (["list_item"].includes(type)) {
-        jsx = parseListXmlToJSX(blockXml);
-      } else if (["navigation_button"].includes(type)) {
-        jsx = parseNavigationXmlToJSX(blockXml);
-      } else if (["container_box"].includes(type)) {
-        jsx = parseLayoutXmlToJSX(blockXml);
-      }
-
-      if (jsx) {
-        if (Array.isArray(jsx)) jsxList.push(...jsx);
-        else jsxList.push(jsx);
-      }
+    topBlocks.forEach((block) => {
+      const jsx = parseXmlToJSX(block);
+      if (jsx) jsxList.push(...(Array.isArray(jsx) ? jsx : [jsx]));
     });
 
     return jsxList.map((jsx, i) => (
@@ -137,11 +113,22 @@ export default function App() {
     workspaceRef.current = workspace;
     if (workspace) {
       const newXml = Blockly.Xml.domToText(Blockly.Xml.workspaceToDom(workspace));
-      const dom = Blockly.Xml.workspaceToDom(workspace);
-      const blocks = Array.from(dom.children);
       if (tabXmlMap[activeTab] !== newXml) {
         setTabXmlMap(prev => ({ ...prev, [activeTab]: newXml }));
       }
+    }
+  };
+
+  const getToolboxJson = (tab) => {
+    switch (tab) {
+      case "화면": return getLayoutTabToolbox();
+      case "버튼": return getButtonTabToolbox();
+      case "스타일": return getStyleTabToolbox();
+      case "글쓰기": return getWritingTabToolbox();
+      case "사진": return getImageTabToolbox();
+      case "목록": return getListTabToolbox();
+      case "이동": return getNavigationTabToolbox();
+      default: return { kind: "flyoutToolbox", contents: [] };
     }
   };
 
@@ -166,9 +153,7 @@ export default function App() {
         <section className="render-box">
           <div className="title-bar">나의 화면</div>
           <div className="rendered-content">
-            {jsxOutput.map((jsx, idx) => (
-              <React.Fragment key={idx}>{jsx}</React.Fragment>
-            ))}
+            {jsxOutput}
           </div>
         </section>
 
@@ -187,14 +172,14 @@ export default function App() {
           </div>
 
           <div className="blockly-box">
-            <div className="blockly-wrapper"> 
+            <div className="blockly-wrapper">
               <BlocklyWorkspace
                 key="shared-workspace"
                 toolboxConfiguration={getToolboxJson(activeTab)}
                 className="blockly-editor"
                 workspaceConfiguration={{
                   toolboxPosition: 'top',
-                  horizontalLayout: true, // 여기건들면 툴 내려오는거
+                  horizontalLayout: true,
                   trashcan: true,
                   grid: { spacing: 20, length: 3, colour: '#ccc', snap: true },
                   zoom: { controls: true, wheel: true },
