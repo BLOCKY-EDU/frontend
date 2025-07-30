@@ -1,4 +1,3 @@
-/*App.jsx*/
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { BlocklyWorkspace } from 'react-blockly';
 import * as Blockly from 'blockly';
@@ -62,13 +61,17 @@ export default function App() {
     const xmlText = Blockly.Xml.domToText(xml);
     const type = block.type;
 
+    if (type === "list_bulleted" || type === "list_numbered") {
+      return parseListXmlToJSX(xmlText);
+    }
+
     if (["text_title", "text_small_title", "small_content", "recipe_step", "checkbox_block", "toggle_input", "highlight_text"].includes(type)) {
       return parseWritingXmlToJSX(xmlText);
     } else if (["normal_button", "submit_button", "text_input", "email_input", "select_box"].includes(type)) {
       return parseButtonXmlToJSX(xmlText);
     } else if (["insert_image", "insert_video", "youtube_link"].includes(type)) {
       return parseImageXmlToJSX(xmlText);
-    } else if (["list_item"].includes(type)) {
+    } else if (["list_item", "ordered_list_item"].includes(type)) {
       return parseListXmlToJSX(xmlText);
     } else if (["navigation_button"].includes(type)) {
       return parseNavigationXmlToJSX(xmlText);
@@ -78,25 +81,56 @@ export default function App() {
     return null;
   };
 
+  // ★ 리스트 블록 묶음 렌더링 (핵심!)
   const jsxOutput = useMemo(() => {
     const workspace = Blockly.getMainWorkspace();
     if (!workspace) return [];
-
     const topBlocks = workspace.getTopBlocks(true);
-
-    // 🟡 연결 여부와 무관하게 y좌표 기준 정렬
     topBlocks.sort((a, b) => a.getRelativeToSurfaceXY().y - b.getRelativeToSurfaceXY().y);
 
     const jsxList = [];
+    const visited = new Set();
 
     topBlocks.forEach((block) => {
-      const jsx = parseXmlToJSX(block);
-      if (jsx) jsxList.push(...(Array.isArray(jsx) ? jsx : [jsx]));
+      if (
+        (block.type === "list_item" || block.type === "ordered_list_item") &&
+        !visited.has(block.id)
+      ) {
+        // 같은 타입끼리 묶어서 ul/ol로 렌더
+        const group = [];
+        let current = block;
+        while (
+          current &&
+          !visited.has(current.id) &&
+          (current.type === block.type)
+        ) {
+          const parsed = parseListXmlToJSX(
+            Blockly.Xml.domToText(Blockly.Xml.blockToDom(current))
+          );
+          if (parsed) group.push(parsed.content);
+          visited.add(current.id);
+          current = current.getNextBlock();
+        }
+
+        if (group.length > 0) {
+          const Tag = block.type === "ordered_list_item" ? "ol" : "ul";
+          jsxList.push(
+            <Tag key={block.id}>
+              {group.map((content, i) => <li key={i}>{content}</li>)}
+            </Tag>
+          );
+        }
+      } else if (!visited.has(block.id)) {
+        const jsx = parseXmlToJSX(block);
+        if (jsx && typeof jsx === 'object' && jsx.type && jsx.content) {
+          // 이미 위에서 처리됨
+        } else if (jsx) {
+          jsxList.push(...(Array.isArray(jsx) ? jsx : [jsx]));
+        }
+      }
     });
 
-    return jsxList.map((jsx, i) => (
-      <React.Fragment key={i}>{jsx}</React.Fragment>
-    ));
+    return jsxList.map((jsx, i) => <React.Fragment key={i}>{jsx}</React.Fragment>);
   }, [tabXmlMap]);
 
   const handleTabChange = (newTab) => {
@@ -132,8 +166,6 @@ export default function App() {
     }
   };
 
-  const initialXml = tabXmlMap[activeTab] || "";
-
   return (
     <div className="app-container">
       <header className="header">
@@ -148,7 +180,6 @@ export default function App() {
           <button>회원가입</button>
         </div>
       </header>
-
       <main className="main-box">
         <section className="render-box">
           <div className="title-bar">나의 화면</div>
@@ -156,7 +187,6 @@ export default function App() {
             {jsxOutput}
           </div>
         </section>
-
         <section className="tool-editor-area">
           <div className="tab-bar">
             {tabs.map((tab) => (
@@ -170,7 +200,6 @@ export default function App() {
               </button>
             ))}
           </div>
-
           <div className="blockly-box">
             <div className="blockly-wrapper">
               <BlocklyWorkspace
@@ -195,3 +224,7 @@ export default function App() {
     </div>
   );
 }
+
+  
+
+
