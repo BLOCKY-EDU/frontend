@@ -6,6 +6,13 @@ import blockyLogo from './assets/blocky-logo.png';
 import 'blockly/blocks';
 import 'blockly/javascript';
 import 'blockly/msg/ko';
+import screenIcon from './assets/icons/screen.png';
+import styleIcon from './assets/icons/style.png';
+import textIcon from './assets/icons/text.png';
+import buttonIcon from './assets/icons/button.png';
+import imageIcon from './assets/icons/image.png';
+import listIcon from './assets/icons/list.png';
+import navIcon from './assets/icons/nav.png';
 
 import { getWritingTabToolbox, registerWritingBlocks, parseWritingXmlToJSX } from './tabs/WritingTab';
 import { getImageTabToolbox, registerImageBlocks, parseImageXmlToJSX } from './tabs/ImageTab';
@@ -25,13 +32,13 @@ registerNavigationBlocks();
 
 export default function App() {
   const tabs = [
-    { name: "화면", color: "#B5D8FF" },
-    { name: "스타일", color: "#B5D8FF" },
-    { name: "글쓰기", color: "#B5D8FF" },
-    { name: "버튼", color: "#B5D8FF" },
-    { name: "사진", color: "#B5D8FF" },
-    { name: "목록", color: "#B5D8FF" },
-    { name: "이동", color: "#B5D8FF" }
+    { name: "화면", color: "#B5D8FF", activeColor: "#A0C4FF", icon: screenIcon },
+    { name: "스타일", color: "#B5D8FF", activeColor: "#FFD700", icon: styleIcon },
+    { name: "글쓰기", color: "#B5D8FF", activeColor: "#FFB3B3", icon: textIcon },
+    { name: "버튼", color: "#B5D8FF", activeColor: "#90EE90", icon: buttonIcon },
+    { name: "사진", color: "#B5D8FF", activeColor: "#FFA07A", icon: imageIcon },
+    { name: "목록", color: "#B5D8FF", activeColor: "#FFB6C1", icon: listIcon },
+    { name: "이동", color: "#B5D8FF", activeColor: "#87CEEB", icon: navIcon }
   ];
 
   const [activeTab, setActiveTab] = useState("글쓰기");
@@ -190,12 +197,14 @@ export default function App() {
         <section className="tool-editor-area">
           <div className="tab-bar">
             {tabs.map((tab) => (
+              //여기
               <button
                 key={tab.name}
                 className={`tab-btn ${activeTab === tab.name ? 'active' : ''}`}
                 onClick={() => handleTabChange(tab.name)}
-                style={{ backgroundColor: activeTab === tab.name ? '#FFEE95' : tab.color }}
+                style={{ backgroundColor: activeTab === tab.name ? tab.activeColor : tab.color }}
               >
+                <img src={tab.icon} alt={tab.name} style={{ width: 18, height: 18, marginRight: 6 }} />
                 {tab.name}
               </button>
             ))}

@@ -149,24 +149,41 @@ html, body, #root {
 .tab-bar {
   display: flex;
   gap: 10px;
-  margin-bottom: 12px;
+  margin-bottom: 0px; /* 기존 12 */
   margin-left: 10px;
 }
 
 
-.tab-btn {
+/* .tab-btn {
   padding: 8px 16px;
   border-radius: 100px;
   background-color: #C9E2F1;
   border: 1px solid #A3D5FF;
   font-weight: 600;
-  font-size: 14px;
+  font-size: 20px;
   cursor: pointer;
   transition: background 0.2s;
+  color: #1C1C1C;
+} */
+
+.tab-btn {
+  padding: 8px 16px;
+  border-top-left-radius: 10px;    /* ✅ 위쪽만 둥글게 */
+  border-top-right-radius: 10px;
+  border-bottom-left-radius: 0;    /* ✅ 아래쪽 직각 */
+  border-bottom-right-radius: 0;
+  background-color: #FFA5A5;
+  border: 1px solid #A3D5FF;
+  font-weight: 600;
+  font-size: 20px;
+  cursor: pointer;
+  transition: background 0.2s;
+  color: #1C1C1C;
 }
 
 .tab-btn.active {
   background-color: #FFEE95;
+  color: #1C1C1C;
 }
 
 /* 도구 책갈피 스타일 */
@@ -182,16 +199,22 @@ html, body, #root {
 .tab-container {
   position: relative;
   background-color: #DEF3FF;
-  padding-top: 30px; /* 툴탭이 위로 올라올 수 있도록 공간 확보 */
+  /* padding-top: 30px; 툴탭이 위로 올라올 수 있도록 공간 확보 */
+  padding-top: 0;
 }
 
 
 .toolbox-panel {
   background-color: #DEF3FF;
+  margin-top: 0; 
   padding: 12px 20px;
   border-bottom: 1px solid #A3D5FF;
-  border-top-left-radius: 10px;
-  border-top-right-radius: 10px;
+  /* border-top-left-radius: 15px;
+  border-top-right-radius: 15px; */
+  border-top: none; /* 탭과 직선 연결 */
+  border-radius: 0 0 10px 10px; /* 아랫부분만 둥글게 */
+  width: calc(100% - 2px); /* 탭과 완전 일자 맞춤 */
+  box-sizing: border-box;
 }
 
 
@@ -220,7 +243,7 @@ html, body, #root {
 .tab-label {
   padding: 6px 14px;
   font-weight: 600;
-  font-size: 14px;
+  font-size: 20px;
   border-radius: 8px;
   cursor: pointer;
   margin-bottom: 6px;
@@ -257,10 +280,9 @@ html, body, #root {
   background-color: #FFEE95;
   padding: 6px 14px;
   border-radius: 100px;
-  font-size: 14px;
+  font-size: 20px;
   font-weight: 600;
   color: #1C1C1C;
-  border: 1px solid #A3D5FF;
   white-space: nowrap;
 }
 
