@@ -1,3 +1,4 @@
+/* App.jsx */
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { BlocklyWorkspace } from 'react-blockly';
 import * as Blockly from 'blockly';
@@ -6,6 +7,7 @@ import blockyLogo from './assets/blocky-logo.png';
 import 'blockly/blocks';
 import 'blockly/javascript';
 import 'blockly/msg/ko';
+
 import screenIcon from './assets/icons/screen.png';
 import styleIcon from './assets/icons/style.png';
 import textIcon from './assets/icons/text.png';
@@ -13,6 +15,8 @@ import buttonIcon from './assets/icons/button.png';
 import imageIcon from './assets/icons/image.png';
 import listIcon from './assets/icons/list.png';
 import navIcon from './assets/icons/nav.png';
+import trashcanSVG from './assets/trashcan.svg';
+import robotIcon from './assets/robot-icon.png';   // ✅ 추가: 로봇 아이콘 import
 
 import { getWritingTabToolbox, registerWritingBlocks, parseWritingXmlToJSX } from './tabs/WritingTab';
 import { getImageTabToolbox, registerImageBlocks, parseImageXmlToJSX } from './tabs/ImageTab';
@@ -29,6 +33,31 @@ registerLayoutBlocks();
 registerButtonBlocks();
 registerListBlocks();
 registerNavigationBlocks();
+
+/* ✅ 휴지통 아이콘 커스텀 */
+const overrideTrashcanIcon = () => {
+  const origCreateDom = Blockly.Trashcan.prototype.createDom;
+  Blockly.Trashcan.prototype.createDom = function () {
+    const group = origCreateDom.call(this);
+    if (!this.svgGroup_) return group;
+
+    while (this.svgGroup_.firstChild) {
+      this.svgGroup_.removeChild(this.svgGroup_.firstChild);
+    }
+
+    const img = document.createElementNS('http://www.w3.org/2000/svg', 'image');
+    img.setAttributeNS('http://www.w3.org/1999/xlink', 'href', trashcanSVG);
+    img.setAttribute('width', 40);
+    img.setAttribute('height', 40);
+    img.setAttribute('x', 0);
+    img.setAttribute('y', 0);
+
+    this.svgGroup_.appendChild(img);
+    return group;
+  };
+};
+
+overrideTrashcanIcon();
 
 export default function App() {
   const tabs = [
@@ -71,7 +100,6 @@ export default function App() {
     if (type === "list_bulleted" || type === "list_numbered") {
       return parseListXmlToJSX(xmlText);
     }
-
     if (["text_title", "text_small_title", "small_content", "recipe_step", "checkbox_block", "toggle_input", "highlight_text"].includes(type)) {
       return parseWritingXmlToJSX(xmlText);
     } else if (["normal_button", "submit_button", "text_input", "email_input", "select_box"].includes(type)) {
@@ -88,7 +116,6 @@ export default function App() {
     return null;
   };
 
-  // ★ 리스트 블록 묶음 렌더링 (핵심!)
   const jsxOutput = useMemo(() => {
     const workspace = Blockly.getMainWorkspace();
     if (!workspace) return [];
@@ -99,18 +126,10 @@ export default function App() {
     const visited = new Set();
 
     topBlocks.forEach((block) => {
-      if (
-        (block.type === "list_item" || block.type === "ordered_list_item") &&
-        !visited.has(block.id)
-      ) {
-        // 같은 타입끼리 묶어서 ul/ol로 렌더
+      if ((block.type === "list_item" || block.type === "ordered_list_item") && !visited.has(block.id)) {
         const group = [];
         let current = block;
-        while (
-          current &&
-          !visited.has(current.id) &&
-          (current.type === block.type)
-        ) {
+        while (current && !visited.has(current.id) && (current.type === block.type)) {
           const parsed = parseListXmlToJSX(
             Blockly.Xml.domToText(Blockly.Xml.blockToDom(current))
           );
@@ -118,25 +137,18 @@ export default function App() {
           visited.add(current.id);
           current = current.getNextBlock();
         }
-
         if (group.length > 0) {
           const Tag = block.type === "ordered_list_item" ? "ol" : "ul";
-          jsxList.push(
-            <Tag key={block.id}>
-              {group.map((content, i) => <li key={i}>{content}</li>)}
-            </Tag>
-          );
+          jsxList.push(<Tag key={block.id}>{group.map((content, i) => <li key={i}>{content}</li>)}</Tag>);
         }
       } else if (!visited.has(block.id)) {
         const jsx = parseXmlToJSX(block);
         if (jsx && typeof jsx === 'object' && jsx.type && jsx.content) {
-          // 이미 위에서 처리됨
         } else if (jsx) {
           jsxList.push(...(Array.isArray(jsx) ? jsx : [jsx]));
         }
       }
     });
-
     return jsxList.map((jsx, i) => <React.Fragment key={i}>{jsx}</React.Fragment>);
   }, [tabXmlMap]);
 
@@ -197,7 +209,6 @@ export default function App() {
         <section className="tool-editor-area">
           <div className="tab-bar">
             {tabs.map((tab) => (
-              //여기
               <button
                 key={tab.name}
                 className={`tab-btn ${activeTab === tab.name ? 'active' : ''}`}
@@ -227,13 +238,13 @@ export default function App() {
                 onWorkspaceChange={handleWorkspaceChange}
               />
             </div>
+            {/* ✅ 로봇 아이콘 추가 */}
+            <div className="robot-container">
+              <img src={robotIcon} alt="AI 도우미" className="robot-icon" />
+            </div>
           </div>
         </section>
       </main>
     </div>
   );
 }
-
-  
-
-
