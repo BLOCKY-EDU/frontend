@@ -225,6 +225,12 @@ html, body, #root {
 }
 
 
+.blocklyText {
+  fill: #333333 !important;  /* 원하는 글자색으로 변경 */
+  font-weight: 600;          /* 글씨 굵기 변경 가능 */
+}
+
+
 /* .tool-section {
   background: #ffffff;
   border: 1px solid #ccc;

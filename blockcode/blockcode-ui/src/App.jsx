@@ -61,13 +61,13 @@ overrideTrashcanIcon();
 
 export default function App() {
   const tabs = [
-    { name: "화면", color: "#B5D8FF", activeColor: "#A0C4FF", icon: screenIcon },
-    { name: "스타일", color: "#B5D8FF", activeColor: "#FFD700", icon: styleIcon },
-    { name: "글쓰기", color: "#B5D8FF", activeColor: "#FFB3B3", icon: textIcon },
-    { name: "버튼", color: "#B5D8FF", activeColor: "#90EE90", icon: buttonIcon },
-    { name: "사진", color: "#B5D8FF", activeColor: "#FFA07A", icon: imageIcon },
-    { name: "목록", color: "#B5D8FF", activeColor: "#FFB6C1", icon: listIcon },
-    { name: "이동", color: "#B5D8FF", activeColor: "#87CEEB", icon: navIcon }
+    { name: "화면", color: "#B5D8FF", activeColor: "#8FCCFF", icon: screenIcon },
+    { name: "스타일", color: "#B5D8FF", activeColor: "#FFEE95", icon: styleIcon },
+    { name: "글쓰기", color: "#B5D8FF", activeColor: "#FFA5A5", icon: textIcon },
+    { name: "버튼", color: "#B5D8FF", activeColor: "#FFCDD6", icon: buttonIcon },
+    { name: "사진", color: "#B5D8FF", activeColor: "#B0EACD", icon: imageIcon },
+    { name: "목록", color: "#B5D8FF", activeColor: "#D8B4F8", icon: listIcon },
+    { name: "이동", color: "#B5D8FF", activeColor: "#FFC8AB", icon: navIcon }
   ];
 
   const [activeTab, setActiveTab] = useState("글쓰기");
