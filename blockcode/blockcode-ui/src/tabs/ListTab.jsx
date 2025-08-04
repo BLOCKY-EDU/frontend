@@ -1,5 +1,6 @@
 import * as Blockly from 'blockly';
 import React from 'react';
+import {COMBINE_TYPES} from "./CombineType.jsx";
 
 export function registerListBlocks() {
   // 글머리(ul) 컨테이너
@@ -8,6 +9,8 @@ export function registerListBlocks() {
       this.appendStatementInput("ITEMS")
         .setCheck("list_item")
         .appendField("글머리");
+      this.setPreviousStatement(true,COMBINE_TYPES);
+      this.setNextStatement(true,COMBINE_TYPES);
       this.setColour('#D8B4F8');  // ← 컬러 변경
       this.setTooltip("글머리 리스트(ul)를 만듭니다");
       this.setHelpUrl("");
@@ -34,6 +37,8 @@ export function registerListBlocks() {
       this.appendStatementInput("ITEMS")
         .setCheck("ordered_list_item")
         .appendField("숫자 목록");
+      this.setPreviousStatement(true,COMBINE_TYPES);
+      this.setNextStatement(true,COMBINE_TYPES);
       this.setColour('#D8B4F8');  // ← 컬러 변경
       this.setTooltip("숫자 목록 리스트(ol)를 만듭니다");
       this.setHelpUrl("");
