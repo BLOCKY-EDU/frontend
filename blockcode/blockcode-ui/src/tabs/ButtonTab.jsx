@@ -6,7 +6,7 @@ export function registerButtonBlocks() {
       this.appendDummyInput()
         .appendField("일반 버튼")
         .appendField(new Blockly.FieldTextInput("눌러보세요"), "LABEL");
-      this.setColour("#F4B6C2");
+      this.setColour("#FFCDD6");
     }
   };
 
@@ -15,7 +15,7 @@ export function registerButtonBlocks() {
       this.appendDummyInput()
         .appendField("제출 버튼")
         .appendField(new Blockly.FieldTextInput("제출"), "LABEL");
-      this.setColour("#F4B6C2");
+      this.setColour("#FFCDD6");
     }
   };
 
@@ -24,7 +24,7 @@ export function registerButtonBlocks() {
       this.appendDummyInput()
         .appendField("글 입력칸")
         .appendField(new Blockly.FieldTextInput("placeholder"), "PLACEHOLDER");
-      this.setColour("#F4B6C2");
+      this.setColour("#FFCDD6");
     }
   };
 
@@ -33,7 +33,7 @@ export function registerButtonBlocks() {
       this.appendDummyInput()
         .appendField("이메일 입력칸")
         .appendField(new Blockly.FieldTextInput("email@example.com"), "PLACEHOLDER");
-      this.setColour("#F4B6C2");
+      this.setColour("#FFCDD6");
     }
   };
 
@@ -42,7 +42,7 @@ export function registerButtonBlocks() {
       this.appendDummyInput()
         .appendField("선택 상자")
         .appendField(new Blockly.FieldTextInput("옵션1,옵션2"), "OPTIONS");
-      this.setColour("#F4B6C2");
+      this.setColour("#FFCDD6");
     }
   };
 }

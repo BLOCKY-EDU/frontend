@@ -1,3 +1,4 @@
+/* App.jsx */
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { BlocklyWorkspace } from 'react-blockly';
 import * as Blockly from 'blockly';
@@ -52,6 +53,15 @@ function AlertModal({ open, onClose, message }) {
   );
 }
 
+import screenIcon from './assets/icons/screen.png';
+import styleIcon from './assets/icons/style.png';
+import textIcon from './assets/icons/text.png';
+import buttonIcon from './assets/icons/button.png';
+import imageIcon from './assets/icons/image.png';
+import listIcon from './assets/icons/list.png';
+import navIcon from './assets/icons/nav.png';
+import trashcanSVG from './assets/trashcan.svg';
+import robotIcon from './assets/robot-icon.png';   // ✅ 추가: 로봇 아이콘 import
 
 import { getWritingTabToolbox, registerWritingBlocks, parseWritingXmlToJSX } from './tabs/WritingTab';
 import { getImageTabToolbox, registerImageBlocks, parseImageXmlToJSX } from './tabs/ImageTab';
@@ -69,15 +79,40 @@ registerButtonBlocks();
 registerListBlocks();
 registerNavigationBlocks();
 
+/* ✅ 휴지통 아이콘 커스텀 */
+const overrideTrashcanIcon = () => {
+  const origCreateDom = Blockly.Trashcan.prototype.createDom;
+  Blockly.Trashcan.prototype.createDom = function () {
+    const group = origCreateDom.call(this);
+    if (!this.svgGroup_) return group;
+
+    while (this.svgGroup_.firstChild) {
+      this.svgGroup_.removeChild(this.svgGroup_.firstChild);
+    }
+
+    const img = document.createElementNS('http://www.w3.org/2000/svg', 'image');
+    img.setAttributeNS('http://www.w3.org/1999/xlink', 'href', trashcanSVG);
+    img.setAttribute('width', 40);
+    img.setAttribute('height', 40);
+    img.setAttribute('x', 0);
+    img.setAttribute('y', 0);
+
+    this.svgGroup_.appendChild(img);
+    return group;
+  };
+};
+
+overrideTrashcanIcon();
+
 export default function App() {
   const tabs = [
-    { name: "화면", color: "#B5D8FF" },
-    { name: "스타일", color: "#B5D8FF" },
-    { name: "글쓰기", color: "#B5D8FF" },
-    { name: "버튼", color: "#B5D8FF" },
-    { name: "사진", color: "#B5D8FF" },
-    { name: "목록", color: "#B5D8FF" },
-    { name: "이동", color: "#B5D8FF" }
+    { name: "화면", color: "#B5D8FF", activeColor: "#8FCCFF", icon: screenIcon },
+    { name: "스타일", color: "#B5D8FF", activeColor: "#FFEE95", icon: styleIcon },
+    { name: "글쓰기", color: "#B5D8FF", activeColor: "#FFA5A5", icon: textIcon },
+    { name: "버튼", color: "#B5D8FF", activeColor: "#FFCDD6", icon: buttonIcon },
+    { name: "사진", color: "#B5D8FF", activeColor: "#B0EACD", icon: imageIcon },
+    { name: "목록", color: "#B5D8FF", activeColor: "#D8B4F8", icon: listIcon },
+    { name: "이동", color: "#B5D8FF", activeColor: "#FFC8AB", icon: navIcon }
   ];
 
   const [activeTab, setActiveTab] = useState("글쓰기");
@@ -127,7 +162,6 @@ export default function App() {
     if (type === "list_bulleted" || type === "list_numbered") {
       return parseListXmlToJSX(xmlText);
     }
-
     if (["text_title", "text_small_title", "small_content", "recipe_step", "checkbox_block", "toggle_input", "highlight_text"].includes(type)) {
       return parseWritingXmlToJSX(xmlText);
     } else if (["normal_button", "submit_button", "text_input", "email_input", "select_box"].includes(type)) {
@@ -415,8 +449,9 @@ const handleWorkspaceChange = () => {
                 key={tab.name}
                 className={`tab-btn ${activeTab === tab.name ? 'active' : ''}`}
                 onClick={() => handleTabChange(tab.name)}
-                style={{ backgroundColor: activeTab === tab.name ? '#FFEE95' : tab.color }}
+                style={{ backgroundColor: activeTab === tab.name ? tab.activeColor : tab.color }}
               >
+                <img src={tab.icon} alt={tab.name} style={{ width: 18, height: 18, marginRight: 6 }} />
                 {tab.name}
               </button>
             ))}
@@ -439,6 +474,10 @@ const handleWorkspaceChange = () => {
                 onWorkspaceChange={handleWorkspaceChange}
               />
             </div>
+            {/* ✅ 로봇 아이콘 추가 */}
+            <div className="robot-container">
+              <img src={robotIcon} alt="AI 도우미" className="robot-icon" />
+            </div>
           </div>
         </section>
       </main>
@@ -447,7 +486,3 @@ const handleWorkspaceChange = () => {
     </>
   );
 }
-
-  
-
-

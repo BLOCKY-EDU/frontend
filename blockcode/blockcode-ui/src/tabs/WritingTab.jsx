@@ -41,7 +41,7 @@ export function registerWritingBlocks() {
       this.appendDummyInput()
         .appendField("순서 단계")
         .appendField(new Blockly.FieldTextInput("밀가루를 이용해서 반죽을 만든다"), "STEP");
-      this.setColour("#FFAB19");
+      this.setColour("#FFA5A5");
       this.setPreviousStatement(true, null);
       this.setNextStatement(true, null);
     }
@@ -52,7 +52,7 @@ export function registerWritingBlocks() {
       this.appendDummyInput()
         .appendField("체크박스")
         .appendField(new Blockly.FieldTextInput("밀가루"), "LABEL");
-      this.setColour("#4C97FF");
+      this.setColour("#FFA5A5");
       this.setPreviousStatement(true, null);
       this.setNextStatement(true, null);
     }
@@ -67,7 +67,7 @@ export function registerWritingBlocks() {
           ["선택 토글", "select"]
         ]), "MODE")
         .appendField(new Blockly.FieldTextInput("값 또는 옵션"), "VALUE");
-      this.setColour("#C9E2F1");
+      this.setColour("#FFA5A5");
       this.setPreviousStatement(true, null);
       this.setNextStatement(true, null);
     }
@@ -78,7 +78,7 @@ export function registerWritingBlocks() {
       this.appendDummyInput()
         .appendField("강조하기")
         .appendField(new Blockly.FieldTextInput("중요한 단어"), "HIGHLIGHT");
-      this.setColour("#FF6666");
+      this.setColour("#FFA5A5");
       this.setPreviousStatement(true, null);
       this.setNextStatement(true, null);
     }
