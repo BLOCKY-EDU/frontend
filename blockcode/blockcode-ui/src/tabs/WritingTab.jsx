@@ -8,6 +8,8 @@ export function registerWritingBlocks() {
         .appendField("큰 제목")
         .appendField(new Blockly.FieldTextInput("쿠키 레시피 만드는 법"), "TITLE");
       this.setColour("#FFAB19");
+      this.setPreviousStatement(true, null);  
+      this.setNextStatement(true, null);  
     }
   };
 
@@ -17,6 +19,8 @@ export function registerWritingBlocks() {
         .appendField("작은 제목")
         .appendField(new Blockly.FieldTextInput("쿠키 레시피 만드는 법"), "SMALL_TITLE");
       this.setColour("#FFAB19");
+      this.setPreviousStatement(true, null);
+      this.setNextStatement(true, null);
     }
   };
 
@@ -26,6 +30,9 @@ export function registerWritingBlocks() {
         .appendField("작은 설명")
         .appendField(new Blockly.FieldTextInput("르뱅쿠키 만들기"), "SMALL_CONTENT");
       this.setColour("#FFAB19");
+      this.setPreviousStatement(true, null);
+      this.setNextStatement(true, null);
+      
     }
   };
 
