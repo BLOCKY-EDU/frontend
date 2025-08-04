@@ -1,0 +1,136 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Pretendard, sans-serif;
+  color: #1d1d1f;
+  letter-spacing: -0.02em;
+  line-height: 1.4;
+}
+
+.container {
+  width: 100%;
+  min-height: 100vh;
+  position: relative;
+  background: #DEF3FF;
+  overflow-x: hidden;
+}
+
+/* 메인 박스 */
+.main-box {
+  width: 80vw;                /* 브라우저 너비의 80% */
+  max-width: 1600px;          /* 최대 1600px */
+  min-height: 2661px;       /* 최소 높이 */
+  padding: 80px 0;
+  position: relative;
+  margin: 64px auto 0 auto;   /* 상단 Navbar 64px 아래, 가운데 정렬 */
+  background: white;
+}
+
+/* 로고 이미지 */
+.main-image {
+  width: 25%;                 /* 부모박스 기준 비율 */
+  max-width: 394px;
+  height: auto;
+  position: absolute;
+  top: 25%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* 타이틀 */
+.title-text {
+  position: absolute;
+  top: 7%;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  /* font-size: 1.4vw; */
+  font-size: clamp(20px, 2.4vw, 36px);
+  font-weight: 600;
+  color: #1d1d1f;
+}
+
+/* 중간 텍스트 */
+.middle-text {
+  position: absolute;
+  top: 17%;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  /* font-size: 1.4vw; */
+  font-size: clamp(16px, 1.6vw, 24px);
+  font-weight: 500;
+  color: #1d1d1f;
+  opacity: 0.9;
+}
+
+/* 강조 텍스트 */
+.highlight-text {
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  /* font-size: 1.8vw; */
+  font-size: clamp(20px, 2vw, 32px);
+  font-weight: 600;
+  color: #0071e3;
+}
+
+/* 설명 텍스트 */
+.sub-text {
+  position: absolute;
+  top: 38%;
+  left: 10%;
+  width: 80%;
+  text-align: center;
+  /* font-size: 1.3vw; */
+  font-size: clamp(14px, 1.4vw, 22px);
+  font-weight: 400;
+  color: #2C2C2C;
+  opacity: 0.8;
+}
+
+.card-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  justify-content: center;
+  gap: 40px; /* 카드 간격 */
+  width: 80%; /* 필요시 조절 */
+}
+
+/* .card {
+  flex: 0 0 25%;
+  aspect-ratio: 0.88;
+  background: #DEF3FF;
+  border-radius: 20px;
+  text-align: center;
+  font-size: 1.6vw;
+  font-weight: 700;
+  color: #2C2C2C;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+} */
+
+.card {
+  flex: 0 0 25%;
+  aspect-ratio: 0.88;
+  background: #f5f5f7; /* 기존 색상보다 조금 더 Apple 느낌 */
+  border-radius: 18px;
+  font-size: clamp(14px, 1.3vw, 20px);
+  font-weight: 500;
+  color: #1d1d1f;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1.5em;
+  transition: transform 0.25s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+}
