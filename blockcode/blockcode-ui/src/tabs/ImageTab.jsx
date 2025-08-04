@@ -11,6 +11,8 @@ export function registerImageBlocks() {
         //예시 이미지 링크 
         .appendField(new Blockly.FieldTextInput("https://fastly.picsum.photos/id/177/300/300.jpg?hmac=iqXyonsAi67PWRf_09YhPkmp81Thf9Pch6MNvOkGiGo"),"SRC");
       this.setColour("#B0EACD");
+      this.setPreviousStatement(true, null);
+      this.setNextStatement(true, null);
     }
   };
 
@@ -24,6 +26,8 @@ export function registerImageBlocks() {
         .appendField(new Blockly.FieldTextInput("https://www.w3schools.com/html/mov_bbb.mp4"), "SRC");
 
       this.setColour("#B0EACD");
+      this.setPreviousStatement(true, null);
+      this.setNextStatement(true, null);
     }
   };
 
@@ -33,6 +37,8 @@ export function registerImageBlocks() {
         .appendField("유튜브 연결")
         .appendField(new Blockly.FieldTextInput("주소 입력"), "SRC");
       this.setColour("#B0EACD");
+      this.setPreviousStatement(true, null);
+      this.setNextStatement(true, null);
     }
   };
 }
