@@ -1,4 +1,5 @@
 import * as Blockly from 'blockly';
+import {COMBINE_TYPES} from "./CombineType.jsx";
 
 /* ✅ 블록 정의 */
 export function registerWritingBlocks() {
@@ -8,8 +9,8 @@ export function registerWritingBlocks() {
         .appendField("큰 제목")
         .appendField(new Blockly.FieldTextInput("쿠키 레시피 만드는 법"), "TITLE");
       this.setColour("#FFAB19");
-      this.setPreviousStatement(true, null);  
-      this.setNextStatement(true, null);  
+      this.setPreviousStatement(true, COMBINE_TYPES);
+      this.setNextStatement(true, COMBINE_TYPES);
     }
   };
 
@@ -19,8 +20,8 @@ export function registerWritingBlocks() {
         .appendField("작은 제목")
         .appendField(new Blockly.FieldTextInput("쿠키 레시피 만드는 법"), "SMALL_TITLE");
       this.setColour("#FFAB19");
-      this.setPreviousStatement(true, null);
-      this.setNextStatement(true, null);
+      this.setPreviousStatement(true, COMBINE_TYPES);
+      this.setNextStatement(true, COMBINE_TYPES);
     }
   };
 
@@ -30,8 +31,8 @@ export function registerWritingBlocks() {
         .appendField("작은 설명")
         .appendField(new Blockly.FieldTextInput("르뱅쿠키 만들기"), "SMALL_CONTENT");
       this.setColour("#FFAB19");
-      this.setPreviousStatement(true, null);
-      this.setNextStatement(true, null);
+      this.setPreviousStatement(true, COMBINE_TYPES);
+      this.setNextStatement(true, COMBINE_TYPES);
       
     }
   };
@@ -42,8 +43,8 @@ export function registerWritingBlocks() {
         .appendField("순서 단계")
         .appendField(new Blockly.FieldTextInput("밀가루를 이용해서 반죽을 만든다"), "STEP");
       this.setColour("#FFA5A5");
-      this.setPreviousStatement(true, null);
-      this.setNextStatement(true, null);
+      this.setPreviousStatement(true, COMBINE_TYPES);
+      this.setNextStatement(true, COMBINE_TYPES);
     }
   };
 
@@ -53,8 +54,8 @@ export function registerWritingBlocks() {
         .appendField("체크박스")
         .appendField(new Blockly.FieldTextInput("밀가루"), "LABEL");
       this.setColour("#FFA5A5");
-      this.setPreviousStatement(true, null);
-      this.setNextStatement(true, null);
+      this.setPreviousStatement(true, COMBINE_TYPES);
+      this.setNextStatement(true, COMBINE_TYPES);
     }
   };
 
@@ -68,8 +69,8 @@ export function registerWritingBlocks() {
         ]), "MODE")
         .appendField(new Blockly.FieldTextInput("값 또는 옵션"), "VALUE");
       this.setColour("#FFA5A5");
-      this.setPreviousStatement(true, null);
-      this.setNextStatement(true, null);
+      this.setPreviousStatement(true, COMBINE_TYPES);
+      this.setNextStatement(true, COMBINE_TYPES);
     }
   };
 
@@ -79,8 +80,8 @@ export function registerWritingBlocks() {
         .appendField("강조하기")
         .appendField(new Blockly.FieldTextInput("중요한 단어"), "HIGHLIGHT");
       this.setColour("#FFA5A5");
-      this.setPreviousStatement(true, null);
-      this.setNextStatement(true, null);
+      this.setPreviousStatement(true, COMBINE_TYPES);
+      this.setNextStatement(true, COMBINE_TYPES);
     }
   };
 }

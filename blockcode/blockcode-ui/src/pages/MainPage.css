@@ -1,0 +1,110 @@
+/* 전체 페이지 기본 스타일 */
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+  background-color: #FFFFFF; /* ✅ 흰색으로 변경 */
+  color: #1d1d1f;
+  font-size: 18px; /* ✅ 폰트 크기 축소 */
+  overscroll-behavior: none;
+  height: 100%;
+}
+
+/* 컨테이너 중앙 정렬 */
+.container {
+  padding-top: 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  width: 100%;
+  background-color: #FFFFFF; /* ✅ 흰색으로 변경 */
+  overflow: hidden;
+}
+
+/* 메인 박스 */
+.main-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 1rem;
+  max-width: 960px;
+  margin: 0 auto;
+  text-align: center;
+  background-color: #FFFFFF; /* ✅ 흰색으로 변경 */
+}
+
+/* 로고 이미지 */
+.main-image {
+  width: 400px; /* ✅ 크기 키움 */
+  margin: 2rem 0 3.5rem;
+  opacity: 0;
+  transform: translateY(15px);
+  animation: fadeInUp 1s ease forwards;
+}
+
+/* 타이틀 텍스트 */
+.title-text {
+  font-size: 2.8rem; /* ✅ 기존보다 조금 축소 */
+  font-weight: 700;
+  line-height: 1.3;
+  margin-bottom: 2rem;
+}
+
+/* 서브 텍스트 */
+.sub-text {
+  font-size: 1.5rem; /* ✅ 조금 축소 */
+  color: #555;
+  margin-bottom: 2.5rem;
+  max-width: 720px;
+}
+
+/* 중간 텍스트 */
+.middle-text {
+  font-size: 1.8rem; /* ✅ 축소 */
+  font-weight: 500;
+  margin: 2.5rem 0 1.5rem;
+}
+
+/* 강조 텍스트 */
+.highlight-text {
+  font-size: 2.2rem; /* ✅ 축소 */
+  font-weight: 700;
+  margin-bottom: 2.5rem;
+}
+
+/* 카드 컨테이너 */
+.card-container {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 1.2rem;
+}
+
+/* 카드 */
+.card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 2rem 2.2rem;
+  min-width: 260px;
+  text-align: center;
+  font-size: 1.2rem; /* ✅ 폰트 크기 축소 */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+}
+
+/* 페이드 인 애니메이션 */
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
