@@ -165,30 +165,68 @@ export default function App() {
     if (alertOpen) setAlertOpen(false);
   
     // 3. 상자 안이 비었으면 모달 열기
-    let showEmptyBoxAlert = false;
-    boxBlocks.forEach(box => {
-      const contentBlock = box.getInputTargetBlock("CONTENT");
-      if (!contentBlock) showEmptyBoxAlert = true;
-    });
-    if (showEmptyBoxAlert) {
-      if (!alertOpen) setAlertOpen(true);
-      if (alertMsg !== "상자 안에 블록을 넣어주세요.") setAlertMsg("상자 안에 블록을 넣어주세요.");
-      return [];
-    }
+    // let showEmptyBoxAlert = false;
+    // boxBlocks.forEach(box => {
+    //   const contentBlock = box.getInputTargetBlock("CONTENT");
+    //   if (!contentBlock) showEmptyBoxAlert = true;
+    // });
+    // if (showEmptyBoxAlert) {
+    //   if (!alertOpen) setAlertOpen(true);
+    //   if (alertMsg !== "상자 안에 블록을 넣어주세요.") setAlertMsg("상자 안에 블록을 넣어주세요.");
+    //   return [];
+    // }
   
     // 4. 상자와 콘텐츠가 있으면 정상 렌더
-    const output = [];
-    boxBlocks.forEach(box => {
-      const xml = Blockly.Xml.domToText(Blockly.Xml.blockToDom(box));
-      const jsxArr = parseLayoutXmlToJSX(xml);
-      output.push(...jsxArr);
+    topBlocks.sort((a, b) => a.getRelativeToSurfaceXY().y - b.getRelativeToSurfaceXY().y);
+
+    const jsxList = [];
+    const visited = new Set();
+
+    topBlocks.forEach((block) => {
+      if (
+        (block.type === "list_item" || block.type === "ordered_list_item") &&
+        !visited.has(block.id)
+      ) {
+        // 같은 타입끼리 묶어서 ul/ol로 렌더
+        const group = [];
+        let current = block;
+        while (
+          current &&
+          !visited.has(current.id) &&
+          (current.type === block.type)
+        ) {
+          const parsed = parseListXmlToJSX(
+            Blockly.Xml.domToText(Blockly.Xml.blockToDom(current))
+          );
+          if (parsed) group.push(parsed.content);
+          visited.add(current.id);
+          current = current.getNextBlock();
+        }
+
+        if (group.length > 0) {
+          const Tag = block.type === "ordered_list_item" ? "ol" : "ul";
+          jsxList.push(
+            <Tag key={block.id}>
+              {group.map((content, i) => <li key={i}>{content}</li>)}
+            </Tag>
+          );
+        }
+      } else if (!visited.has(block.id)) {
+        const jsx = parseXmlToJSX(block);
+        if (jsx && typeof jsx === 'object' && jsx.type && jsx.content) {
+          // 이미 위에서 처리됨
+        } else if (jsx) {
+          jsxList.push(...(Array.isArray(jsx) ? jsx : [jsx]));
+        }
+      }
     });
-    return output;
+
+    return jsxList.map((jsx, i) => <React.Fragment key={i}>{jsx}</React.Fragment>);
     // eslint-disable-next-line
   }, [tabXmlMap]);
-  
-  
-  
+
+
+
   const handleTabChange = (newTab) => {
     const workspace = Blockly.getMainWorkspace();
     if (workspace) {
