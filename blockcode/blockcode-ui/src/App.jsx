@@ -48,7 +48,7 @@ import { getLayoutTabToolbox, parseLayoutXmlToJSX } from './tabs/LayoutTab.jsx';
 import { registerButtonBlocks, getButtonTabToolbox, parseButtonXmlToJSX } from './tabs/ButtonTab.jsx';
 import { registerStyleBlocks, getStyleTabToolbox } from './tabs/StyleTab.jsx';
 import { getListTabToolbox, registerListBlocks, parseListXmlToJSX } from './tabs/ListTab.jsx';
-import { getNavigationTabToolbox, registerNavigationBlocks, parseNavigationXmlToJSX } from './tabs/NavigationTab.jsx';
+import {registerNavigationBlocks, getNavigationTabToolbox, parseNavigationXmlToJSX} from './tabs/NavigationTab';
 
 registerStyleBlocks();
 registerWritingBlocks();
