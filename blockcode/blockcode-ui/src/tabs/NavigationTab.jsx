@@ -29,38 +29,56 @@ export function getNavigationTabToolbox() {
 }
 
 export function parseNavigationXmlToJSX(xmlText) {
-  //  deep import 대신, 이 방식만! 
-  const dom = parser.parseFromString(xml, 'text/xml');
-  const block = dom.firstChild;
+  try {
+    if (!xmlText || typeof xmlText !== 'string') {
+      console.warn("parseNavigationXmlToJSX: 잘못된 XML 입력");
+      return null;
+    }
 
-  const labelField = block.getElementsByTagName('field').namedItem('LABEL');
-  const linkField = block.getElementsByTagName('field').namedItem('LINK');
+    // DOMParser 인스턴스 생성
+    const parser = new DOMParser();
+    const dom = parser.parseFromString(xmlText, 'text/xml');
+    const block = dom.firstChild;
 
-  const label = labelField?.textContent || '이동';
-  let rawHref = linkField?.textContent || '';
+    if (!block) {
+      console.warn("parseNavigationXmlToJSX: XML에서 block 노드를 찾을 수 없음");
+      return null;
+    }
 
-  rawHref = rawHref.trim();
-  if (rawHref.startsWith('/')) rawHref = rawHref.slice(1);
-  const href = /^https?:\/\//i.test(rawHref) ? rawHref : `https://${rawHref}`;
+    const fields = block.getElementsByTagName('field');
+    const labelField = Array.from(fields).find(f => f.getAttribute('name') === 'LABEL');
+    const linkField = Array.from(fields).find(f => f.getAttribute('name') === 'LINK');
 
-  return (
-    <button
-      key={`nav-btn-${Math.random()}`}
-      type="button"
-      onClick={e => {
-        e.preventDefault();
-        window.open(href, '_blank', 'noopener,noreferrer');
-      }}
-      style={{
-        padding: '10px 16px',
-        margin: '8px 0',
-        borderRadius: 4,
-        border: '1px solid #ccc',
-        backgroundColor: '#f9f9f9',
-        cursor: 'pointer'
-      }}
-    >
-      {label}
-    </button>
-  );
+    const label = labelField?.textContent?.trim() || '이동';
+    let rawHref = linkField?.textContent?.trim() || '';
+
+    // 링크 형식 보정
+    if (rawHref.startsWith('/')) rawHref = rawHref.slice(1);
+    const href = /^https?:\/\//i.test(rawHref) ? rawHref : `https://${rawHref}`;
+
+    // 버튼 JSX 반환
+    return (
+      <button
+        key={`nav-btn-${Date.now()}`}
+        type="button"
+        onClick={e => {
+          e.preventDefault();
+          window.open(href, '_blank', 'noopener,noreferrer');
+        }}
+        style={{
+          padding: '10px 16px',
+          margin: '8px 0',
+          borderRadius: 4,
+          border: '1px solid #ccc',
+          backgroundColor: '#f9f9f9',
+          cursor: 'pointer'
+        }}
+      >
+        {label}
+      </button>
+    );
+  } catch (error) {
+    console.error("parseNavigationXmlToJSX 오류:", error);
+    return null;
+  }
 }
