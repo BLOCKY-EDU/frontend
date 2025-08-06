@@ -15,6 +15,8 @@ import 'blockly/msg/ko';
 import { registerLayoutBlocks } from './tabs/LayoutTab';
 registerLayoutBlocks();
 
+import NavBar from './components/NavBar'; // navbar
+
 
 function AlertModal({ open, onClose, message }) {
   if (!open) return null;
@@ -339,7 +341,7 @@ const handleWorkspaceChange = () => {
     <>  <AlertModal open={alertOpen} message={alertMsg} onClose={() => setAlertOpen(false)} />
 
     <div className="app-container">
-      <header className="header">
+      {/* <header className="header">
         <div className="logo"><img src={blockyLogo} alt="BLOCKY" /></div>
         <nav className="nav">
           <span>서비스 소개</span>
@@ -350,7 +352,8 @@ const handleWorkspaceChange = () => {
           <button>로그인</button>
           <button>회원가입</button>
         </div>
-      </header>
+      </header> */}
+      <NavBar />
       <main className="main-box">
         <section className="render-box">
           <div className="title-bar">나의 화면</div>
