@@ -16,7 +16,7 @@
 a {
   font-weight: 500;
   color: #646cff;
-  text-decoration: inherit;
+  text-decoration: none;
 }
 a:hover {
   color: #535bf2;
@@ -24,15 +24,28 @@ a:hover {
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
+  padding: 0;
   min-width: 320px;
   min-height: 100vh;
+  display: flex;
+  flex-direction: column; /* ✅ 위에서부터 쌓이도록 변경 */
+  align-items: stretch; /* 전체 너비 사용 */
+  background-color: #f5f5f5; /* ✅ 밝은 배경 */
+  color: #213547; /* ✅ 기본 글자색 */
+}
+
+.page-container {
+  flex: 1;
+  padding: 20px;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
 }
 
 h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+  font-size: 2.4em;
+  line-height: 1.2;
+  margin: 0.5em 0;
 }
 
 button {
@@ -43,11 +56,13 @@ button {
   font-weight: 500;
   font-family: inherit;
   background-color: #1a1a1a;
+  color: #fff;
   cursor: pointer;
-  transition: border-color 0.25s;
+  transition: border-color 0.25s, background-color 0.3s ease;
 }
 button:hover {
   border-color: #646cff;
+  background-color: #333;
 }
 button:focus,
 button:focus-visible {
@@ -64,5 +79,6 @@ button:focus-visible {
   }
   button {
     background-color: #f9f9f9;
+    color: #213547;
   }
 }

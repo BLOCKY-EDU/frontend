@@ -8,14 +8,14 @@ Blockly.fieldRegistry.register('field_colour', FieldColour);
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { BlocklyWorkspace } from 'react-blockly';
 import './App.css';
-import blockyLogo from './assets/blocky-logo.png';
+import blockyLogo from "../assets/blocky-logo.png";
 import 'blockly/javascript';
 import 'blockly/msg/ko';
 
-import { registerLayoutBlocks } from './tabs/LayoutTab';
+import { registerLayoutBlocks } from '../tabs/LayoutTab.jsx';
 registerLayoutBlocks();
 
-import NavBar from './components/NavBar'; // navbar
+
 
 
 function AlertModal({ open, onClose, message }) {
@@ -44,13 +44,13 @@ function AlertModal({ open, onClose, message }) {
 }
 
 
-import { getWritingTabToolbox, registerWritingBlocks, parseWritingXmlToJSX } from './tabs/WritingTab';
-import { getImageTabToolbox, registerImageBlocks, parseImageXmlToJSX } from './tabs/ImageTab';
-import { getLayoutTabToolbox, parseLayoutXmlToJSX } from './tabs/LayoutTab.jsx';
-import { registerButtonBlocks, getButtonTabToolbox, parseButtonXmlToJSX } from './tabs/ButtonTab.jsx';
-import { registerStyleBlocks, getStyleTabToolbox } from './tabs/StyleTab.jsx';
-import { getListTabToolbox, registerListBlocks, parseListXmlToJSX } from './tabs/ListTab.jsx';
-import {registerNavigationBlocks, getNavigationTabToolbox, parseNavigationXmlToJSX} from './tabs/NavigationTab';
+import { getWritingTabToolbox, registerWritingBlocks, parseWritingXmlToJSX } from '../tabs/WritingTab.jsx';
+import { getImageTabToolbox, registerImageBlocks, parseImageXmlToJSX } from '../tabs/ImageTab.jsx';
+import { getLayoutTabToolbox, parseLayoutXmlToJSX } from '../tabs/LayoutTab.jsx';
+import { registerButtonBlocks, getButtonTabToolbox, parseButtonXmlToJSX } from '../tabs/ButtonTab.jsx';
+import { registerStyleBlocks, getStyleTabToolbox } from '../tabs/StyleTab.jsx';
+import { getListTabToolbox, registerListBlocks, parseListXmlToJSX } from '../tabs/ListTab.jsx';
+import {registerNavigationBlocks, getNavigationTabToolbox, parseNavigationXmlToJSX} from '../tabs/NavigationTab.jsx';
 
 registerStyleBlocks();
 registerWritingBlocks();
@@ -353,20 +353,19 @@ const handleWorkspaceChange = () => {
           <button>회원가입</button>
         </div>
       </header> */}
-      <NavBar />
-      <main className="main-box">
-        <section className="render-box">
-          <div className="title-bar">나의 화면</div>
-          <div className="rendered-content"  style={{ backgroundColor: globalBackgroundColor }}>
+      <main className="app-main-box">
+        <section className="app-render-box">
+          <div className="app-title-bar">나의 화면</div>
+          <div className="app-rendered-content"  style={{ backgroundColor: globalBackgroundColor }}>
             {jsxOutput}
           </div>
         </section>
-        <section className="tool-editor-area">
-          <div className="tab-bar">
+        <section className="app-tool-editor-area">
+          <div className="app-tab-bar">
             {tabs.map((tab) => (
               <button
                 key={tab.name}
-                className={`tab-btn ${activeTab === tab.name ? 'active' : ''}`}
+                className={`app-tab-btn ${activeTab === tab.name ? 'active' : ''}`}
                 onClick={() => handleTabChange(tab.name)}
                 style={{ backgroundColor: activeTab === tab.name ? '#FFEE95' : tab.color }}
               >
@@ -374,12 +373,12 @@ const handleWorkspaceChange = () => {
               </button>
             ))}
           </div>
-          <div className="blockly-box">
-            <div className="blockly-wrapper">
+          <div className="app-blockly-box">
+            <div className="app-blockly-wrapper">
               <BlocklyWorkspace
                 key="shared-workspace"
                 toolboxConfiguration={getToolboxJson(activeTab)}
-                className="blockly-editor"
+                className="app-blockly-editor"
                 workspaceConfiguration={{
                   toolboxPosition: 'top',
                   horizontalLayout: true,

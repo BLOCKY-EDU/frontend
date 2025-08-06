@@ -1,10 +1,20 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import './index.css'
-import App from './App.jsx'
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+
+import App from './PlayPage/App.jsx';
+import MainPage from './pages/MainPage.jsx';
+import Layout from './Layout.jsx';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <App />
-  </StrictMode>,
-)
+    <BrowserRouter>
+      <Layout>
+        <Routes>
+          <Route path="/" element={<MainPage />} />
+          <Route path="/play" element={<App />} />
+        </Routes>
+      </Layout>
+    </BrowserRouter>
+  </StrictMode>
+);
