@@ -19,7 +19,7 @@ export default function BackgroundColorSelector({ selectedColor, onChange }) {
             backgroundColor: color.value,
             width: 40,
             height: 40,
-            borderRadius: '50%',
+             borderRadius: '50%',
             border: selectedColor === color.value ? '3px solid #000' : '1px solid #ccc',
             cursor: 'pointer',
           }}

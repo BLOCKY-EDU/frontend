@@ -104,6 +104,7 @@ export function parseStyleStatementsToStyleObj(statements) {
       case 'style_border':
         styleObj.border = '1px solid #ccc';
         break;
+       
       case 'style_shadow':
         styleObj.boxShadow = '0px 2px 4px rgba(0,0,0,0.2)';
         break;

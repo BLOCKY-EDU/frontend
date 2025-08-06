@@ -18,6 +18,8 @@ html, body, #root {
   height: 100vh;
   overflow: hidden;
   background-color: white;
+  overflow: visible;
+
 }
 
 /* 상단 헤더 */

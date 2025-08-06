@@ -82,6 +82,7 @@ export default function App() {
   const [alertMsg, setAlertMsg] = useState("");
   const [alertShown, setAlertShown] = useState(false); 
 
+  
   useEffect(() => {
     const handleResize = () => {
       const workspace = Blockly.getMainWorkspace();
@@ -105,6 +106,8 @@ export default function App() {
     const workspace = Blockly.getMainWorkspace();
     if (workspace) {
       const topBlocks = workspace.getTopBlocks(true);
+
+
       const hasBox = topBlocks.some(block => block.type === 'container_box');
       if (hasBox) {
         setAlertOpen(false);
@@ -143,14 +146,16 @@ export default function App() {
     if (!workspace) return [];
     const topBlocks = workspace.getTopBlocks(true);
   
-    // 배경색 블록 처리
-    const bgBlock = topBlocks.find(b => b.type === "background_color_block");
-    if (bgBlock) {
-      const colorField = bgBlock.getFieldValue("COLOR");
-      if (colorField && globalBackgroundColor !== colorField) {
-        setGlobalBackgroundColor(colorField);
-      }
+
+    const bgBlock = topBlocks.find(b => b.type === "style_background");
+  if (bgBlock && !bgBlock.getParent()) {
+    const colorField = bgBlock.getFieldValue("COLOR");
+    if (colorField && globalBackgroundColor !== colorField) {
+      setGlobalBackgroundColor(colorField);
     }
+  }
+    // 배경색 블록 처리
+   
 
 
     // 상자 블록만 필터
@@ -356,7 +361,7 @@ const handleWorkspaceChange = () => {
       <main className="app-main-box">
         <section className="app-render-box">
           <div className="app-title-bar">나의 화면</div>
-          <div className="app-rendered-content"  style={{ backgroundColor: globalBackgroundColor }}>
+          <div className="app-rendered-content"  style={{ backgroundColor: globalBackgroundColor,  minHeight: '100vh',  }}>
             {jsxOutput}
           </div>
         </section>
