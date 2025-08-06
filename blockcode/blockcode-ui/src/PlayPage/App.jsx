@@ -361,7 +361,7 @@ const handleWorkspaceChange = () => {
       <main className="app-main-box">
         <section className="app-render-box">
           <div className="app-title-bar">나의 화면</div>
-          <div className="app-rendered-content"  style={{ backgroundColor: globalBackgroundColor,  minHeight: '100vh' }}>
+          <div className="app-rendered-content"  style={{ backgroundColor: globalBackgroundColor}}>
             {jsxOutput}
           </div>
         </section>
