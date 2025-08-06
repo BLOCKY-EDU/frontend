@@ -149,6 +149,44 @@ export function parseWritingXmlToJSX(xml) {
   return output;
 }
 
+// 블록 하나만 처리
+export function parseSingleWritingBlock(blockXml) {
+  if (!blockXml) return null;
+
+  const parser = new DOMParser();
+  const dom = parser.parseFromString(blockXml, 'text/xml');
+  const block = dom.getElementsByTagName('block')[0];
+  const type = block.getAttribute('type');
+
+  if (type === 'text_title') {
+    const title = block.getElementsByTagName('field')[0]?.textContent || "제목 없음";
+    return <h1>{title}</h1>;
+  } else if (type === 'text_small_title') {
+    const title = block.getElementsByTagName('field')[0]?.textContent || "제목 없음";
+    return <h3>{title}</h3>;
+  } else if (type === 'small_content') {
+    const content = block.getElementsByTagName('field')[0]?.textContent || "설명 없음";
+    return <h5>{content}</h5>;
+  } else if (type === 'checkbox_block') {
+    const label = block.getElementsByTagName('field')[0]?.textContent || "체크";
+    return (
+        <label style={{ display: "flex", alignItems: "center", marginBottom: "8px" }}>
+          <input type="checkbox" style={{ marginRight: "8px" }} />
+          {label}
+        </label>
+    );
+  } else if (type === 'highlight_text') {
+    const text = block.getElementsByTagName('field')[0]?.textContent || "강조";
+    return (
+        <span style={{ textDecoration: 'underline', textDecorationColor: 'red' }}>
+        {text}
+      </span>
+    );
+  }
+
+  return null;
+}
+
 /* ✅ 툴박스 반환 함수 */
 export function getWritingTabToolbox() {
   return {

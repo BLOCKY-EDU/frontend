@@ -97,3 +97,63 @@ export function parseImageXmlToJSX(xml) {
   }
   return output;
 }
+
+export function parseSingleImageBlock(blockXml) {
+  if (!blockXml || blockXml.nodeName !== 'block') return null;
+
+  const parser = new DOMParser();
+  const dom = parser.parseFromString(blockXml, 'text/xml');
+  const block = dom.getElementsByTagName('block')[0];
+  const type = block.getAttribute('type');
+  const field = block.querySelector('field');
+  const src = field?.textContent?.trim();
+
+  if (!src) return null;
+
+  switch (type) {
+    case 'insert_image':
+      return (
+          <img
+              src={src}
+              alt="image"
+              style={{ maxWidth: '100%', marginBottom: 10 }}
+          />
+      );
+
+    case 'insert_video':
+      return (
+          <video
+              src={src}
+              controls
+              style={{ maxWidth: '100%', marginBottom: 10 }}
+          />
+      );
+
+    case 'youtube_link':
+    {
+      let url = src;
+      const match = src.match(/(?:v=|\/)([0-9A-Za-z_-]{11})/);
+      const videoId = match ? match[1] : null;
+
+      if (videoId) {
+        url = `https://www.youtube.com/embed/${videoId}`;
+      }
+
+      return (
+          <iframe
+              width="100%"
+              height="315"
+              src={url}
+              title="YouTube video"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              style={{ marginBottom: 10 }}
+          />
+      );
+    }
+
+    default:
+      return null;
+  }
+}

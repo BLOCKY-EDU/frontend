@@ -83,3 +83,43 @@ export function parseNavigationXmlToJSX(xmlText) {
     return null;
   }
 }
+
+export function parseSingleNavigationBlock(blockXml) {
+  if (!blockXml) {
+    console.warn("parseSingleNavigationBlock: block이 null 또는 undefined입니다.");
+    return null;
+  }
+  const parser = new DOMParser();
+  const dom = parser.parseFromString(blockXml, 'text/xml');
+  const block = dom.getElementsByTagName('block')[0];
+  const fields = block.getElementsByTagName('field');
+  const labelField = Array.from(fields).find(f => f.getAttribute('name') === 'LABEL');
+  const linkField = Array.from(fields).find(f => f.getAttribute('name') === 'LINK');
+
+  const label = labelField?.textContent?.trim() || '이동';
+  let rawHref = linkField?.textContent?.trim() || '';
+
+  // 링크 형식 보정
+  if (rawHref.startsWith('/')) rawHref = rawHref.slice(1);
+  const href = /^https?:\/\//i.test(rawHref) ? rawHref : `https://${rawHref}`;
+
+  return (
+      <button
+          type="button"
+          onClick={e => {
+            e.preventDefault();
+            window.open(href, '_blank', 'noopener,noreferrer');
+          }}
+          style={{
+            padding: '10px 16px',
+            margin: '8px 0',
+            borderRadius: 4,
+            border: '1px solid #ccc',
+            backgroundColor: '#f9f9f9',
+            cursor: 'pointer'
+          }}
+      >
+        {label}
+      </button>
+  );
+}

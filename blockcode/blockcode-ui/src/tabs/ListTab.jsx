@@ -105,3 +105,39 @@ export const parseListXmlToJSX = (xmlText) => {
   }
   return null;
 };
+
+export function parseSingleListBlock(blockXml) {
+  if (!blockXml) return null;
+
+  const parser = new DOMParser();
+  const dom = parser.parseFromString(blockXml, 'text/xml');
+  const block = dom.getElementsByTagName('block')[0];
+  const type = block.getAttribute('type');
+
+  // 리스트 항목 단일 블록 처리
+  if (type === 'list_item' || type === 'ordered_list_item') {
+    const field = block.querySelector('field[name="TEXT"]');
+    const text = field?.textContent?.trim() || '';
+    return <li>{text}</li>;
+  }
+
+  // 리스트 컨테이너 (ul / ol) 처리
+  if (type === 'list_bulleted' || type === 'list_numbered') {
+    const statement = block.querySelector('statement[name="ITEMS"]');
+    const items = [];
+
+    if (statement) {
+      let current = statement.firstElementChild; // <block>
+      while (current) {
+        const field = current.querySelector('field[name="TEXT"]');
+        const text = field?.textContent?.trim() || '';
+        items.push(<li key={text + Math.random()}>{text}</li>);
+        current = current.querySelector('next > block');
+      }
+    }
+
+    return type === 'list_bulleted' ? <ul>{items}</ul> : <ol>{items}</ol>;
+  }
+
+  return null;
+}

@@ -111,3 +111,29 @@ export function parseButtonXmlToJSX(xml) {
 
   return output;
 }
+
+export function parseSingleButtonBlock(blockXml) {
+  if (!blockXml) return null;
+
+  const parser = new DOMParser();
+  const dom = parser.parseFromString(blockXml, 'text/xml');
+  const block = dom.getElementsByTagName('block')[0];
+  const type = block.getAttribute('type');
+  const field = block.getElementsByTagName('field')[0]?.textContent || '';
+
+  switch (type) {
+    case 'normal_button':
+      return <button>{field}</button>;
+    case 'submit_button':
+      return <button type="submit">{field}</button>;
+    case 'text_input':
+      return <input type="text" placeholder={field} style={{ marginBottom: 10 }} />;
+    case 'email_input':
+      return <input type="email" placeholder={field} style={{ marginBottom: 10 }} />;
+    case 'select_box':
+      const options = field.split(',').map((opt, idx) => <option key={idx}>{opt.trim()}</option>);
+      return <select style={{ marginBottom: 10 }}>{options}</select>;
+    default:
+      return null;
+  }
+}

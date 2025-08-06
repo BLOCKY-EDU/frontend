@@ -1,14 +1,15 @@
 import * as Blockly from 'blockly';
 import { parseStyleStatementsToStyleObj } from './StyleTab';
-import { parseWritingXmlToJSX } from './WritingTab';
-import { parseButtonXmlToJSX } from './ButtonTab';
+import {parseSingleWritingBlock} from './WritingTab';
+import {parseSingleButtonBlock} from './ButtonTab';
 import { ColourPreviewDropdown } from '../blocks/CustomFields';
 
 import {STYLE_BLOCK_TYPES} from "./StyleTab";
 import {COMBINE_TYPES} from "./CombineType.jsx";
 
-import { parseNavigationXmlToJSX } from './NavigationTab';
-import { parseListXmlToJSX } from './ListTab';
+import {parseSingleNavigationBlock} from './NavigationTab';
+import {parseSingleListBlock} from './ListTab';
+import {parseSingleImageBlock} from "./ImageTab.jsx";
 
 export function registerLayoutBlocks() {
   Blockly.Blocks['container_box'] = {
@@ -116,23 +117,28 @@ function parseSingleContainerBlock(block) {
         if (
           ["text_title", "text_small_title", "small_content", "recipe_step", "checkbox_block", "toggle_input", "highlight_text"].includes(type)
         ) {
-          childJSX = parseWritingXmlToJSX(new XMLSerializer().serializeToString(innerBlock));
+          childJSX = parseSingleWritingBlock(new XMLSerializer().serializeToString(innerBlock));
         }
         else if (
           ["normal_button", "submit_button", "text_input", "email_input", "select_box"].includes(type)
         ) {
-          childJSX = parseButtonXmlToJSX(new XMLSerializer().serializeToString(innerBlock));
+          childJSX = parseSingleButtonBlock(new XMLSerializer().serializeToString(innerBlock));
         }
         else if (
           ["navigation_button"].includes(type)
         ) {
-          childJSX = parseNavigationXmlToJSX(new XMLSerializer().serializeToString(innerBlock));
+          childJSX = parseSingleNavigationBlock(new XMLSerializer().serializeToString(innerBlock));
         }
         // 목록 블록 처리 추가
         else if (
           ["list_bulleted", "list_numbered"].includes(type)
         ) {
-          childJSX = parseListXmlToJSX(new XMLSerializer().serializeToString(innerBlock));
+          childJSX = parseSingleListBlock(new XMLSerializer().serializeToString(innerBlock));
+        }
+        else if (
+            ["insert_image", "insert_video", "youtube_link"].includes(type)
+        ) {
+          childJSX = parseSingleImageBlock(new XMLSerializer().serializeToString(innerBlock));
         }
         else {
           childJSX = parseSingleContainerBlock(innerBlock);
