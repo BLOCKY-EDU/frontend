@@ -1,4 +1,5 @@
 import * as Blockly from 'blockly';
+import {COMBINE_TYPES} from "./CombineType.jsx";
 
 export function registerNavigationBlocks() {
   Blockly.Blocks['navigation_button'] = {
@@ -10,8 +11,8 @@ export function registerNavigationBlocks() {
         .appendField(new Blockly.FieldTextInput("GO"), "LABEL");
       this.setColour("#D1B3FF");
       this.setTooltip("클릭 시 특정 링크로 이동하는 버튼입니다.");
-      this.setPreviousStatement(true, null);
-      this.setNextStatement(true, null);
+      this.setPreviousStatement(true, COMBINE_TYPES);
+      this.setNextStatement(true, COMBINE_TYPES);
     }
   };
 }
