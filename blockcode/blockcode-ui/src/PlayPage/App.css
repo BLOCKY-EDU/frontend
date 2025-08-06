@@ -114,7 +114,10 @@ html, body, #root {
   border-top-right-radius: 10px; 
 }
 
-
+.app-rendered-content{
+  padding: 30px;
+  
+}
 /* Blockly 조립 화면 */
 .app-blockly-box {
   width: 100%;
