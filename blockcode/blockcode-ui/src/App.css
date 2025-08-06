@@ -1,0 +1,367 @@
+/* Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  width: 100%;
+  height: 100%;
+  font-family: 'Pretendard', 'Noto Sans KR', sans-serif;
+  background: white;
+}
+
+.app-container {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  background-color: white;
+}
+
+/* 상단 헤더 */
+.header {
+  width: 100%;
+  height: 64px;
+  background: #59B3FF;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 30px;
+  color: white;
+}
+
+.logo img {
+  height: 34px;
+}
+
+/* .nav {
+  display: flex;
+  gap: 32px;
+  font-size: 20px;
+  font-weight: 700;
+  margin-right: 1000px;
+} */
+.nav {
+  display: flex;
+  gap: 32px;
+  font-size: 20px;
+  font-weight: 700;
+  flex: 1;
+  justify-content: flex-start;
+}
+
+.nav span {
+  /* margin-left: 20px;
+  font-size: 16px; */
+  cursor: pointer;
+}
+
+/* auth 영역 수정 - 로그인하고 회원가입 */
+.auth {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.auth button {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 20px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0;
+}
+
+/* 본문 전체 박스 */
+/* .main-box {
+  display: flex;
+  gap: 24px;
+  padding: 20px 30px;
+  height: calc(100vh - 64px);
+  background: white;
+} */
+ .main-box {
+  display: flex;
+  gap: 24px;
+  padding: 20px 30px;
+  min-height: calc(100vh - 64px);
+  box-sizing: border-box;
+  margin-top: 64px;
+}
+
+/* 나의 화면 */
+/* .render-box {
+  position: relative;
+  flex: 1.2;
+  height: 100%;
+  border: 2px solid #83C7FF;
+  border-radius: 10px;
+  background-color: white;
+  padding: 40px;
+  min-width: 480px;
+} */
+
+.render-box {
+  /* width: 783px; */
+  min-width: 480px;
+  max-width: 800px;
+  flex: 0 0 50%;
+  width: 100%;
+  background: white;
+  color: #1C1C1C;
+  padding: 40px;
+  padding-top: 60px;
+  position: relative;
+  flex: 0.5;
+  /* 전체 테두리 */
+  border: 2px solid #A3D5FF;
+  /* 모서리 둥글게 */
+  border-radius: 0 0 10px 10px;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px; 
+}
+
+
+
+.title-bar {
+  position: absolute;
+  top: 0; 
+  left: 0;
+  width: 100%;
+  height: 60px;
+  background: #DEF3FF;
+  border-bottom: 2px solid #A3D5FF;
+  display: flex;
+  align-items: center;
+  padding-left: 30px;
+  font-size: 20px;
+  font-weight: 600;
+  color: #1C1C1C;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px; 
+}
+
+
+
+/* Blockly 조립 화면 */
+.blockly-box {
+  width: 100%;
+  height: 100%;
+  border: 1px solid #A3D5FF;
+  border-radius: 10px;
+  background-color: #F7FCFF;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  overflow: hidden;
+  /* flex: 2.5; */
+  flex: 1;
+  min-width: 500px;
+}
+
+.tool-editor-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 기존 탭 바 제거 -> 다시 생성*/
+.tab-bar {
+  display: flex;
+  gap: 5px;
+  margin-bottom: 0px; /* 기존 12 */
+  margin-left: 0px;
+}
+
+
+/* .tab-btn {
+  padding: 8px 16px;
+  border-radius: 100px;
+  background-color: #C9E2F1;
+  border: 1px solid #A3D5FF;
+  font-weight: 600;
+  font-size: 20px;
+  cursor: pointer;
+  transition: background 0.2s;
+  color: #1C1C1C;
+} */
+
+.tab-btn {
+  padding: 8px 16px;
+  /* border-top-left-radius: 10px;    ✅ 위쪽만 둥글게 */
+  /* border-top-right-radius: 10px; */
+  border-bottom-left-radius: 0;    /* ✅ 아래쪽 직각 */
+  border-bottom-right-radius: 0;
+  background-color: #C9E2F1;
+  border: 1px solid #A3D5FF;
+  font-weight: 600;
+  font-size: 20px;
+  cursor: pointer;
+  transition: background 0.2s;
+  color: #1C1C1C;
+}
+
+.tab-btn.active {
+  background-color: #FFEE95;
+  color: #1C1C1C;
+}
+
+/* 도구 책갈피 스타일 */
+/* .toolbox-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+  overflow-y: auto;
+} */
+
+/* tab-container: 책갈피와 블록을 같이 감싸는 박스 */
+.tab-container {
+  position: relative;
+  background-color: #DEF3FF;
+  /* padding-top: 30px; 툴탭이 위로 올라올 수 있도록 공간 확보 */
+  padding-top: 0;
+}
+
+
+.toolbox-panel {
+  background-color: #DEF3FF;
+  margin-top: 0; 
+  padding: 12px 20px;
+  border-bottom: 1px solid #A3D5FF;
+  /* border-top-left-radius: 15px;
+  border-top-right-radius: 15px; */
+  border-top: none;
+  /* border-top: 1px solid #A3D5FF; */
+  /* border-radius: 0 0 10px 10px; 아랫부분만 둥글게 */
+  border-radius: 0;
+  /* width: calc(100% - 2px); 탭과 완전 일자 맞춤 */
+  width: 100%;
+  box-sizing: border-box;
+}
+
+
+.blocklyText {
+  fill: #333333 !important;  /* 원하는 글자색으로 변경 */
+  font-weight: 600;          /* 글씨 굵기 변경 가능 */
+}
+
+
+/* .tool-section {
+  background: #ffffff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+} */
+/* 책갈피 섹션 */
+/* .tool-section {
+  margin-bottom: 6px;
+} */
+
+/* .tab-label {
+  padding: 10px 16px;
+  font-weight: bold;
+  font-size: 15px;
+  background-color: #f2f2f2;
+  cursor: pointer;
+  border-bottom: 1px solid #ddd;
+  user-select: none;
+} */
+
+.tab-label {
+  padding: 6px 14px;
+  font-weight: 600;
+  font-size: 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-bottom: 6px;
+  /* color: #333; */
+  transition: background 0.2s ease;
+}
+
+/* .toolset {
+  padding: 10px 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  background-color: #f9f9f9;
+} */
+ .toolset {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.toolset.collapsed {
+  display: none;
+}
+
+/* .tool-pill {
+  background-color: #eee;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 14px;
+  cursor: pointer;
+  white-space: nowrap;
+} */
+
+.tool-pill {
+  background-color: #FFEE95;
+  padding: 6px 14px;
+  border-radius: 100px;
+  font-size: 20px;
+  font-weight: 600;
+  color: #1C1C1C;
+  white-space: nowrap;
+}
+
+.blockly-wrapper {
+  flex: 1;
+  width: 100%;
+  height: 100%;
+}
+
+/* Blockly 영역 */
+.blockly-editor {
+  flex: 1;
+  width: 100%;
+  height: 100%;
+}
+
+.blockly-box {
+  position: relative;
+}
+
+.ai-bot {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  width: 50px;
+  height: auto;
+  cursor: pointer;
+  z-index: 9999;
+}
+
+.robot-container {
+  position: absolute;
+  bottom: 40px;
+  left: 40px;
+  width: 100px;
+  height: 100px;
+  background-color: #59B3FF; /* 시안 배경색 */
+  border-radius: 50%;        /* 원형 만들기 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 9px 15px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+}
+
+.robot-icon {
+  width: 80px;
+  height: 80px;
+}
