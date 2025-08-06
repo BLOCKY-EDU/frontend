@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "./login.css";
-
+import logo from '../assets/blocky-logo.png';
 export default function Login() {
   const [isSignUp, setIsSignUp] = useState(false);
   const [form, setForm] = useState({
@@ -28,10 +28,18 @@ export default function Login() {
   };
 
   return (
-    <div className="main-container">
+    <div className="login-main-container">
       <div className="main-box" style={{ maxWidth: 400, width: "100%" }}>
+
+      <img
+          src={logo}
+          alt="Logo"
+          className="auth-logo"
+          style={{ width: 200,marginTop:20, marginBottom: 45, display: "block", marginLeft: "auto", marginRight: "auto" }}
+        />
+
         <div className="main-title-text" style={{ marginBottom: 24 }}>
-          {isSignUp ? "회원가입" : "로그인"}
+          {/* {isSignUp ? "회원가입" : "로그인"} */}
         </div>
         <form className="auth-form" onSubmit={handleSubmit}>
           {isSignUp && (

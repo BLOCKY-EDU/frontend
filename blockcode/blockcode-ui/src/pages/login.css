@@ -1,3 +1,9 @@
+.login-main-container{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    margin-top:120px;
+}
 .auth-form {
     display: flex;
     flex-direction: column;
@@ -54,3 +60,4 @@
     font-size: 0.99rem;
   }
   
+
