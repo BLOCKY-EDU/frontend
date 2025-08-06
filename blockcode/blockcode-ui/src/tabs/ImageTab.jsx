@@ -32,16 +32,16 @@ export function registerImageBlocks() {
     }
   };
 
-  Blockly.Blocks['youtube_link'] = {
-    init: function () {
-      this.appendDummyInput()
-        .appendField("유튜브 연결")
-        .appendField(new Blockly.FieldTextInput("주소 입력"), "SRC");
-      this.setColour("#B0EACD");
-      this.setPreviousStatement(true, COMBINE_TYPES);
-      this.setNextStatement(true, COMBINE_TYPES);
-    }
-  };
+  // Blockly.Blocks['youtube_link'] = {
+  //   init: function () {
+  //     this.appendDummyInput()
+  //       .appendField("유튜브 연결")
+  //       .appendField(new Blockly.FieldTextInput("주소 입력"), "SRC");
+  //     this.setColour("#B0EACD");
+  //     this.setPreviousStatement(true, COMBINE_TYPES);
+  //     this.setNextStatement(true, COMBINE_TYPES);
+  //   }
+  // };
 }
 
 export function getImageTabToolbox() {
@@ -50,7 +50,7 @@ export function getImageTabToolbox() {
     contents: [
       { kind: "block", type: "insert_image" },
       { kind: "block", type: "insert_video" },
-      { kind: "block", type: "youtube_link" }
+      // { kind: "block", type: "youtube_link" }
     ]
   };
 }

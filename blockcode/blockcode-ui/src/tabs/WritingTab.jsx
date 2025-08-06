@@ -37,16 +37,16 @@ export function registerWritingBlocks() {
     }
   };
 
-  Blockly.Blocks['recipe_step'] = {
-    init: function () {
-      this.appendDummyInput()
-        .appendField("순서 단계")
-        .appendField(new Blockly.FieldTextInput("밀가루를 이용해서 반죽을 만든다"), "STEP");
-      this.setColour("#FFA5A5");
-      this.setPreviousStatement(true, COMBINE_TYPES);
-      this.setNextStatement(true, COMBINE_TYPES);
-    }
-  };
+  // Blockly.Blocks['recipe_step'] = {
+  //   init: function () {
+  //     this.appendDummyInput()
+  //       .appendField("순서 단계")
+  //       .appendField(new Blockly.FieldTextInput("밀가루를 이용해서 반죽을 만든다"), "STEP");
+  //     this.setColour("#FFA5A5");
+  //     this.setPreviousStatement(true, COMBINE_TYPES);
+  //     this.setNextStatement(true, COMBINE_TYPES);
+  //   }
+  // };
 
   Blockly.Blocks['checkbox_block'] = {
     init: function () {
@@ -59,20 +59,20 @@ export function registerWritingBlocks() {
     }
   };
 
-  Blockly.Blocks['toggle_input'] = {
-    init: function () {
-      this.appendDummyInput()
-        .appendField("입력 또는 선택")
-        .appendField(new Blockly.FieldDropdown([
-          ["직접 입력", "input"],
-          ["선택 토글", "select"]
-        ]), "MODE")
-        .appendField(new Blockly.FieldTextInput("값 또는 옵션"), "VALUE");
-      this.setColour("#FFA5A5");
-      this.setPreviousStatement(true, COMBINE_TYPES);
-      this.setNextStatement(true, COMBINE_TYPES);
-    }
-  };
+  // Blockly.Blocks['toggle_input'] = {
+  //   init: function () {
+  //     this.appendDummyInput()
+  //       .appendField("입력 또는 선택")
+  //       .appendField(new Blockly.FieldDropdown([
+  //         ["직접 입력", "input"],
+  //         ["선택 토글", "select"]
+  //       ]), "MODE")
+  //       .appendField(new Blockly.FieldTextInput("값 또는 옵션"), "VALUE");
+  //     this.setColour("#FFA5A5");
+  //     this.setPreviousStatement(true, COMBINE_TYPES);
+  //     this.setNextStatement(true, COMBINE_TYPES);
+  //   }
+  // };
 
   Blockly.Blocks['highlight_text'] = {
     init: function () {
@@ -195,9 +195,9 @@ export function getWritingTabToolbox() {
       { kind: "block", type: "text_title" },
       { kind: "block", type: "text_small_title" },
       { kind: "block", type: "small_content" },
-      { kind: "block", type: "recipe_step" },
+      // { kind: "block", type: "recipe_step" },
       { kind: "block", type: "checkbox_block" },
-      { kind: "block", type: "toggle_input" },
+      // { kind: "block", type: "toggle_input" },
       { kind: "block", type: "highlight_text" },
     ]
   };
