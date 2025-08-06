@@ -29,8 +29,8 @@ export function getNavigationTabToolbox() {
 }
 
 export function parseNavigationXmlToJSX(xmlText) {
-  // *** deep import 대신, 이 방식만! ***
-  const dom = Blockly.Xml.textToDom(xmlText);   // 여기!
+  //  deep import 대신, 이 방식만! 
+  const dom = parser.parseFromString(xml, 'text/xml');
   const block = dom.firstChild;
 
   const labelField = block.getElementsByTagName('field').namedItem('LABEL');

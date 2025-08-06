@@ -240,7 +240,7 @@ export default function App() {
   const writingBlockTypes = [
     "text_title", "text_small_title", "small_content",
     "recipe_step", "checkbox_block", "toggle_input", "highlight_text",
-    "normal_button", "submit_button", "text_input", "email_input", "select_box"
+    "normal_button", "submit_button", "text_input", "email_input", "select_box","navigation_button"
   ];
   // const handleWorkspaceChange = () => {
   //   const workspace = Blockly.getMainWorkspace();
