@@ -1,110 +1,112 @@
-/* 전체 페이지 기본 스타일 */
 html, body {
   margin: 0;
   padding: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
-  background-color: #FFFFFF; /* ✅ 흰색으로 변경 */
+  background-color: #fff;
   color: #1d1d1f;
-  font-size: 18px; /* ✅ 폰트 크기 축소 */
-  overscroll-behavior: none;
+  font-size: 18px;
+  line-height: 1.5;
   height: 100%;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  scroll-behavior: smooth;
 }
 
-/* 컨테이너 중앙 정렬 */
-.main-container {
-  padding-top: 80px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-height: 100vh;
+.scroll-container {
+  height: 100vh;
+  overflow-y: scroll;
+  scroll-snap-type: y mandatory;
+}
+
+.section {
+  height: 100vh;
   width: 100%;
-  background-color: #FFFFFF; /* ✅ 흰색으로 변경 */
-  overflow: hidden;
-}
-
-/* 메인 박스 */
-.main-box {
   display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
-  padding: 4rem 1rem;
-  max-width: 960px;
-  margin: 0 auto;
+  align-items: center;
+  scroll-snap-align: start;
+  padding: 2rem;
+  background-color: #fff;
+  transition: background-color 0.5s ease;
+}
+
+.section.dark {
+  background-color: #111;
+  color: #fff;
+}
+
+.main-box {
   text-align: center;
-  background-color: #FFFFFF; /* ✅ 흰색으로 변경 */
+  max-width: 960px;
 }
 
-/* 로고 이미지 */
 .main-image {
-  width: 400px; /* ✅ 크기 키움 */
-  margin: 2rem 0 3.5rem;
-  opacity: 0;
-  transform: translateY(15px);
-  animation: fadeInUp 1s ease forwards;
+  width: 400px;
+  margin: 2rem 0 3rem;
+  transition: transform 0.4s ease;
+  will-change: transform;
 }
 
-/* 타이틀 텍스트 */
 .main-title-text {
-  font-size: 2.8rem; /* ✅ 기존보다 조금 축소 */
+  font-size: 2.8rem;
   font-weight: 700;
-  line-height: 1.3;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
 }
 
-/* 서브 텍스트 */
 .main-sub-text {
-  font-size: 1.5rem; /* ✅ 조금 축소 */
-  color: #555;
+  font-size: 1.3rem;
+  color: #6e6e73;
   margin-bottom: 2.5rem;
-  max-width: 720px;
 }
 
-/* 중간 텍스트 */
-.main-middle-text {
-  font-size: 1.8rem; /* ✅ 축소 */
-  font-weight: 500;
-  margin: 2.5rem 0 1.5rem;
+.dark .main-sub-text {
+  color: #ccc;
 }
 
-/* 강조 텍스트 */
 .main-highlight-text {
-  font-size: 2.2rem; /* ✅ 축소 */
+  font-size: 2rem;
   font-weight: 700;
   margin-bottom: 2.5rem;
 }
 
-/* 카드 컨테이너 */
 .main-card-container {
   display: flex;
   gap: 1.5rem;
   flex-wrap: wrap;
   justify-content: center;
-  margin-top: 1.2rem;
+  margin-top: 1.5rem;
 }
 
-/* 카드 */
 .main-card {
   background: #fff;
-  border-radius: 12px;
-  padding: 2rem 2.2rem;
-  min-width: 260px;
+  border-radius: 16px;
+  padding: 2rem;
+  min-width: 240px;
   text-align: center;
-  font-size: 1.2rem; /* ✅ 폰트 크기 축소 */
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  cursor: pointer;
+  font-size: 1.1rem;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  transition: transform 0.35s ease, box-shadow 0.35s ease, opacity 0.6s ease;
+  opacity: 0;
+  transform: translateY(30px);
+}
+.dark .main-card {
+  background: #222;
+  color: #fff;
 }
 
 .main-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
 }
 
-/* 페이드 인 애니메이션 */
-@keyframes fadeInUp {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.fade-up {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+.fade-up.visible {
+  opacity: 1;
+  transform: translateY(0);
 }

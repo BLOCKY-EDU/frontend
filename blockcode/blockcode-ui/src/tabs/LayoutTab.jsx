@@ -1,6 +1,5 @@
 import * as Blockly from 'blockly';
 import { parseStyleStatementsToStyleObj } from './StyleTab';
-
 import { parseWritingXmlToJSX } from './WritingTab';
 import { parseButtonXmlToJSX } from './ButtonTab';
 import { ColourPreviewDropdown } from '../blocks/CustomFields';
@@ -9,9 +8,8 @@ import {STYLE_BLOCK_TYPES} from "./StyleTab";
 import {COMBINE_TYPES} from "./CombineType.jsx";
 
 import { parseNavigationXmlToJSX } from './NavigationTab';
+import { parseListXmlToJSX } from './ListTab';
 
-// import { parseImageXmlToJSX } from './tabs/ImageTab';
-/* ✅ 1. 블록 등록 */
 export function registerLayoutBlocks() {
   Blockly.Blocks['container_box'] = {
     init: function () {
@@ -37,7 +35,6 @@ export function registerLayoutBlocks() {
   
 }
 
-/* ✅ 2. 툴박스 JSON */
 export function getLayoutTabToolbox() {
   return {
     kind: "flyoutToolbox",
@@ -110,39 +107,40 @@ function parseSingleContainerBlock(block) {
     const styleObj = parseStyleStatementsToStyleObj(styleStatement);
 
     const children = [];
-    // **여기서 contentStatement 안에 있는 블록들만, next 체인만 따로 파싱**
     if (contentStatement) {
       let innerBlock = contentStatement.getElementsByTagName('block')[0];
       while (innerBlock) {
         const type = innerBlock.getAttribute('type');
         let childJSX = null;
+
         if (
           ["text_title", "text_small_title", "small_content", "recipe_step", "checkbox_block", "toggle_input", "highlight_text"].includes(type)
         ) {
           childJSX = parseWritingXmlToJSX(new XMLSerializer().serializeToString(innerBlock));
-          if (Array.isArray(childJSX)) children.push(...childJSX);
-          else if (childJSX) children.push(childJSX);
         }
         else if (
           ["normal_button", "submit_button", "text_input", "email_input", "select_box"].includes(type)
         ) {
           childJSX = parseButtonXmlToJSX(new XMLSerializer().serializeToString(innerBlock));
-          if (Array.isArray(childJSX)) children.push(...childJSX);
-          else if (childJSX) children.push(childJSX);
         }
         else if (
           ["navigation_button"].includes(type)
         ) {
           childJSX = parseNavigationXmlToJSX(new XMLSerializer().serializeToString(innerBlock));
-          if (Array.isArray(childJSX)) children.push(...childJSX);
-          else if (childJSX) children.push(childJSX);
-        }        
+        }
+        // 목록 블록 처리 추가
+        else if (
+          ["list_bulleted", "list_numbered"].includes(type)
+        ) {
+          childJSX = parseListXmlToJSX(new XMLSerializer().serializeToString(innerBlock));
+        }
         else {
           childJSX = parseSingleContainerBlock(innerBlock);
-          if (Array.isArray(childJSX)) children.push(...childJSX);
-          else if (childJSX) children.push(childJSX);
         }
-        // 이 **상자 CONTENT에 붙은 블록만 next로 진행**
+
+        if (Array.isArray(childJSX)) children.push(...childJSX);
+        else if (childJSX) children.push(childJSX);
+
         innerBlock = innerBlock.getElementsByTagName('next')[0]?.getElementsByTagName('block')[0];
       }
     }
