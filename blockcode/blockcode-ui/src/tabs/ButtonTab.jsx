@@ -101,9 +101,9 @@ export function parseButtonXmlToJSX(xml) {
         output.push(<input key={`email-${i}`} type="email" placeholder={field} style={{ marginBottom: 10 }} />);
         break;
       case 'select_box':
-        const options = field.split(',').map((opt, idx) => <option key={idx}>{opt.trim()}</option>);
+        { const options = field.split(',').map((opt, idx) => <option key={idx}>{opt.trim()}</option>);
         output.push(<select key={`select-${i}`} style={{ marginBottom: 10 }}>{options}</select>);
-        break;
+        break; }
       default:
         break;
     }
@@ -131,8 +131,8 @@ export function parseSingleButtonBlock(blockXml) {
     case 'email_input':
       return <input type="email" placeholder={field} style={{ marginBottom: 10 }} />;
     case 'select_box':
-      const options = field.split(',').map((opt, idx) => <option key={idx}>{opt.trim()}</option>);
-      return <select style={{ marginBottom: 10 }}>{options}</select>;
+      { const options = field.split(',').map((opt, idx) => <option key={idx}>{opt.trim()}</option>);
+      return <select style={{ marginBottom: 10 }}>{options}</select>; }
     default:
       return null;
   }
