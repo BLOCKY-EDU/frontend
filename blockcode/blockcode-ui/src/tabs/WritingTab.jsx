@@ -37,16 +37,16 @@ export function registerWritingBlocks() {
     }
   };
 
-  Blockly.Blocks['recipe_step'] = {
-    init: function () {
-      this.appendDummyInput()
-        .appendField("순서 단계")
-        .appendField(new Blockly.FieldTextInput("밀가루를 이용해서 반죽을 만든다"), "STEP");
-      this.setColour("#FFA5A5");
-      this.setPreviousStatement(true, COMBINE_TYPES);
-      this.setNextStatement(true, COMBINE_TYPES);
-    }
-  };
+  // Blockly.Blocks['recipe_step'] = {
+  //   init: function () {
+  //     this.appendDummyInput()
+  //       .appendField("순서 단계")
+  //       .appendField(new Blockly.FieldTextInput("밀가루를 이용해서 반죽을 만든다"), "STEP");
+  //     this.setColour("#FFA5A5");
+  //     this.setPreviousStatement(true, COMBINE_TYPES);
+  //     this.setNextStatement(true, COMBINE_TYPES);
+  //   }
+  // };
 
   Blockly.Blocks['checkbox_block'] = {
     init: function () {
@@ -59,20 +59,20 @@ export function registerWritingBlocks() {
     }
   };
 
-  Blockly.Blocks['toggle_input'] = {
-    init: function () {
-      this.appendDummyInput()
-        .appendField("입력 또는 선택")
-        .appendField(new Blockly.FieldDropdown([
-          ["직접 입력", "input"],
-          ["선택 토글", "select"]
-        ]), "MODE")
-        .appendField(new Blockly.FieldTextInput("값 또는 옵션"), "VALUE");
-      this.setColour("#FFA5A5");
-      this.setPreviousStatement(true, COMBINE_TYPES);
-      this.setNextStatement(true, COMBINE_TYPES);
-    }
-  };
+  // Blockly.Blocks['toggle_input'] = {
+  //   init: function () {
+  //     this.appendDummyInput()
+  //       .appendField("입력 또는 선택")
+  //       .appendField(new Blockly.FieldDropdown([
+  //         ["직접 입력", "input"],
+  //         ["선택 토글", "select"]
+  //       ]), "MODE")
+  //       .appendField(new Blockly.FieldTextInput("값 또는 옵션"), "VALUE");
+  //     this.setColour("#FFA5A5");
+  //     this.setPreviousStatement(true, COMBINE_TYPES);
+  //     this.setNextStatement(true, COMBINE_TYPES);
+  //   }
+  // };
 
   Blockly.Blocks['highlight_text'] = {
     init: function () {
@@ -110,9 +110,9 @@ export function parseWritingXmlToJSX(xml) {
     } else if (type === 'small_content') {
       const content = blocks[i].getElementsByTagName('field')[0]?.textContent || "설명 없음";
       output.push(<h5 key={`small_content-${i}`}>{content}</h5>);
-    } else if (type === 'recipe_step') {
-      const step = blocks[i].getElementsByTagName('field')[0]?.textContent || "";
-      steps.push(<li key={`step-${i}`}>{step}</li>);
+    // } else if (type === 'recipe_step') {
+    //   const step = blocks[i].getElementsByTagName('field')[0]?.textContent || "";
+    //   steps.push(<li key={`step-${i}`}>{step}</li>);
     } else if (type === 'checkbox_block') {
       const label = blocks[i].getElementsByTagName('field')[0]?.textContent || "체크";
       checkboxes.push(
@@ -121,14 +121,14 @@ export function parseWritingXmlToJSX(xml) {
           {label}
         </label>
       );
-    } else if (type === 'toggle_input') {
-      const mode = blocks[i].getElementsByTagName('field')[0]?.textContent;
-      const value = blocks[i].getElementsByTagName('field')[1]?.textContent;
-      toggles.push(
-        mode === "input"
-          ? <input key={`toggle-${i}`} type="text" placeholder={value} style={{ marginBottom: '8px', padding: '4px' }} />
-          : <select key={`toggle-${i}`} style={{ marginBottom: '8px', padding: '4px' }}><option>{value}</option></select>
-      );
+    // } else if (type === 'toggle_input') {
+    //   const mode = blocks[i].getElementsByTagName('field')[0]?.textContent;
+    //   const value = blocks[i].getElementsByTagName('field')[1]?.textContent;
+    //   toggles.push(
+    //     mode === "input"
+    //       ? <input key={`toggle-${i}`} type="text" placeholder={value} style={{ marginBottom: '8px', padding: '4px' }} />
+    //       : <select key={`toggle-${i}`} style={{ marginBottom: '8px', padding: '4px' }}><option>{value}</option></select>
+    //   );
     } else if (type === 'highlight_text') {
       const text = blocks[i].getElementsByTagName('field')[0]?.textContent || "강조";
       output.push(
@@ -157,9 +157,9 @@ export function getWritingTabToolbox() {
       { kind: "block", type: "text_title" },
       { kind: "block", type: "text_small_title" },
       { kind: "block", type: "small_content" },
-      { kind: "block", type: "recipe_step" },
+      // { kind: "block", type: "recipe_step" },
       { kind: "block", type: "checkbox_block" },
-      { kind: "block", type: "toggle_input" },
+      // { kind: "block", type: "toggle_input" },
       { kind: "block", type: "highlight_text" },
     ]
   };
