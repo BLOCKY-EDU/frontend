@@ -99,7 +99,7 @@ export function parseImageXmlToJSX(xml) {
 }
 
 export function parseSingleImageBlock(blockXml) {
-  if (!blockXml || blockXml.nodeName !== 'block') return null;
+  if (!blockXml) return null;
 
   const parser = new DOMParser();
   const dom = parser.parseFromString(blockXml, 'text/xml');
