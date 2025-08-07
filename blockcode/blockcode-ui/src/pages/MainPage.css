@@ -1,0 +1,112 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+  background-color: #fff;
+  color: #1d1d1f;
+  font-size: 18px;
+  line-height: 1.5;
+  height: 100%;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  scroll-behavior: smooth;
+}
+
+.scroll-container {
+  height: 100vh;
+  overflow-y: scroll;
+  scroll-snap-type: y mandatory;
+}
+
+.section {
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  scroll-snap-align: start;
+  padding: 2rem;
+  background-color: #fff;
+  transition: background-color 0.5s ease;
+}
+
+.section.dark {
+  background-color: #111;
+  color: #fff;
+}
+
+.main-box {
+  text-align: center;
+  max-width: 960px;
+}
+
+.main-image {
+  width: 400px;
+  margin: 2rem 0 3rem;
+  transition: transform 0.4s ease;
+  will-change: transform;
+}
+
+.main-title-text {
+  font-size: 2.8rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+}
+
+.main-sub-text {
+  font-size: 1.3rem;
+  color: #6e6e73;
+  margin-bottom: 2.5rem;
+}
+
+.dark .main-sub-text {
+  color: #ccc;
+}
+
+.main-highlight-text {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 2.5rem;
+}
+
+.main-card-container {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+
+.main-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 2rem;
+  min-width: 240px;
+  text-align: center;
+  font-size: 1.1rem;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  transition: transform 0.35s ease, box-shadow 0.35s ease, opacity 0.6s ease;
+  opacity: 0;
+  transform: translateY(30px);
+}
+.dark .main-card {
+  background: #222;
+  color: #fff;
+}
+
+.main-card:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.fade-up {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+.fade-up.visible {
+  opacity: 1;
+  transform: translateY(0);
+}

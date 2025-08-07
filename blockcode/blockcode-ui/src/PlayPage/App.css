@@ -18,10 +18,12 @@ html, body, #root {
   height: 100vh;
   overflow: hidden;
   background-color: white;
+  overflow: visible;
+
 }
 
 /* 상단 헤더 */
-.header {
+.app-header {
   width: 100%;
   height: 64px;
   background: #59B3FF;
@@ -32,31 +34,31 @@ html, body, #root {
   color: white;
 }
 
-.logo img {
+.app-logo img {
   height: 34px;
 }
 
-.nav {
+.app-nav {
   display: flex;
   gap: 32px;
   font-size: 20px;
   font-weight: 700;
+  flex: 1;
+  justify-content: flex-start;
 }
 
-.nav span {
-  /* margin-left: 20px;
-  font-size: 16px; */
+.app-nav span {
   cursor: pointer;
 }
 
-/* auth 영역 수정 - 로그인하고 회원가입 */
-.auth {
+/* auth 영역 */
+.app-auth {
   display: flex;
   gap: 20px;
   align-items: center;
 }
 
-.auth button {
+.app-auth button {
   background: none;
   border: none;
   color: white;
@@ -67,59 +69,57 @@ html, body, #root {
 }
 
 /* 본문 전체 박스 */
-.main-box {
+.app-main-box {
   display: flex;
   gap: 24px;
   padding: 20px 30px;
-  height: calc(100vh - 64px);
-  background: white;
+  min-height: calc(100vh - 64px);
+  box-sizing: border-box;
+  margin-top: 64px;
 }
 
 /* 나의 화면 */
-/* .render-box {
-  position: relative;
-  flex: 1.2;
-  height: 100%;
-  border: 2px solid #83C7FF;
-  border-radius: 10px;
-  background-color: white;
-  padding: 40px;
+.app-render-box {
   min-width: 480px;
-} */
-.render-box {
-  width: 783px;
-  border: 2px solid #83C7FF;
-  border-radius: 10px;
+  max-width: 800px;
+  flex: 0 0 50%;
+  width: 100%;
   background: white;
-  padding: 40px;
-  padding-top: 70px;
+  color: #1C1C1C;
+  /* padding : 40px; */
+  padding-top: 60px;
   position: relative;
   flex: 0.5;
+  border: 2px solid #A3D5FF;
+  border-radius: 0 0 10px 10px;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px; 
 }
 
-.title-bar {
+.app-title-bar {
   position: absolute;
-  top: 0;
+  top: 0; 
   left: 0;
   width: 100%;
   height: 60px;
   background: #DEF3FF;
-  border-top-left-radius: 10px;
-  border-top-right-radius: 10px;
-  border: 2px solid #A3D5FF;
-  border-bottom: none;
+  border-bottom: 2px solid #A3D5FF;
   display: flex;
   align-items: center;
   padding-left: 30px;
   font-size: 20px;
   font-weight: 600;
   color: #1C1C1C;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px; 
 }
 
-
-
+.app-rendered-content{
+  padding: 30px;
+  
+}
 /* Blockly 조립 화면 */
-.blockly-box {
+.app-blockly-box {
   width: 100%;
   height: 100%;
   border: 1px solid #A3D5FF;
@@ -129,143 +129,132 @@ html, body, #root {
   flex-direction: column;
   padding: 0;
   overflow: hidden;
-  flex: 2.5;
+  flex: 1;
+  min-width: 500px;
 }
 
-.tool-editor-area {
+.app-tool-editor-area {
   flex: 1;
   display: flex;
   flex-direction: column;
 }
 
-/* 기존 탭 바 제거 -> 다시 생성*/
-.tab-bar {
+/* 탭 바 */
+.app-tab-bar {
   display: flex;
-  gap: 10px;
-  margin-bottom: 12px;
-  margin-left: 10px;
+  gap: 5px;
+  margin-bottom: 0px;
+  margin-left: 0px;
 }
 
-
-.tab-btn {
+.app-tab-btn {
   padding: 8px 16px;
-  border-radius: 100px;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
   background-color: #C9E2F1;
   border: 1px solid #A3D5FF;
   font-weight: 600;
-  font-size: 14px;
+  font-size: 20px;
   cursor: pointer;
   transition: background 0.2s;
+  color: #1C1C1C;
 }
 
-.tab-btn.active {
+.app-tab-btn.active {
   background-color: #FFEE95;
+  color: #1C1C1C;
 }
 
-/* 도구 책갈피 스타일 */
-/* .toolbox-panel {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 12px;
-  overflow-y: auto;
-} */
-
-/* tab-container: 책갈피와 블록을 같이 감싸는 박스 */
-.tab-container {
-  position: relative;
+/* 책갈피 패널 */
+.app-toolbox-panel {
   background-color: #DEF3FF;
-  padding-top: 30px; /* 툴탭이 위로 올라올 수 있도록 공간 확보 */
-}
-
-
-.toolbox-panel {
-  background-color: #DEF3FF;
+  margin-top: 0; 
   padding: 12px 20px;
   border-bottom: 1px solid #A3D5FF;
-  border-top-left-radius: 10px;
-  border-top-right-radius: 10px;
+  border-top: none;
+  border-radius: 0;
+  width: 100%;
+  box-sizing: border-box;
 }
 
+.blocklyText {
+  fill: #333333 !important;
+  font-weight: 600;
+}
 
-/* .tool-section {
-  background: #ffffff;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  overflow: hidden;
-  transition: all 0.3s ease;
-} */
-/* 책갈피 섹션 */
-/* .tool-section {
-  margin-bottom: 6px;
-} */
-
-/* .tab-label {
-  padding: 10px 16px;
-  font-weight: bold;
-  font-size: 15px;
-  background-color: #f2f2f2;
-  cursor: pointer;
-  border-bottom: 1px solid #ddd;
-  user-select: none;
-} */
-
-.tab-label {
+.app-tab-label {
   padding: 6px 14px;
   font-weight: 600;
-  font-size: 14px;
+  font-size: 20px;
   border-radius: 8px;
   cursor: pointer;
   margin-bottom: 6px;
-  /* color: #333; */
   transition: background 0.2s ease;
 }
 
-/* .toolset {
-  padding: 10px 16px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  background-color: #f9f9f9;
-} */
- .toolset {
+.app-toolset {
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
 }
 
-.toolset.collapsed {
+.app-toolset.collapsed {
   display: none;
 }
 
-/* .tool-pill {
-  background-color: #eee;
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 14px;
-  cursor: pointer;
-  white-space: nowrap;
-} */
-.tool-pill {
+.app-tool-pill {
   background-color: #FFEE95;
   padding: 6px 14px;
   border-radius: 100px;
-  font-size: 14px;
+  font-size: 20px;
   font-weight: 600;
   color: #1C1C1C;
-  border: 1px solid #A3D5FF;
   white-space: nowrap;
 }
 
-.blockly-wrapper {
+.app-blockly-wrapper {
   flex: 1;
   width: 100%;
   height: 100%;
 }
 
 /* Blockly 영역 */
-.blockly-editor {
+.app-blockly-editor {
   flex: 1;
   width: 100%;
   height: 100%;
+}
+
+.app-blockly-box {
+  position: relative;
+}
+
+.app-ai-bot {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  width: 50px;
+  height: auto;
+  cursor: pointer;
+  z-index: 9999;
+}
+
+.app-robot-container {
+  position: absolute;
+  bottom: 40px;
+  left: 40px;
+  width: 100px;
+  height: 100px;
+  background-color: #59B3FF;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 9px 15px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+}
+
+.app-robot-icon {
+  width: 80px;
+  height: 80px;
 }

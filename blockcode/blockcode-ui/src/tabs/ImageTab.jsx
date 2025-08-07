@@ -1,6 +1,12 @@
+<<<<<<< HEAD
 // ImageTab.jsx
 import React from 'react';
 import * as Blockly from 'blockly';
+=======
+import React from 'react';
+import * as Blockly from 'blockly';
+import {COMBINE_TYPES} from "./CombineType.jsx";
+>>>>>>> 90d53ffa1ff01680826773e1db3b26c436209678
 
 export function registerImageBlocks() {
   Blockly.Blocks['insert_image'] = {
@@ -11,7 +17,13 @@ export function registerImageBlocks() {
         // .appendField(new Blockly.FieldTextInput("주소 입력"), "SRC");
         //예시 이미지 링크 
         .appendField(new Blockly.FieldTextInput("https://fastly.picsum.photos/id/177/300/300.jpg?hmac=iqXyonsAi67PWRf_09YhPkmp81Thf9Pch6MNvOkGiGo"),"SRC");
+<<<<<<< HEAD
       this.setColour("#91D8C6");
+=======
+      this.setColour("#B0EACD");
+      this.setPreviousStatement(true, COMBINE_TYPES);
+      this.setNextStatement(true, COMBINE_TYPES);
+>>>>>>> 90d53ffa1ff01680826773e1db3b26c436209678
     }
   };
 
@@ -24,6 +36,7 @@ export function registerImageBlocks() {
         //예시 영상 
         .appendField(new Blockly.FieldTextInput("https://www.w3schools.com/html/mov_bbb.mp4"), "SRC");
 
+<<<<<<< HEAD
       this.setColour("#91D8C6");
     }
   };
@@ -36,6 +49,24 @@ export function registerImageBlocks() {
       this.setColour("#91D8C6");
     }
   };
+=======
+      this.setColour("#B0EACD");
+      this.setPreviousStatement(true, COMBINE_TYPES);
+      this.setNextStatement(true, COMBINE_TYPES);
+    }
+  };
+
+  // Blockly.Blocks['youtube_link'] = {
+  //   init: function () {
+  //     this.appendDummyInput()
+  //       .appendField("유튜브 연결")
+  //       .appendField(new Blockly.FieldTextInput("주소 입력"), "SRC");
+  //     this.setColour("#B0EACD");
+  //     this.setPreviousStatement(true, COMBINE_TYPES);
+  //     this.setNextStatement(true, COMBINE_TYPES);
+  //   }
+  // };
+>>>>>>> 90d53ffa1ff01680826773e1db3b26c436209678
 }
 
 export function getImageTabToolbox() {
@@ -44,7 +75,11 @@ export function getImageTabToolbox() {
     contents: [
       { kind: "block", type: "insert_image" },
       { kind: "block", type: "insert_video" },
+<<<<<<< HEAD
       { kind: "block", type: "youtube_link" }
+=======
+      // { kind: "block", type: "youtube_link" }
+>>>>>>> 90d53ffa1ff01680826773e1db3b26c436209678
     ]
   };
 }
@@ -91,3 +126,66 @@ export function parseImageXmlToJSX(xml) {
   }
   return output;
 }
+<<<<<<< HEAD
+=======
+
+export function parseSingleImageBlock(blockXml) {
+  if (!blockXml || blockXml.nodeName !== 'block') return null;
+
+  const parser = new DOMParser();
+  const dom = parser.parseFromString(blockXml, 'text/xml');
+  const block = dom.getElementsByTagName('block')[0];
+  const type = block.getAttribute('type');
+  const field = block.querySelector('field');
+  const src = field?.textContent?.trim();
+
+  if (!src) return null;
+
+  switch (type) {
+    case 'insert_image':
+      return (
+          <img
+              src={src}
+              alt="image"
+              style={{ maxWidth: '100%', marginBottom: 10 }}
+          />
+      );
+
+    case 'insert_video':
+      return (
+          <video
+              src={src}
+              controls
+              style={{ maxWidth: '100%', marginBottom: 10 }}
+          />
+      );
+
+    case 'youtube_link':
+    {
+      let url = src;
+      const match = src.match(/(?:v=|\/)([0-9A-Za-z_-]{11})/);
+      const videoId = match ? match[1] : null;
+
+      if (videoId) {
+        url = `https://www.youtube.com/embed/${videoId}`;
+      }
+
+      return (
+          <iframe
+              width="100%"
+              height="315"
+              src={url}
+              title="YouTube video"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              style={{ marginBottom: 10 }}
+          />
+      );
+    }
+
+    default:
+      return null;
+  }
+}
+>>>>>>> 90d53ffa1ff01680826773e1db3b26c436209678
