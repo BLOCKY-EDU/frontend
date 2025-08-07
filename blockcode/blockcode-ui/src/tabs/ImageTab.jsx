@@ -1,12 +1,6 @@
-<<<<<<< HEAD
-// ImageTab.jsx
-import React from 'react';
-import * as Blockly from 'blockly';
-=======
 import React from 'react';
 import * as Blockly from 'blockly';
 import {COMBINE_TYPES} from "./CombineType.jsx";
->>>>>>> 90d53ffa1ff01680826773e1db3b26c436209678
 
 export function registerImageBlocks() {
   Blockly.Blocks['insert_image'] = {
@@ -17,13 +11,9 @@ export function registerImageBlocks() {
         // .appendField(new Blockly.FieldTextInput("주소 입력"), "SRC");
         //예시 이미지 링크 
         .appendField(new Blockly.FieldTextInput("https://fastly.picsum.photos/id/177/300/300.jpg?hmac=iqXyonsAi67PWRf_09YhPkmp81Thf9Pch6MNvOkGiGo"),"SRC");
-<<<<<<< HEAD
-      this.setColour("#91D8C6");
-=======
       this.setColour("#B0EACD");
       this.setPreviousStatement(true, COMBINE_TYPES);
       this.setNextStatement(true, COMBINE_TYPES);
->>>>>>> 90d53ffa1ff01680826773e1db3b26c436209678
     }
   };
 
@@ -36,20 +26,6 @@ export function registerImageBlocks() {
         //예시 영상 
         .appendField(new Blockly.FieldTextInput("https://www.w3schools.com/html/mov_bbb.mp4"), "SRC");
 
-<<<<<<< HEAD
-      this.setColour("#91D8C6");
-    }
-  };
-
-  Blockly.Blocks['youtube_link'] = {
-    init: function () {
-      this.appendDummyInput()
-        .appendField("유튜브 연결")
-        .appendField(new Blockly.FieldTextInput("주소 입력"), "SRC");
-      this.setColour("#91D8C6");
-    }
-  };
-=======
       this.setColour("#B0EACD");
       this.setPreviousStatement(true, COMBINE_TYPES);
       this.setNextStatement(true, COMBINE_TYPES);
@@ -66,7 +42,6 @@ export function registerImageBlocks() {
   //     this.setNextStatement(true, COMBINE_TYPES);
   //   }
   // };
->>>>>>> 90d53ffa1ff01680826773e1db3b26c436209678
 }
 
 export function getImageTabToolbox() {
@@ -75,11 +50,7 @@ export function getImageTabToolbox() {
     contents: [
       { kind: "block", type: "insert_image" },
       { kind: "block", type: "insert_video" },
-<<<<<<< HEAD
-      { kind: "block", type: "youtube_link" }
-=======
       // { kind: "block", type: "youtube_link" }
->>>>>>> 90d53ffa1ff01680826773e1db3b26c436209678
     ]
   };
 }
@@ -126,8 +97,6 @@ export function parseImageXmlToJSX(xml) {
   }
   return output;
 }
-<<<<<<< HEAD
-=======
 
 export function parseSingleImageBlock(blockXml) {
   if (!blockXml || blockXml.nodeName !== 'block') return null;
@@ -188,4 +157,3 @@ export function parseSingleImageBlock(blockXml) {
       return null;
   }
 }
->>>>>>> 90d53ffa1ff01680826773e1db3b26c436209678
