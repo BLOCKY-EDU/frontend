@@ -24,9 +24,9 @@ export function registerButtonBlocks() {
     }
   };
 
-  Blockly.JavaScript['submit_button'] = function () {
-    return `alert("제출이 완료되었습니다.");\n`;
-  }
+  // Blockly.JavaScript['submit_button'] = function () {
+  //   return `alert("제출이 완료되었습니다.");\n`;
+  // }
 
   Blockly.Blocks['text_input'] = {
     init: function () {
