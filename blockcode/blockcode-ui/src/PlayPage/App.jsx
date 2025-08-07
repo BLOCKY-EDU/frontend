@@ -153,6 +153,10 @@ export default function App() {
     if (colorField && globalBackgroundColor !== colorField) {
       setGlobalBackgroundColor(colorField);
     }
+  }else {
+      if (globalBackgroundColor !== "#ffffff") {
+          setGlobalBackgroundColor("#ffffff");
+      }
   }
     // 배경색 블록 처리
    
