@@ -50,15 +50,15 @@ export function registerButtonBlocks() {
     }
   };
 
-  Blockly.Blocks['checkbox'] = {
-    init: function () {
-      this.appendDummyInput()
-        .appendField("체크박스")
-        .appendField(new Blockly.FieldTextInput("옵션"), "LABEL");
-      this.setColour("#F4B6C2");
-      this.setPreviousStatement(true, COMBINE_TYPES);
-      this.setNextStatement(true, COMBINE_TYPES);
-    }
+  Blockly.Blocks['checkbox_block'] = {
+      init: function () {
+          this.appendDummyInput()
+              .appendField("체크박스")
+              .appendField(new Blockly.FieldTextInput("밀가루"), "LABEL");
+          this.setColour("#FFCDD6");
+          this.setPreviousStatement(true, COMBINE_TYPES);
+          this.setNextStatement(true, COMBINE_TYPES);
+      }
   };
 
   Blockly.Blocks['select_box'] = {
@@ -82,7 +82,7 @@ export function getButtonTabToolbox() {
       { kind: "block", type: "submit_button" },
       { kind: "block", type: "text_input" },
       { kind: "block", type: "email_input" },
-      { kind: "block", type: "checkbox" },
+      { kind: "block", type: "checkbox_block" },
       { kind: "block", type: "select_box" },
     ]
   };
@@ -97,7 +97,7 @@ export function parseButtonXmlToJSX(xml) {
   const blocks = dom.getElementsByTagName('block');
 
   const output = [];
-
+  let checkboxes = [];
   for (let i = 0; i < blocks.length; i++) {
     const block = blocks[i];
     const type = block.getAttribute('type');
@@ -116,16 +116,15 @@ export function parseButtonXmlToJSX(xml) {
       case 'email_input':
         output.push(<input key={`email-${i}`} type="email" placeholder={field} style={{ marginBottom: 10 }} />);
         break;
-        case 'checkbox':
-          output.push(
-            <label
-              key={`checkbox-${i}`}
-              style={{ display: "flex", alignItems: "center", marginBottom: 10 }}
-            >
-              <input type="checkbox" style={{ marginRight: "6px" }} /> {field}
-            </label>
-          );
-          break;
+      case 'checkbox_block':
+          { const label = blocks[i].getElementsByTagName('field')[0]?.textContent || "체크";
+          checkboxes.push(
+              <label key={`checkbox-${i}`} style={{ display: "flex", alignItems: "center", marginBottom: "8px" }}>
+                  <input type="checkbox" style={{ marginRight: "8px" }} />
+                  {label}
+              </label>
+          ); }
+        break;
       case 'select_box':
         { const options = field.split(',').map((opt, idx) => <option key={idx}>{opt.trim()}</option>);
         output.push(<select key={`select-${i}`} style={{ marginBottom: 10 }}>{options}</select>);
@@ -134,7 +133,7 @@ export function parseButtonXmlToJSX(xml) {
         break;
     }
   }
-
+  if (checkboxes.length > 0) output.push(<div key="checkboxes">{checkboxes}</div>);
   return output;
 }
 
@@ -156,6 +155,14 @@ export function parseSingleButtonBlock(blockXml) {
       return <input type="text" placeholder={field} style={{ marginBottom: 10 }} />;
     case 'email_input':
       return <input type="email" placeholder={field} style={{ marginBottom: 10 }} />;
+      case 'checkbox_block':
+          { const label = block.getElementsByTagName('field')[0]?.textContent || "체크";
+          return (
+              <label style={{ display: "flex", alignItems: "center", marginBottom: "8px" }}>
+                  <input type="checkbox" style={{ marginRight: "8px" }} />
+                  {label}
+              </label>
+          ); }
     case 'select_box':
       { const options = field.split(',').map((opt, idx) => <option key={idx}>{opt.trim()}</option>);
       return <select style={{ marginBottom: 10 }}>{options}</select>; }

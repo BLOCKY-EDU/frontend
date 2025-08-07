@@ -115,12 +115,12 @@ function parseSingleContainerBlock(block) {
         let childJSX = null;
 
         if (
-          ["text_title", "text_small_title", "small_content", "recipe_step", "checkbox_block", "toggle_input", "highlight_text"].includes(type)
+          ["text_title", "text_small_title", "small_content", "recipe_step", "toggle_input", "highlight_text"].includes(type)
         ) {
           childJSX = parseSingleWritingBlock(new XMLSerializer().serializeToString(innerBlock));
         }
         else if (
-          ["normal_button", "submit_button", "text_input", "email_input", "select_box"].includes(type)
+          ["normal_button", "submit_button", "text_input", "email_input", "checkbox_block", "select_box"].includes(type)
         ) {
           childJSX = parseSingleButtonBlock(new XMLSerializer().serializeToString(innerBlock));
         }

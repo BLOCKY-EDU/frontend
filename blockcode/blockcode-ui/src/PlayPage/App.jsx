@@ -125,9 +125,9 @@ export default function App() {
       return parseListXmlToJSX(xmlText);
     }
 
-    if (["text_title", "text_small_title", "small_content", "recipe_step", "checkbox_block", "toggle_input", "highlight_text"].includes(type)) {
+    if (["text_title", "text_small_title", "small_content", "recipe_step", "toggle_input", "highlight_text"].includes(type)) {
       return parseWritingXmlToJSX(xmlText);
-    } else if (["normal_button", "submit_button", "text_input", "email_input", "select_box"].includes(type)) {
+    } else if (["normal_button", "submit_button", "text_input", "email_input", "checkbox_block", "select_box"].includes(type)) {
       return parseButtonXmlToJSX(xmlText);
     } else if (["insert_image", "insert_video", "youtube_link"].includes(type)) {
       return parseImageXmlToJSX(xmlText);

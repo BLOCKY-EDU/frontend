@@ -48,16 +48,16 @@ export function registerWritingBlocks() {
   //   }
   // };
 
-  Blockly.Blocks['checkbox_block'] = {
-    init: function () {
-      this.appendDummyInput()
-        .appendField("체크박스")
-        .appendField(new Blockly.FieldTextInput("밀가루"), "LABEL");
-      this.setColour("#FFA5A5");
-      this.setPreviousStatement(true, COMBINE_TYPES);
-      this.setNextStatement(true, COMBINE_TYPES);
-    }
-  };
+  // Blockly.Blocks['checkbox_block'] = {
+  //   init: function () {
+  //     this.appendDummyInput()
+  //       .appendField("체크박스")
+  //       .appendField(new Blockly.FieldTextInput("밀가루"), "LABEL");
+  //     this.setColour("#FFA5A5");
+  //     this.setPreviousStatement(true, COMBINE_TYPES);
+  //     this.setNextStatement(true, COMBINE_TYPES);
+  //   }
+  // };
 
   // Blockly.Blocks['toggle_input'] = {
   //   init: function () {
@@ -113,14 +113,14 @@ export function parseWritingXmlToJSX(xml) {
     } else if (type === 'recipe_step') {
       const step = blocks[i].getElementsByTagName('field')[0]?.textContent || "";
       steps.push(<li key={`step-${i}`}>{step}</li>);
-    } else if (type === 'checkbox_block') {
-      const label = blocks[i].getElementsByTagName('field')[0]?.textContent || "체크";
-      checkboxes.push(
-        <label key={`checkbox-${i}`} style={{ display: "flex", alignItems: "center", marginBottom: "8px" }}>
-          <input type="checkbox" style={{ marginRight: "8px" }} />
-          {label}
-        </label>
-      );
+    // } else if (type === 'checkbox_block') {
+    //   const label = blocks[i].getElementsByTagName('field')[0]?.textContent || "체크";
+    //   checkboxes.push(
+    //     <label key={`checkbox-${i}`} style={{ display: "flex", alignItems: "center", marginBottom: "8px" }}>
+    //       <input type="checkbox" style={{ marginRight: "8px" }} />
+    //       {label}
+    //     </label>
+    //   );
     } else if (type === 'toggle_input') {
       const mode = blocks[i].getElementsByTagName('field')[0]?.textContent;
       const value = blocks[i].getElementsByTagName('field')[1]?.textContent;
@@ -143,7 +143,7 @@ export function parseWritingXmlToJSX(xml) {
   }
 
   if (steps.length > 0) output.push(<ol key="steps">{steps}</ol>);
-  if (checkboxes.length > 0) output.push(<div key="checkboxes">{checkboxes}</div>);
+  // if (checkboxes.length > 0) output.push(<div key="checkboxes">{checkboxes}</div>);
   if (toggles.length > 0) output.push(<div key="toggles">{toggles}</div>);
 
   return output;
@@ -167,14 +167,14 @@ export function parseSingleWritingBlock(blockXml) {
   } else if (type === 'small_content') {
     const content = block.getElementsByTagName('field')[0]?.textContent || "설명 없음";
     return <h5>{content}</h5>;
-  } else if (type === 'checkbox_block') {
-    const label = block.getElementsByTagName('field')[0]?.textContent || "체크";
-    return (
-        <label style={{ display: "flex", alignItems: "center", marginBottom: "8px" }}>
-          <input type="checkbox" style={{ marginRight: "8px" }} />
-          {label}
-        </label>
-    );
+  // } else if (type === 'checkbox_block') {
+    // const label = block.getElementsByTagName('field')[0]?.textContent || "체크";
+    // return (
+    //     <label style={{ display: "flex", alignItems: "center", marginBottom: "8px" }}>
+    //       <input type="checkbox" style={{ marginRight: "8px" }} />
+    //       {label}
+    //     </label>
+    // );
   } else if (type === 'highlight_text') {
     const text = block.getElementsByTagName('field')[0]?.textContent || "강조";
     return (
@@ -196,7 +196,7 @@ export function getWritingTabToolbox() {
       { kind: "block", type: "text_small_title" },
       { kind: "block", type: "small_content" },
       // { kind: "block", type: "recipe_step" },
-      { kind: "block", type: "checkbox_block" },
+      // { kind: "block", type: "checkbox_block" },
       // { kind: "block", type: "toggle_input" },
       { kind: "block", type: "highlight_text" },
     ]
