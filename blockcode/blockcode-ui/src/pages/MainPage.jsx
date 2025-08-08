@@ -174,7 +174,6 @@ export default function MainPage() {
               margin: "2.5rem auto 2.5rem"
             }}
           />
-          <button className="main-action-btn fade-up shiny-btn">지금 체험해보기</button>
         </div>
       </section>
     </div>
