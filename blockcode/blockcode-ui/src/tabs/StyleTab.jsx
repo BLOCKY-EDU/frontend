@@ -13,7 +13,7 @@ const styleBlocks = [
   { type: 'style_flex_row', label: '가로로 나누기', style: { display: 'flex', flexDirection: 'row' } },
   { type: 'style_flex_column', label: '세로로 나누기', style: { display: 'flex', flexDirection: 'column' } },
   { type: 'style_center_align', label: '가운데 정렬 (가로/세로)', style: { justifyContent: 'center', alignItems: 'center' } },
-  { type: 'style_border_radius', label: '둥근 모서리', style: { borderRadius: '8px' } },
+  { type: 'style_border_radius', label: '둥근 모서리', style: { borderRadius: '8px',overflow: 'hidden' } },
   { type: 'style_border', label: '테두리 추가', style: { border: '1px solid #ccc' } },
   { type: 'style_shadow', label: '그림자 추가', style: { boxShadow: '0px 2px 4px rgba(0,0,0,0.2)' } }
 ];
@@ -100,6 +100,7 @@ export function parseStyleStatementsToStyleObj(statements) {
         break;
       case 'style_border_radius':
         styleObj.borderRadius = '8px';
+        styleObj.overflow = 'hidden';
         break;
       case 'style_border':
         styleObj.border = '1px solid #ccc';
