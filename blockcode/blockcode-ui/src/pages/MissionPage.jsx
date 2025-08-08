@@ -1,0 +1,32 @@
+import React from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { PROBLEM_BY_ID } from "../data/problems";
+
+export default function MissionPage() {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const problem = PROBLEM_BY_ID[id];
+
+  if (!problem) return <div>존재하지 않는 문제입니다. (id={id})</div>;
+
+  return (
+    <div style={{ padding:20, border:"2px solid #A3D5FF", borderRadius:12, background:"#fff" }}>
+      <div style={{ display:"flex", justifyContent:"space-between", marginBottom:12 }}>
+        <div className="app-tab-btn active" style={{ borderBottomLeftRadius:10, borderBottomRightRadius:10 }}>
+          나의 미션 — “{problem.title}”
+        </div>
+        <button className="app-tab-btn" onClick={() => navigate(-1)}>문제 목록으로</button>
+      </div>
+
+      <div style={{ display:"flex", gap:24, alignItems:"center" }}>
+        <img src={problem.image} alt={problem.title}
+             style={{ width:240, borderRadius:12, border:"1px solid #DEF3FF", boxShadow:"0 6px 18px rgba(0,0,0,0.12)" }}/>
+        <div>
+          <h2 style={{ marginBottom:8 }}>문제 {id}</h2>
+          <p style={{ fontWeight:600 }}>{problem.title}</p>
+          <p style={{ marginTop:8, color:"#4b5563" }}>우측 블록을 조립해 상단 “나의 화면”과 같이 만들면 성공!</p>
+        </div>
+      </div>
+    </div>
+  );
+}

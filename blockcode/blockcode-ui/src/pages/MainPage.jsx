@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import "./MainPage.css";
 import logo from "../assets/blocky-logo.png";
-
+import NavBar from "../components/NavBar"
 export default function MainPage() {
   useEffect(() => {
     // 페이드업 효과
@@ -36,8 +36,11 @@ export default function MainPage() {
   }, []);
 
   return (
+
     <div className="scroll-container">
+      <NavBar/>
       {/* Section 1 */}
+
       <section className="section">
         <div className="main-box">
           <div className="main-title-text fade-up">
