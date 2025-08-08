@@ -461,17 +461,25 @@ export default function EditorShell() {
     if (!workspace) return [];
     const topBlocks = workspace.getTopBlocks(true);
 
-    const bgBlock = topBlocks.find((b) => b.type === "style_background");
-    if (bgBlock && !bgBlock.getParent()) {
-      const colorField = bgBlock.getFieldValue("COLOR");
-      if (colorField && globalBackgroundColor !== colorField) {
-        setGlobalBackgroundColor(colorField);
-      }
-    } else {
-      if (globalBackgroundColor !== "#ffffff") {
-        setGlobalBackgroundColor("#ffffff");
-      }
-    }
+    // const bgBlock = topBlocks.find((b) => b.type === "style_background");
+
+    // 배경 블록 감지
+const BG_TYPES = ["style_background", "background_color_block"];
+const bgBlock = topBlocks.find(
+  (b) => BG_TYPES.includes(b.type) && !b.getParent()
+);
+
+if (bgBlock) {
+  const colorField =
+    bgBlock.getFieldValue?.("COLOR") ||
+    bgBlock.getFieldValue?.("BG_COLOR");
+  if (colorField && globalBackgroundColor !== colorField) {
+    setGlobalBackgroundColor(colorField);
+  }
+} else if (globalBackgroundColor !== "#ffffff") {
+  setGlobalBackgroundColor("#ffffff");
+}
+
 
     const boxBlocks = topBlocks.filter(
       (block) => block.type === "container_box"
@@ -629,6 +637,10 @@ export default function EditorShell() {
             <div
               className="app-rendered-content"
               ref={renderRef}
+              style={{
+                backgroundColor: globalBackgroundColor,
+               
+              }}
             >
               {jsxOutput}
             </div>
@@ -637,12 +649,10 @@ export default function EditorShell() {
 
           <section className="app-my-mission-box">
             <div className="app-title-bar">나의 미션</div>
-            <div className="app-rendered-content">
+            <div className="app-render-content">
                 <Outlet/>
             </div>
           </section>
-
-
           </div>
           <section className="app-tool-editor-area">
             <div className="app-tab-bar">
