@@ -1,23 +1,54 @@
-/* 공통 레이아웃 */
-.level-page {
-    padding: 2rem;
+.problems-container {
+    display: flex;
+    flex-wrap: wrap; /* 줄바꿈 허용 */
+    gap: 40px;
+    justify-content: center;
+    margin-top: 130px;
+    width: 920px;
+    margin-left: auto;
+    margin-right: auto; /* 가운데 정렬 */
+  }
+  
+  .problem-card {
+    width: 270px; /* 한 줄에 3개 */
+    background-color: #fff;
+    border-radius: 12px;
+    padding: 8px;
     text-align: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
   }
   
-  /* 공통 타이틀/본문 */
-  .level-title {
-    color: var(--accent, #007aff);
-    margin: 0 0 0.75rem;
+  
+  .problem-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
   }
   
-  .level-desc {
-    font-size: 1rem;
-    margin: 0.75rem 0 0;
-    color: #333;
+  .problem-card img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
   }
   
-  /* 레벨별 테마 색 (CSS 변수) */
-  .level--basic   { --accent: #007aff; } /* 파랑 */
-  .level--inter   { --accent: #ff9500; } /* 주황 */
-  .level--adv     { --accent: #34c759; } /* 초록 */
+  .problem-card h3 {
+    font-size: 22px;
+    font-weight: 600;
+
+    color: #1C1C1C;
+    font-family: Pretendard;
+
+  }
+  
+  .problem-card p {
+    font-size: 18px;
+    color: #555;
+    font-family: Pretendard;
+    font-weight: 500;
+    justify-self: start;
+    margin-left: 10px;
+
+
+  }
   
