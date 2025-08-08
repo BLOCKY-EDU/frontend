@@ -309,7 +309,7 @@ html, body, #root {
   background: #f1f5f9;
 }
 
-.code-popup-body {
+/* .code-popup-body {
   margin: 0;
   padding: 12px;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
@@ -321,6 +321,15 @@ html, body, #root {
   color: #dbeafe;
   overflow: auto;
   max-height: 50vh;
+} */
+.code-popup-body {
+  font-size: 15px;
+  line-height: 1.7;
+  background: #fafafc;
+  white-space: pre-wrap;
+  word-break: break-all;
+  padding: 12px 18px;
+  border-radius: 6px;
 }
 
 .code-popup-body::-webkit-scrollbar {

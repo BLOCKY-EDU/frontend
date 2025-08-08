@@ -20,6 +20,8 @@ import listIcon from '../assets/icons/list.png';
 import navIcon from '../assets/icons/nav.png';
 import robotIcon from '../assets/robot-icon.png';
 
+import { html as beautifyHtml } from 'js-beautify'; // 코드 추가 npm install js-beautify
+
 import { registerLayoutBlocks } from "../tabs/LayoutTab.jsx";
 registerLayoutBlocks();
 
@@ -117,13 +119,15 @@ function CodeFloat({ renderRef }) {
 
   const BTN_SIZE = 36;
   const MARGIN = 8;
+  const POPUP_MIN_W = 500;
+  const POPUP_MIN_H = 240;
+  const POPUP_MAX_W = 900;
+  const POPUP_MAX_H = 600;
   const CLICK_TOLERANCE = 5;
 
   useEffect(() => {
     const ws = Blockly.getMainWorkspace();
-    if (ws) {
-      setInjectionEl(ws.getInjectionDiv());
-    }
+    if (ws) setInjectionEl(ws.getInjectionDiv());
   }, []);
 
   const clamp = (v, min, max) => Math.min(Math.max(v, min), max);
@@ -150,9 +154,7 @@ function CodeFloat({ renderRef }) {
   };
 
   // 팝업 토글 (닫기 버튼 없음)
-  const togglePopup = () => {
-    setCodeOpen(open => !open);
-  };
+  const togglePopup = () => setCodeOpen(open => !open);
 
   // 코드 팝업이 열려있으면 실시간 innerHTML 반영
   useEffect(() => {
@@ -164,9 +166,7 @@ function CodeFloat({ renderRef }) {
     const ws = Blockly.getMainWorkspace();
     ws && ws.addChangeListener(updateCode);
     updateCode();
-    return () => {
-      ws && ws.removeChangeListener(updateCode);
-    };
+    return () => { ws && ws.removeChangeListener(updateCode); };
   }, [codeOpen, renderRef]);
 
   const handleDown = (e) => {
@@ -175,30 +175,22 @@ function CodeFloat({ renderRef }) {
     e.stopPropagation();
     draggingRef.current = true;
     startRef.current = { x: e.clientX, y: e.clientY };
-
     window.addEventListener("pointermove", handleMove, { passive: false });
-    window.addEventListener("pointerup", handleUp, {
-      passive: false,
-      once: true,
-    });
+    window.addEventListener("pointerup", handleUp, { passive: false, once: true });
   };
 
   const handleMove = (e) => {
     if (!draggingRef.current || !injectionEl) return;
     e.preventDefault();
-
     const rect = injectionEl.getBoundingClientRect();
     const toolboxH = getToolboxHeight();
     const scrollLeft = injectionEl.scrollLeft || 0;
     const scrollTop = injectionEl.scrollTop || 0;
-
-    // 버튼 중심이 커서에 맞게
     let nx = e.clientX - rect.left + scrollLeft - BTN_SIZE / 2;
     let ny = e.clientY - rect.top + scrollTop - BTN_SIZE / 2;
-
+    // 버튼이 완전히 안쪽에만 있게 clamp!
     nx = clamp(nx, MARGIN + scrollLeft, rect.width - BTN_SIZE - MARGIN + scrollLeft);
     ny = clamp(ny, toolboxH + MARGIN + scrollTop, rect.height - BTN_SIZE - MARGIN + scrollTop);
-
     posRef.current = { x: nx, y: ny };
     force((v) => v + 1);
   };
@@ -207,13 +199,38 @@ function CodeFloat({ renderRef }) {
     if (!draggingRef.current) return;
     draggingRef.current = false;
     window.removeEventListener("pointermove", handleMove);
-
     const dx = e.clientX - startRef.current.x;
     const dy = e.clientY - startRef.current.y;
     const dist = Math.hypot(dx, dy);
-
     if (dist <= CLICK_TOLERANCE) togglePopup();
+    // 버튼이 벽에 살짝이라도 넘치면 안쪽으로 자동 이동 보정!
+    setTimeout(() => {
+      if (!injectionEl) return;
+      const rect = injectionEl.getBoundingClientRect();
+      const toolboxH = getToolboxHeight();
+      const scrollLeft = injectionEl.scrollLeft || 0;
+      const scrollTop = injectionEl.scrollTop || 0;
+      let { x, y } = posRef.current;
+      x = clamp(x, MARGIN + scrollLeft, rect.width - BTN_SIZE - MARGIN + scrollLeft);
+      y = clamp(y, toolboxH + MARGIN + scrollTop, rect.height - BTN_SIZE - MARGIN + scrollTop);
+      posRef.current = { x, y };
+      force(v => v + 1);
+    }, 0);
   };
+
+useEffect(() => {
+  if (!codeOpen) return;
+  const updateCode = () => {
+    const html = renderRef?.current?.innerHTML?.trim() || "";
+    // 여기서 예쁘게!
+    const pretty = beautifyHtml(html, { indent_size: 2 });
+    setCodeText(pretty || "<!-- 렌더된 내용이 없습니다. -->");
+  };
+  const ws = Blockly.getMainWorkspace();
+  ws && ws.addChangeListener(updateCode);
+  updateCode();
+  return () => { ws && ws.removeChangeListener(updateCode); };
+}, [codeOpen, renderRef]);
 
   // 리사이즈, injectionDiv 스크롤 시 위치 보정
   useEffect(() => {
@@ -242,8 +259,31 @@ function CodeFloat({ renderRef }) {
   }, [injectionEl]);
 
   if (!injectionEl) return null;
-
   const p = ensureInitialPos();
+
+  // 팝업 위치 계산 (벽 넘지 않게!)
+  const getPopupPos = () => {
+    const rect = injectionEl.getBoundingClientRect();
+    const scrollLeft = injectionEl.scrollLeft || 0;
+    const scrollTop = injectionEl.scrollTop || 0;
+    let left = p.x;
+    let top = p.y + BTN_SIZE + 8;
+    let popupW = POPUP_MIN_W;
+    let popupH = POPUP_MIN_H;
+    // 최대값으로 clamp
+    if (left + popupW > rect.width + scrollLeft - MARGIN) {
+      left = rect.width + scrollLeft - popupW - MARGIN;
+      if (left < MARGIN + scrollLeft) left = MARGIN + scrollLeft;
+    }
+    if (top + popupH > rect.height + scrollTop - MARGIN) {
+      top = p.y - popupH - 8; // 위로 띄우기
+      if (top < MARGIN + scrollTop) top = rect.height + scrollTop - popupH - MARGIN;
+      if (top < MARGIN + scrollTop) top = MARGIN + scrollTop;
+    }
+    return { left, top };
+  };
+
+  const popupPos = getPopupPos();
 
   return createPortal(
     <>
@@ -281,13 +321,13 @@ function CodeFloat({ renderRef }) {
           className="code-popup"
           style={{
             position: "absolute",
-            left: p.x,
-            top: p.y + BTN_SIZE + 8,
+            left: popupPos.left,
+            top: popupPos.top,
             zIndex: 1000,
-            minWidth: 500,
-            minHeight: 240,
-            maxWidth: 900,
-            maxHeight: 600,
+            minWidth: POPUP_MIN_W,
+            minHeight: POPUP_MIN_H,
+            maxWidth: POPUP_MAX_W,
+            maxHeight: POPUP_MAX_H,
             overflow: "auto",
             background: "#fff",
             borderRadius: 10,
