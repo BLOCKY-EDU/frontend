@@ -17,8 +17,8 @@ export function registerLayoutBlocks() {
   Blockly.Blocks['container_box'] = {
     init: function () {
       this.appendDummyInput().appendField("상자");
-      this.appendStatementInput("CONTENT").setCheck(localCombineTypes);   // 내부 콘텐츠
-      this.appendStatementInput("STYLE").setCheck(STYLE_BLOCK_TYPES);     // 스타일 블록 연결
+      this.appendStatementInput("CONTENT").setCheck(localCombineTypes).appendField("내용");   // 내부 콘텐츠
+      this.appendStatementInput("STYLE").setCheck(STYLE_BLOCK_TYPES).appendField("스타일");     // 스타일 블록 연결
       this.setColour("#A3D5FF");
       this.setTooltip("내용을 담는 레이아웃 상자입니다.");
       this.setPreviousStatement(true, 'container_box');
