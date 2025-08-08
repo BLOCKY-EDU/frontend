@@ -1,64 +1,297 @@
-import * as Blockly from 'blockly';
-import 'blockly/blocks';
+import * as Blockly from "blockly";
+import "blockly/blocks";
+import { FieldColour } from "@blockly/field-colour";
+Blockly.fieldRegistry.register("field_colour", FieldColour);
 
-import { FieldColour } from '@blockly/field-colour';
-Blockly.fieldRegistry.register('field_colour', FieldColour);
-
-
-import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { BlocklyWorkspace } from 'react-blockly';
-import './App.css';
+import React, { useState, useEffect, useRef, useMemo } from "react";
+import { BlocklyWorkspace } from "react-blockly";
+import { createPortal } from "react-dom";
+import "./App.css";
 import blockyLogo from "../assets/blocky-logo.png";
-import 'blockly/javascript';
-import 'blockly/msg/ko';
+import "blockly/javascript";
+import "blockly/msg/ko";
 
-import { registerLayoutBlocks } from '../tabs/LayoutTab.jsx';
+import { registerLayoutBlocks } from "../tabs/LayoutTab.jsx";
 registerLayoutBlocks();
-
-
-
 
 function AlertModal({ open, onClose, message }) {
   if (!open) return null;
   return (
     <div
       style={{
-        position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-        background: 'rgba(0,0,0,0.4)', zIndex: 9999,
-        display: 'flex', alignItems: 'center', justifyContent: 'center'
+        position: "fixed",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        background: "rgba(0,0,0,0.4)",
+        zIndex: 9999,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
       }}
       onClick={onClose}
     >
       <div
         style={{
-          background: '#fff', padding: 24, borderRadius: 8, minWidth: 280,
-          boxShadow: '0 4px 32px rgba(0,0,0,0.2)', textAlign: 'center'
+          background: "#fff",
+          padding: 24,
+          borderRadius: 8,
+          minWidth: 280,
+          boxShadow: "0 4px 32px rgba(0,0,0,0.2)",
+          textAlign: "center",
         }}
-        onClick={e => e.stopPropagation()} // 팝업 안 클릭은 전파 막기
+        onClick={(e) => e.stopPropagation()}
       >
-        <div style={{ marginBottom: 20, fontSize: 18, color: '#333' }}>{message}</div>
-        <button onClick={onClose} style={{ padding: '6px 20px' }}>확인</button>
+        <div style={{ marginBottom: 20, fontSize: 18, color: "#333" }}>
+          {message}
+        </div>
+        <button onClick={onClose} style={{ padding: "6px 20px" }}>
+          확인
+        </button>
       </div>
     </div>
   );
 }
 
-
-import { getWritingTabToolbox, registerWritingBlocks, parseWritingXmlToJSX } from '../tabs/WritingTab.jsx';
-import { getImageTabToolbox, registerImageBlocks, parseImageXmlToJSX } from '../tabs/ImageTab.jsx';
-import { getLayoutTabToolbox, parseLayoutXmlToJSX } from '../tabs/LayoutTab.jsx';
-import { registerButtonBlocks, getButtonTabToolbox, parseButtonXmlToJSX } from '../tabs/ButtonTab.jsx';
-import { registerStyleBlocks, getStyleTabToolbox } from '../tabs/StyleTab.jsx';
-import { getListTabToolbox, registerListBlocks, parseListXmlToJSX } from '../tabs/ListTab.jsx';
-import {registerNavigationBlocks, getNavigationTabToolbox, parseNavigationXmlToJSX} from '../tabs/NavigationTab.jsx';
+import {
+  getWritingTabToolbox,
+  registerWritingBlocks,
+  parseWritingXmlToJSX,
+} from "../tabs/WritingTab.jsx";
+import {
+  getImageTabToolbox,
+  registerImageBlocks,
+  parseImageXmlToJSX,
+} from "../tabs/ImageTab.jsx";
+import {
+  getLayoutTabToolbox,
+  parseLayoutXmlToJSX,
+} from "../tabs/LayoutTab.jsx";
+import {
+  registerButtonBlocks,
+  getButtonTabToolbox,
+  parseButtonXmlToJSX,
+} from "../tabs/ButtonTab.jsx";
+import {
+  registerStyleBlocks,
+  getStyleTabToolbox,
+} from "../tabs/StyleTab.jsx";
+import {
+  getListTabToolbox,
+  registerListBlocks,
+  parseListXmlToJSX,
+} from "../tabs/ListTab.jsx";
+import {
+  registerNavigationBlocks,
+  getNavigationTabToolbox,
+  parseNavigationXmlToJSX,
+} from "../tabs/NavigationTab.jsx";
 
 registerStyleBlocks();
 registerWritingBlocks();
 registerImageBlocks();
-// registerLayoutBlocks();
 registerButtonBlocks();
 registerListBlocks();
 registerNavigationBlocks();
+
+// 드래그 플로팅 버튼 + 코드 팝업(실시간)
+function CodeFloat({ renderRef }) {
+  const [injectionEl, setInjectionEl] = useState(null);
+  const [codeOpen, setCodeOpen] = useState(false);
+  const [codeText, setCodeText] = useState("");
+  const posRef = useRef({ x: null, y: null });
+  const [, force] = useState(0);
+
+  const draggingRef = useRef(false);
+  const startRef = useRef({ x: 0, y: 0 });
+
+  const BTN_SIZE = 36;
+  const MARGIN = 8;
+  const CLICK_TOLERANCE = 5;
+
+  useEffect(() => {
+    const ws = Blockly.getMainWorkspace();
+    if (ws) {
+      setInjectionEl(ws.getInjectionDiv());
+    }
+  }, []);
+
+  const clamp = (v, min, max) => Math.min(Math.max(v, min), max);
+
+  const getToolboxHeight = () => {
+    if (!injectionEl) return 0;
+    const tb = injectionEl.querySelector(".blocklyToolboxDiv");
+    return tb ? tb.getBoundingClientRect().height : 0;
+  };
+
+  const ensureInitialPos = () => {
+    if (!injectionEl) return { x: MARGIN, y: MARGIN };
+    const rect = injectionEl.getBoundingClientRect();
+    const toolboxH = getToolboxHeight();
+    const scrollLeft = injectionEl.scrollLeft || 0;
+    const scrollTop = injectionEl.scrollTop || 0;
+    const x = rect.width - BTN_SIZE - MARGIN + scrollLeft;
+    const y = toolboxH + MARGIN + scrollTop;
+    if (posRef.current.x == null || posRef.current.y == null) {
+      posRef.current = { x, y };
+      force((v) => v + 1);
+    }
+    return posRef.current;
+  };
+
+  // 팝업 토글 (닫기 버튼 없음)
+  const togglePopup = () => {
+    setCodeOpen(open => !open);
+  };
+
+  // 코드 팝업이 열려있으면 실시간 innerHTML 반영
+  useEffect(() => {
+    if (!codeOpen) return;
+    const updateCode = () => {
+      const html = renderRef?.current?.innerHTML?.trim() || "";
+      setCodeText(html || "<!-- 렌더된 내용이 없습니다. -->");
+    };
+    const ws = Blockly.getMainWorkspace();
+    ws && ws.addChangeListener(updateCode);
+    updateCode();
+    return () => {
+      ws && ws.removeChangeListener(updateCode);
+    };
+  }, [codeOpen, renderRef]);
+
+  const handleDown = (e) => {
+    if (!injectionEl) return;
+    e.preventDefault();
+    e.stopPropagation();
+    draggingRef.current = true;
+    startRef.current = { x: e.clientX, y: e.clientY };
+
+    window.addEventListener("pointermove", handleMove, { passive: false });
+    window.addEventListener("pointerup", handleUp, {
+      passive: false,
+      once: true,
+    });
+  };
+
+  const handleMove = (e) => {
+    if (!draggingRef.current || !injectionEl) return;
+    e.preventDefault();
+
+    const rect = injectionEl.getBoundingClientRect();
+    const toolboxH = getToolboxHeight();
+    const scrollLeft = injectionEl.scrollLeft || 0;
+    const scrollTop = injectionEl.scrollTop || 0;
+
+    // 버튼 중심이 커서에 맞게
+    let nx = e.clientX - rect.left + scrollLeft - BTN_SIZE / 2;
+    let ny = e.clientY - rect.top + scrollTop - BTN_SIZE / 2;
+
+    nx = clamp(nx, MARGIN + scrollLeft, rect.width - BTN_SIZE - MARGIN + scrollLeft);
+    ny = clamp(ny, toolboxH + MARGIN + scrollTop, rect.height - BTN_SIZE - MARGIN + scrollTop);
+
+    posRef.current = { x: nx, y: ny };
+    force((v) => v + 1);
+  };
+
+  const handleUp = (e) => {
+    if (!draggingRef.current) return;
+    draggingRef.current = false;
+    window.removeEventListener("pointermove", handleMove);
+
+    const dx = e.clientX - startRef.current.x;
+    const dy = e.clientY - startRef.current.y;
+    const dist = Math.hypot(dx, dy);
+
+    if (dist <= CLICK_TOLERANCE) togglePopup();
+  };
+
+  // 리사이즈, injectionDiv 스크롤 시 위치 보정
+  useEffect(() => {
+    const onResizeOrScroll = () => {
+      if (!injectionEl) return;
+      const rect = injectionEl.getBoundingClientRect();
+      const toolboxH = getToolboxHeight();
+      const scrollLeft = injectionEl.scrollLeft || 0;
+      const scrollTop = injectionEl.scrollTop || 0;
+      const p = posRef.current;
+      if (p.x == null || p.y == null) return;
+      p.x = clamp(p.x, MARGIN + scrollLeft, rect.width - BTN_SIZE - MARGIN + scrollLeft);
+      p.y = clamp(p.y, toolboxH + MARGIN + scrollTop, rect.height - BTN_SIZE - MARGIN + scrollTop);
+      force((v) => v + 1);
+    };
+    window.addEventListener("resize", onResizeOrScroll);
+    if (injectionEl) {
+      injectionEl.addEventListener("scroll", onResizeOrScroll);
+    }
+    return () => {
+      window.removeEventListener("resize", onResizeOrScroll);
+      if (injectionEl) {
+        injectionEl.removeEventListener("scroll", onResizeOrScroll);
+      }
+    };
+  }, [injectionEl]);
+
+  if (!injectionEl) return null;
+
+  const p = ensureInitialPos();
+
+  return createPortal(
+    <>
+      <button
+        className={`floating-code-btn ${draggingRef.current ? "dragging" : ""}`}
+        data-tip="코드 보기"
+        title="코드 보기"
+        onPointerDown={handleDown}
+        style={{
+          position: "absolute",
+          left: p.x,
+          top: p.y,
+          width: BTN_SIZE,
+          height: BTN_SIZE,
+          borderRadius: "50%",
+          background: "#111",
+          color: "#fff",
+          border: "none",
+          cursor: draggingRef.current ? "grabbing" : "grab",
+          zIndex: 999,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          fontWeight: 700,
+          boxShadow: "0 6px 18px rgba(0,0,0,0.25)",
+          userSelect: "none",
+          touchAction: "none",
+        }}
+      >
+        {"</>"}
+      </button>
+
+      {codeOpen && (
+        <div
+          className="code-popup"
+          style={{
+            position: "absolute",
+            left: p.x,
+            top: p.y + BTN_SIZE + 8,
+            zIndex: 1000,
+          }}
+        >
+          <div className="code-popup-header">
+            <span>HTML 코드</span>
+            <div style={{ display: "flex", gap: 8 }}>
+              <button onClick={() => navigator.clipboard.writeText(codeText)}>
+                복사
+              </button>
+            </div>
+          </div>
+          <pre className="code-popup-body">{codeText}</pre>
+        </div>
+      )}
+    </>,
+    injectionEl
+  );
+}
 
 export default function App() {
   const tabs = [
@@ -68,54 +301,42 @@ export default function App() {
     { name: "버튼", color: "#B5D8FF" },
     { name: "사진", color: "#B5D8FF" },
     { name: "목록", color: "#B5D8FF" },
-    { name: "이동", color: "#B5D8FF" }
+    { name: "이동", color: "#B5D8FF" },
   ];
-  
-  
-  const [globalBackgroundColor, setGlobalBackgroundColor] = useState("#ffffff");
 
+  const [globalBackgroundColor, setGlobalBackgroundColor] = useState("#ffffff");
   const [activeTab, setActiveTab] = useState("글쓰기");
   const [tabXmlMap, setTabXmlMap] = useState({});
   const workspaceRef = useRef(null);
 
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertMsg, setAlertMsg] = useState("");
-  const [alertShown, setAlertShown] = useState(false); 
+  const [alertShown, setAlertShown] = useState(false);
 
-  
+  const renderRef = useRef(null);
+
   useEffect(() => {
     const handleResize = () => {
       const workspace = Blockly.getMainWorkspace();
       if (workspace) Blockly.svgResize(workspace);
     };
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
     setTimeout(() => handleResize(), 100);
-    return () => window.removeEventListener('resize', handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
-
-  // useEffect(() => {
-  //   const workspace = Blockly.getMainWorkspace();
-  //   if (workspace) {
-  //     const xml = Blockly.Xml.domToText(Blockly.Xml.workspaceToDom(workspace));
-  //     setTabXmlMap(prev => ({ ...prev, [activeTab]: xml }));
-  //   }
-  // }, [activeTab]);
-
 
   useEffect(() => {
     const workspace = Blockly.getMainWorkspace();
     if (workspace) {
       const topBlocks = workspace.getTopBlocks(true);
-
-
-      const hasBox = topBlocks.some(block => block.type === 'container_box');
+      const hasBox = topBlocks.some((block) => block.type === "container_box");
       if (hasBox) {
         setAlertOpen(false);
-        setAlertShown(false); // 다시 상자 빼면 안내 다시 가능!
+        setAlertShown(false);
       }
     }
   }, [tabXmlMap]);
-  
+
   const parseXmlToJSX = (block) => {
     const xml = Blockly.Xml.blockToDom(block);
     const xmlText = Blockly.Xml.domToText(xml);
@@ -124,12 +345,31 @@ export default function App() {
     if (type === "list_bulleted" || type === "list_numbered") {
       return parseListXmlToJSX(xmlText);
     }
-
-    if (["text_title", "text_small_title", "small_content", "recipe_step", "toggle_input", "highlight_text"].includes(type)) {
+    if (
+      [
+        "text_title",
+        "text_small_title",
+        "small_content",
+        "recipe_step",
+        "toggle_input",
+        "highlight_text",
+      ].includes(type)
+    ) {
       return parseWritingXmlToJSX(xmlText);
-    } else if (["normal_button", "submit_button", "text_input", "email_input", "checkbox_block", "select_box"].includes(type)) {
+    } else if (
+      [
+        "normal_button",
+        "submit_button",
+        "text_input",
+        "email_input",
+        "checkbox_block",
+        "select_box",
+      ].includes(type)
+    ) {
       return parseButtonXmlToJSX(xmlText);
-    } else if (["insert_image", "insert_video", "youtube_link"].includes(type)) {
+    } else if (
+      ["insert_image", "insert_video", "youtube_link"].includes(type)
+    ) {
       return parseImageXmlToJSX(xmlText);
     } else if (["list_item", "ordered_list_item"].includes(type)) {
       return parseListXmlToJSX(xmlText);
@@ -145,50 +385,33 @@ export default function App() {
     const workspace = Blockly.getMainWorkspace();
     if (!workspace) return [];
     const topBlocks = workspace.getTopBlocks(true);
-  
 
-    const bgBlock = topBlocks.find(b => b.type === "style_background");
-  if (bgBlock && !bgBlock.getParent()) {
-    const colorField = bgBlock.getFieldValue("COLOR");
-    if (colorField && globalBackgroundColor !== colorField) {
-      setGlobalBackgroundColor(colorField);
-    }
-  }else {
-      if (globalBackgroundColor !== "#ffffff") {
-          setGlobalBackgroundColor("#ffffff");
+    const bgBlock = topBlocks.find((b) => b.type === "style_background");
+    if (bgBlock && !bgBlock.getParent()) {
+      const colorField = bgBlock.getFieldValue("COLOR");
+      if (colorField && globalBackgroundColor !== colorField) {
+        setGlobalBackgroundColor(colorField);
       }
-  }
-    // 배경색 블록 처리
-   
+    } else {
+      if (globalBackgroundColor !== "#ffffff") {
+        setGlobalBackgroundColor("#ffffff");
+      }
+    }
 
-
-    // 상자 블록만 필터
-    const boxBlocks = topBlocks.filter(block => block.type === "container_box");
-  
-    // 1. 상자가 없으면 모달 열기
+    const boxBlocks = topBlocks.filter(
+      (block) => block.type === "container_box"
+    );
     if (boxBlocks.length === 0) {
-      if (!alertOpen) setAlertOpen(true);   // 모달 켜기
-      if (alertMsg !== "상자 안에 블록을 넣어주세요.") setAlertMsg("상자 안에 블록을 넣어주세요.");
+      if (!alertOpen) setAlertOpen(true);
+      if (alertMsg !== "상자 안에 블록을 넣어주세요.")
+        setAlertMsg("상자 안에 블록을 넣어주세요.");
       return [];
     }
-  
-    // 2. 상자가 있으면 모달 끄기
     if (alertOpen) setAlertOpen(false);
-  
-    // 3. 상자 안이 비었으면 모달 열기
-    // let showEmptyBoxAlert = false;
-    // boxBlocks.forEach(box => {
-    //   const contentBlock = box.getInputTargetBlock("CONTENT");
-    //   if (!contentBlock) showEmptyBoxAlert = true;
-    // });
-    // if (showEmptyBoxAlert) {
-    //   if (!alertOpen) setAlertOpen(true);
-    //   if (alertMsg !== "상자 안에 블록을 넣어주세요.") setAlertMsg("상자 안에 블록을 넣어주세요.");
-    //   return [];
-    // }
-  
-    // 4. 상자와 콘텐츠가 있으면 정상 렌더
-    topBlocks.sort((a, b) => a.getRelativeToSurfaceXY().y - b.getRelativeToSurfaceXY().y);
+
+    topBlocks.sort(
+      (a, b) => a.getRelativeToSurfaceXY().y - b.getRelativeToSurfaceXY().y
+    );
 
     const jsxList = [];
     const visited = new Set();
@@ -198,13 +421,12 @@ export default function App() {
         (block.type === "list_item" || block.type === "ordered_list_item") &&
         !visited.has(block.id)
       ) {
-        // 같은 타입끼리 묶어서 ul/ol로 렌더
         const group = [];
         let current = block;
         while (
           current &&
           !visited.has(current.id) &&
-          (current.type === block.type)
+          current.type === block.type
         ) {
           const parsed = parseListXmlToJSX(
             Blockly.Xml.domToText(Blockly.Xml.blockToDom(current))
@@ -218,13 +440,15 @@ export default function App() {
           const Tag = block.type === "ordered_list_item" ? "ol" : "ul";
           jsxList.push(
             <Tag key={block.id}>
-              {group.map((content, i) => <li key={i}>{content}</li>)}
+              {group.map((content, i) => (
+                <li key={i}>{content}</li>
+              ))}
             </Tag>
           );
         }
       } else if (!visited.has(block.id)) {
         const jsx = parseXmlToJSX(block);
-        if (jsx && typeof jsx === 'object' && jsx.type && jsx.content) {
+        if (jsx && typeof jsx === "object" && jsx.type && jsx.content) {
           // 이미 위에서 처리됨
         } else if (jsx) {
           jsxList.push(...(Array.isArray(jsx) ? jsx : [jsx]));
@@ -236,180 +460,146 @@ export default function App() {
     // eslint-disable-next-line
   }, [tabXmlMap]);
 
-
-
   const handleTabChange = (newTab) => {
     const workspace = Blockly.getMainWorkspace();
     if (workspace) {
       const xml = Blockly.Xml.domToText(Blockly.Xml.workspaceToDom(workspace));
-      setTabXmlMap(prev => ({ ...prev, [activeTab]: xml }));
+      setTabXmlMap((prev) => ({ ...prev, [activeTab]: xml }));
     }
     setActiveTab(newTab);
   };
 
-
   const writingBlockTypes = [
-    "text_title", "text_small_title", "small_content",
-    "recipe_step", "checkbox_block", "toggle_input", "highlight_text",
-    "normal_button", "submit_button", "text_input", "email_input", "select_box","navigation_button"
+    "text_title",
+    "text_small_title",
+    "small_content",
+    "recipe_step",
+    "checkbox_block",
+    "toggle_input",
+    "highlight_text",
+    "normal_button",
+    "submit_button",
+    "text_input",
+    "email_input",
+    "select_box",
+    "navigation_button",
   ];
-  // const handleWorkspaceChange = () => {
-  //   const workspace = Blockly.getMainWorkspace();
-  //   workspaceRef.current = workspace;
-  //   if (workspace) {
-  //     const newXml = Blockly.Xml.domToText(Blockly.Xml.workspaceToDom(workspace));
-  //     if (tabXmlMap[activeTab] !== newXml) {
-  //       setTabXmlMap(prev => ({ ...prev, [activeTab]: newXml }));
-  //     }
-  //   }
-  // };
 
+  const handleWorkspaceChange = () => {
+    const workspace = Blockly.getMainWorkspace();
+    workspaceRef.current = workspace;
+    if (workspace) {
+      const newXml = Blockly.Xml.domToText(Blockly.Xml.workspaceToDom(workspace));
+      console.log("실시간 워크스페이스 XML", newXml);
 
+      if (tabXmlMap[activeTab] !== newXml) {
+        setTabXmlMap((prev) => ({ ...prev, [activeTab]: newXml }));
+      }
 
-//   const handleWorkspaceChange = () => {
-//   const workspace = Blockly.getMainWorkspace();
-//   workspaceRef.current = workspace;
-//   if (workspace) {
-//     const newXml = Blockly.Xml.domToText(Blockly.Xml.workspaceToDom(workspace));
-//     if (tabXmlMap[activeTab] !== newXml) {
-//       setTabXmlMap(prev => ({ ...prev, [activeTab]: newXml }));
-//     }
-
-//     // ---- 팝업 로직 추가 ----
-//     const topBlocks = workspace.getTopBlocks(true);
-//     const hasBox = topBlocks.some(block => block.type === 'container_box');
-//     // const writingBlockTypes = [
-//     //   "text_title", "text_small_title", "small_content",
-//     //   "recipe_step", "checkbox_block", "toggle_input", "highlight_text"
-//     // ];
-
-//     const writingBlockTypes = [
-//       "text_title", "text_small_title", "small_content",
-//       "recipe_step", "checkbox_block", "toggle_input", "highlight_text",
-//       "normal_button", "submit_button", "text_input", "email_input", "select_box"
-//     ];
-    
-//     const hasWriting = topBlocks.some(block => writingBlockTypes.includes(block.type));
-
-//     // 상자가 없는데 글쓰기 블록이 존재하면 팝업!
-//     if (!hasBox && hasWriting) {
-//       setAlertOpen(true);
-
-//       // 팝업 뜬 직후 블록도 제거
-//       // (이건 UX에 따라 선택. 아래 한 줄을 주석 해제하면 팝업 후 블록을 자동 제거)
-//       writingBlockTypes.forEach(type => topBlocks.filter(b => b.type === type).forEach(b => b.dispose()));
-//     }
-//   }
-// };
-
-
-const handleWorkspaceChange = () => {
-  const workspace = Blockly.getMainWorkspace();
-  workspaceRef.current = workspace;
-  if (workspace) {
-    const newXml = Blockly.Xml.domToText(Blockly.Xml.workspaceToDom(workspace));
-    console.log("실시간 워크스페이스 XML", newXml);
-
-    if (tabXmlMap[activeTab] !== newXml) {
-      setTabXmlMap(prev => ({ ...prev, [activeTab]: newXml }));
-    }
-
-    const topBlocks = workspace.getTopBlocks(true);
-    const hasBox = topBlocks.some(block => block.type === 'container_box');
-    // 드래그된 글쓰기/버튼 블록이 상자 밖에 있는지 체크
-    if (!hasBox && !alertShown) {
-      let found = false;
-      topBlocks.forEach(block => {
-        if (writingBlockTypes.includes(block.type)) {
-          block.dispose(); // workspace에서 제거
-          found = true;
+      const topBlocks = workspace.getTopBlocks(true);
+      const hasBox = topBlocks.some((block) => block.type === "container_box");
+      if (!hasBox && !alertShown) {
+        let found = false;
+        topBlocks.forEach((block) => {
+          if (writingBlockTypes.includes(block.type)) {
+            block.dispose();
+            found = true;
+          }
+        });
+        if (found) {
+          setAlertMsg("상자 안에 블록을 넣어주세요.");
+          setAlertOpen(true);
+          setAlertShown(true);
         }
-      });
-      if (found) {
-        setAlertMsg("상자 안에 블록을 넣어주세요.");
-        setAlertOpen(true);
-        setAlertShown(true); // 한번만!
       }
     }
-  }
-};
+  };
+
   const getToolboxJson = (tab) => {
     switch (tab) {
-      case "화면": return getLayoutTabToolbox();
-      case "버튼": return getButtonTabToolbox();
-      case "스타일": return getStyleTabToolbox();
-      case "글쓰기": return getWritingTabToolbox();
-      case "사진": return getImageTabToolbox();
-      case "목록": return getListTabToolbox();
-      case "이동": return getNavigationTabToolbox();
-      default: return { kind: "flyoutToolbox", contents: [] };
+      case "화면":
+        return getLayoutTabToolbox();
+      case "버튼":
+        return getButtonTabToolbox();
+      case "스타일":
+        return getStyleTabToolbox();
+      case "글쓰기":
+        return getWritingTabToolbox();
+      case "사진":
+        return getImageTabToolbox();
+      case "목록":
+        return getListTabToolbox();
+      case "이동":
+        return getNavigationTabToolbox();
+      default:
+        return { kind: "flyoutToolbox", contents: [] };
     }
   };
 
   return (
-    <>  <AlertModal open={alertOpen} message={alertMsg} onClose={() => setAlertOpen(false)} />
+    <>
+      <AlertModal
+        open={alertOpen}
+        message={alertMsg}
+        onClose={() => setAlertOpen(false)}
+      />
 
-    <div className="app-container">
-      {/* <header className="header">
-        <div className="logo"><img src={blockyLogo} alt="BLOCKY" /></div>
-        <nav className="nav">
-          <span>서비스 소개</span>
-          <span>자유롭게 놀기</span>
-          <span>미션 수행하기</span>
-        </nav>
-        <div className="auth">
-          <button>로그인</button>
-          <button>회원가입</button>
-        </div>
-      </header> */}
-      <main className="app-main-box">
-        <section className="app-render-box">
-          <div className="app-title-bar">나의 화면</div>
-          <div className="app-rendered-content"  style={{ backgroundColor: globalBackgroundColor,  minHeight: '77.9vh' ,  borderBottomLeftRadius: '8px',
-  borderBottomRightRadius: '8px'}}>
-            {jsxOutput}
-          </div>
-        </section>
-        <section className="app-tool-editor-area">
-          <div className="app-tab-bar">
-            {tabs.map((tab) => (
-              <button
-                key={tab.name}
-                className={`app-tab-btn ${activeTab === tab.name ? 'active' : ''}`}
-                onClick={() => handleTabChange(tab.name)}
-                style={{ backgroundColor: activeTab === tab.name ? '#FFEE95' : tab.color }}
-              >
-                {tab.name}
-              </button>
-            ))}
-          </div>
-          <div className="app-blockly-box">
-            <div className="app-blockly-wrapper">
-              <BlocklyWorkspace
-                key="shared-workspace"
-                toolboxConfiguration={getToolboxJson(activeTab)}
-                className="app-blockly-editor"
-                workspaceConfiguration={{
-                  toolboxPosition: 'top',
-                  horizontalLayout: true,
-                  trashcan: true,
-                  grid: { spacing: 20, length: 3, colour: '#ccc', snap: true },
-                  zoom: { controls: true, wheel: true },
-                  renderer: "zelos",
-                  move: { scrollbars: true, drag: true, wheel: true }
-                }}
-                onWorkspaceChange={handleWorkspaceChange}
-              />
+      <div className="app-container">
+        <main className="app-main-box">
+          <section className="app-render-box">
+            <div className="app-title-bar">나의 화면</div>
+            <div
+              className="app-rendered-content"
+              ref={renderRef}
+              style={{
+                backgroundColor: globalBackgroundColor,
+                minHeight: "77.9vh",
+                borderBottomLeftRadius: "8px",
+                borderBottomRightRadius: "8px",
+              }}
+            >
+              {jsxOutput}
             </div>
-          </div>
-        </section>
-      </main>
-    </div>
-
+          </section>
+          <section className="app-tool-editor-area">
+            <div className="app-tab-bar">
+              {tabs.map((tab) => (
+                <button
+                  key={tab.name}
+                  className={`app-tab-btn ${activeTab === tab.name ? "active" : ""}`}
+                  onClick={() => handleTabChange(tab.name)}
+                  style={{
+                    backgroundColor: activeTab === tab.name ? "#FFEE95" : tab.color,
+                  }}
+                >
+                  {tab.name}
+                </button>
+              ))}
+            </div>
+            <div className="app-blockly-box">
+              <div className="app-blockly-wrapper">
+                <BlocklyWorkspace
+                  key="shared-workspace"
+                  toolboxConfiguration={getToolboxJson(activeTab)}
+                  className="app-blockly-editor"
+                  workspaceConfiguration={{
+                    toolboxPosition: "top",
+                    horizontalLayout: true,
+                    trashcan: true,
+                    grid: { spacing: 20, length: 3, colour: "#ccc", snap: true },
+                    zoom: { controls: true, wheel: true },
+                    renderer: "zelos",
+                    move: { scrollbars: true, drag: true, wheel: true },
+                  }}
+                  onWorkspaceChange={handleWorkspaceChange}
+                />
+                {/* 블록 조립 영역(injectionDiv) 안에 떠 있는 플로팅 버튼 */}
+                <CodeFloat renderRef={renderRef} />
+              </div>
+            </div>
+          </section>
+        </main>
+      </div>
     </>
   );
 }
-
-  
-
-
