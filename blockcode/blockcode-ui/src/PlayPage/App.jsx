@@ -11,6 +11,15 @@ import blockyLogo from "../assets/blocky-logo.png";
 import "blockly/javascript";
 import "blockly/msg/ko";
 
+import screenIcon from '../assets/icons/screen.png';
+import styleIcon from '../assets/icons/style.png';
+import textIcon from '../assets/icons/text.png';
+import buttonIcon from '../assets/icons/button.png';
+import imageIcon from '../assets/icons/image.png';
+import listIcon from '../assets/icons/list.png';
+import navIcon from '../assets/icons/nav.png';
+import robotIcon from '../assets/robot-icon.png';
+
 import { registerLayoutBlocks } from "../tabs/LayoutTab.jsx";
 registerLayoutBlocks();
 
@@ -275,6 +284,14 @@ function CodeFloat({ renderRef }) {
             left: p.x,
             top: p.y + BTN_SIZE + 8,
             zIndex: 1000,
+            minWidth: 500,
+            minHeight: 240,
+            maxWidth: 900,
+            maxHeight: 600,
+            overflow: "auto",
+            background: "#fff",
+            borderRadius: 10,
+            boxShadow: "0 8px 32px rgba(0,0,0,0.18)"
           }}
         >
           <div className="code-popup-header">
@@ -295,13 +312,13 @@ function CodeFloat({ renderRef }) {
 
 export default function App() {
   const tabs = [
-    { name: "화면", color: "#B5D8FF" },
-    { name: "스타일", color: "#B5D8FF" },
-    { name: "글쓰기", color: "#B5D8FF" },
-    { name: "버튼", color: "#B5D8FF" },
-    { name: "사진", color: "#B5D8FF" },
-    { name: "목록", color: "#B5D8FF" },
-    { name: "이동", color: "#B5D8FF" },
+    { name: "화면", color: "#B5D8FF", activeColor: "#A3D5FF", icon: screenIcon },
+    { name: "스타일", color: "#B5D8FF", activeColor: "#D8B4F8", icon: styleIcon },
+    { name: "글쓰기", color: "#B5D8FF", activeColor: "#FFA5A5", icon: textIcon },
+    { name: "버튼", color: "#B5D8FF", activeColor: "#FFCDD6", icon: buttonIcon },
+    { name: "사진", color: "#B5D8FF", activeColor: "#B0EACD", icon: imageIcon },
+    { name: "목록", color: "#B5D8FF", activeColor: "#D8B4F8", icon: listIcon },
+    { name: "이동", color: "#B5D8FF", activeColor: "#FFC8AB", icon: navIcon }
   ];
 
   const [globalBackgroundColor, setGlobalBackgroundColor] = useState("#ffffff");
@@ -490,8 +507,6 @@ export default function App() {
     workspaceRef.current = workspace;
     if (workspace) {
       const newXml = Blockly.Xml.domToText(Blockly.Xml.workspaceToDom(workspace));
-      console.log("실시간 워크스페이스 XML", newXml);
-
       if (tabXmlMap[activeTab] !== newXml) {
         setTabXmlMap((prev) => ({ ...prev, [activeTab]: newXml }));
       }
@@ -551,12 +566,6 @@ export default function App() {
             <div
               className="app-rendered-content"
               ref={renderRef}
-              style={{
-                backgroundColor: globalBackgroundColor,
-                minHeight: "77.9vh",
-                borderBottomLeftRadius: "8px",
-                borderBottomRightRadius: "8px",
-              }}
             >
               {jsxOutput}
             </div>
@@ -569,9 +578,10 @@ export default function App() {
                   className={`app-tab-btn ${activeTab === tab.name ? "active" : ""}`}
                   onClick={() => handleTabChange(tab.name)}
                   style={{
-                    backgroundColor: activeTab === tab.name ? "#FFEE95" : tab.color,
+                    backgroundColor: activeTab === tab.name ? tab.activeColor : tab.color,
                   }}
                 >
+                  <img src={tab.icon} alt={tab.name} style={{ width: 18, height: 18, marginRight: 2 }} />
                   {tab.name}
                 </button>
               ))}
@@ -593,8 +603,12 @@ export default function App() {
                   }}
                   onWorkspaceChange={handleWorkspaceChange}
                 />
-                {/* 블록 조립 영역(injectionDiv) 안에 떠 있는 플로팅 버튼 */}
+                {/* 플로팅 코드 버튼 */}
                 <CodeFloat renderRef={renderRef} />
+                {/* 로봇 아이콘 */}
+                <div className="app-robot-container" style={{ position: "absolute", bottom: 20, right: 30 }}>
+                  <img src={robotIcon} alt="AI 도우미" className="app-robot-icon" style={{ width: 52, height: 52 }} />
+                </div>
               </div>
             </div>
           </section>
