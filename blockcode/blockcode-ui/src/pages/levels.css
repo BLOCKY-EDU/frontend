@@ -1,0 +1,23 @@
+/* 공통 레이아웃 */
+.level-page {
+    padding: 2rem;
+    text-align: center;
+  }
+  
+  /* 공통 타이틀/본문 */
+  .level-title {
+    color: var(--accent, #007aff);
+    margin: 0 0 0.75rem;
+  }
+  
+  .level-desc {
+    font-size: 1rem;
+    margin: 0.75rem 0 0;
+    color: #333;
+  }
+  
+  /* 레벨별 테마 색 (CSS 변수) */
+  .level--basic   { --accent: #007aff; } /* 파랑 */
+  .level--inter   { --accent: #ff9500; } /* 주황 */
+  .level--adv     { --accent: #34c759; } /* 초록 */
+  
