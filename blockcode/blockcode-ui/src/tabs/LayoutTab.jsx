@@ -11,11 +11,13 @@ import {parseSingleNavigationBlock} from './NavigationTab';
 import {parseSingleListBlock} from './ListTab';
 import {parseSingleImageBlock} from "./ImageTab.jsx";
 
+const localCombineTypes = [...COMBINE_TYPES, 'container_box'];
+
 export function registerLayoutBlocks() {
   Blockly.Blocks['container_box'] = {
     init: function () {
       this.appendDummyInput().appendField("상자");
-      this.appendStatementInput("CONTENT").setCheck(COMBINE_TYPES);   // 내부 콘텐츠
+      this.appendStatementInput("CONTENT").setCheck(localCombineTypes);   // 내부 콘텐츠
       this.appendStatementInput("STYLE").setCheck(STYLE_BLOCK_TYPES);     // 스타일 블록 연결
       this.setColour("#A3D5FF");
       this.setTooltip("내용을 담는 레이아웃 상자입니다.");
