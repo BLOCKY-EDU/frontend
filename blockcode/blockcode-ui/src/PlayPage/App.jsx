@@ -403,6 +403,7 @@ export default function App() {
     if (!workspace) return [];
     const topBlocks = workspace.getTopBlocks(true);
 
+    // 배경색 블록 바깥에 있을 때 전체 배경색상 적용
     const bgBlock = topBlocks.find((b) => b.type === "style_background");
     if (bgBlock && !bgBlock.getParent()) {
       const colorField = bgBlock.getFieldValue("COLOR");
@@ -566,6 +567,12 @@ export default function App() {
             <div
               className="app-rendered-content"
               ref={renderRef}
+              style={{
+                backgroundColor: globalBackgroundColor,
+                minHeight: '77.9vh',
+                borderBottomLeftRadius: '8px',
+                borderBottomRightRadius: '8px',
+              }}
             >
               {jsxOutput}
             </div>
