@@ -609,7 +609,7 @@ export default function App() {
               ref={renderRef}
               style={{
                 backgroundColor: globalBackgroundColor,
-                minHeight: '77.9vh',
+                minHeight: '81.9vh',
                 borderBottomLeftRadius: '8px',
                 borderBottomRightRadius: '8px',
               }}
