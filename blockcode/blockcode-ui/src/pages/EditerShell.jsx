@@ -639,10 +639,10 @@ if (bgBlock) {
               ref={renderRef}
               style={{
                 backgroundColor: globalBackgroundColor,
-                height:'400px',
-                // minHeight: '100%',
-                borderBottomLeftRadius: '8px',
-                borderBottomRightRadius: '8px',
+                minHeight: '100%',
+                borderRadius:'10px',
+                padding:'40px',
+
               }}
             >
               {jsxOutput}
