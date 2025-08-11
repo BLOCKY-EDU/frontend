@@ -23,9 +23,11 @@
 
 /* 로고 */
 .nav-logo {
-  width: 100px;
-  height: auto;
-  cursor: pointer;
+  display: block;
+  display: flex;
+  width: 120px;
+  align-items: center;
+  height: auto; 
 }
 
 /* 우측 메뉴 */
