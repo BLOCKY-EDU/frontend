@@ -10,10 +10,10 @@ export default function MissionPage() {
   if (!problem) return <div>존재하지 않는 문제입니다. (id={id})</div>;
 
   return (
-    <div style={{ padding:20, border:"2px solid #A3D5FF", borderRadius:12, background:"#fff" }}>
+    <div style={{ padding:20, borderRadius:12, background:"#fff" }}>
       <div style={{ display:"flex", justifyContent:"space-between", marginBottom:12 }}>
         <div className="app-tab-btn active" style={{ borderBottomLeftRadius:10, borderBottomRightRadius:10 }}>
-          나의 미션 — “{problem.title}”
+          미션! “{problem.title}”
         </div>
         <button className="app-tab-btn" onClick={() => navigate(-1)}>문제 목록으로</button>
       </div>

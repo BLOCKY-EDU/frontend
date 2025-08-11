@@ -633,15 +633,16 @@ if (bgBlock) {
         <div className="parent-container">
 
           <section className="app-render-box-editer">
-            <div className="app-title-bar1">나의 화면</div>
+            <div className="app-title-bar">나의 화면</div>
             <div
               className="app-render-content"
               ref={renderRef}
               style={{
                 backgroundColor: globalBackgroundColor,
-                // minHeight: '34.3vh',
-                borderBottomLeftRadius: '10px',
-                borderBottomRightRadius: '10px',
+                height:'400px',
+                // minHeight: '100%',
+                borderBottomLeftRadius: '8px',
+                borderBottomRightRadius: '8px',
               }}
             >
               {jsxOutput}
@@ -650,7 +651,7 @@ if (bgBlock) {
 
 
           <section className="app-my-mission-box">
-            <div className="app-title-bar2">나의 미션</div>
+            <div className="app-title-bar">나의 미션</div>
             <div className="app-render-mission-content">
                 <Outlet/>
             </div>

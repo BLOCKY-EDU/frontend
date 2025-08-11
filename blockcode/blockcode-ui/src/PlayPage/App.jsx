@@ -609,9 +609,10 @@ export default function App() {
               ref={renderRef}
               style={{
                 backgroundColor: globalBackgroundColor,
-                minHeight: '81.9vh',
+                minHeight: '100%',
                 borderBottomLeftRadius: '8px',
                 borderBottomRightRadius: '8px',
+                padding:'40px',
               }}
             >
               {jsxOutput}
