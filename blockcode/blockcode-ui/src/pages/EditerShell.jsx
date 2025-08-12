@@ -9,6 +9,7 @@ import React, { useState, useEffect, useRef, useMemo } from "react";
 import { BlocklyWorkspace } from "react-blockly";
 import { createPortal } from "react-dom";
 import "../PlayPage/app.css";
+import "./blockly-font.css";
 import blockyLogo from "../assets/blocky-logo.png";
 import "blockly/javascript";
 import "blockly/msg/ko";
@@ -99,6 +100,7 @@ import {
   parseNavigationXmlToJSX,
 } from "../tabs/NavigationTab.jsx";
 
+// --- 등록 순서 중요할 수 있으므로 모아서 실행
 registerStyleBlocks();
 registerWritingBlocks();
 registerImageBlocks();
@@ -129,8 +131,6 @@ function CodeFloat({ renderRef }) {
   useEffect(() => {
     const ws = Blockly.getMainWorkspace();
     if (ws) setInjectionEl(ws.getInjectionDiv());
-
-
   }, []);
 
   const clamp = (v, min, max) => Math.min(Math.max(v, min), max);
@@ -159,22 +159,18 @@ function CodeFloat({ renderRef }) {
   // 팝업 토글 (닫기 버튼 없음)
   const togglePopup = () => setCodeOpen(open => !open);
 
-
-
-  // 코드 팝업이 열려있으면 실시간 innerHTML 반영
+  // 코드 팝업이 열려있으면 실시간 innerHTML 반영(정리된 버전: 중복 cleanup 제거)
   useEffect(() => {
     if (!codeOpen) return;
     const updateCode = () => {
       const html = renderRef?.current?.innerHTML?.trim() || "";
-      setCodeText(html || "<!-- 렌더된 내용이 없습니다. -->");
+      const pretty = beautifyHtml(html, { indent_size: 2 });
+      setCodeText(pretty || "<!-- 렌더된 내용이 없습니다. -->");
     };
     const ws = Blockly.getMainWorkspace();
     ws && ws.addChangeListener(updateCode);
     updateCode();
-    return () => {
-        return () => { ws && ws.removeChangeListener(updateCode); };
-
-    };
+    return () => { ws && ws.removeChangeListener(updateCode); };
   }, [codeOpen, renderRef]);
 
   const handleDown = (e) => {
@@ -219,36 +215,21 @@ function CodeFloat({ renderRef }) {
 
     if (dist <= CLICK_TOLERANCE) togglePopup();
 
-    // 버튼이 벽에 살짝이라도 넘치면 안쪽으로 자동 이동 보정!
+    // 버튼이 벽에 살짝이라도 넘치면 안쪽으로 자동 이동 보정
     setTimeout(() => {
-        if (!injectionEl) return;
-        const rect = injectionEl.getBoundingClientRect();
-        const toolboxH = getToolboxHeight();
-        const scrollLeft = injectionEl.scrollLeft || 0;
-        const scrollTop = injectionEl.scrollTop || 0;
-        let { x, y } = posRef.current;
-        x = clamp(x, MARGIN + scrollLeft, rect.width - BTN_SIZE - MARGIN + scrollLeft);
-        y = clamp(y, toolboxH + MARGIN + scrollTop, rect.height - BTN_SIZE - MARGIN + scrollTop);
-        posRef.current = { x, y };
-        force(v => v + 1);
-      }, 0);
+      if (!injectionEl) return;
+      const rect = injectionEl.getBoundingClientRect();
+      const toolboxH = getToolboxHeight();
+      const scrollLeft = injectionEl.scrollLeft || 0;
+      const scrollTop = injectionEl.scrollTop || 0;
+      let { x, y } = posRef.current;
+      x = clamp(x, MARGIN + scrollLeft, rect.width - BTN_SIZE - MARGIN + scrollLeft);
+      y = clamp(y, toolboxH + MARGIN + scrollTop, rect.height - BTN_SIZE - MARGIN + scrollTop);
+      posRef.current = { x, y };
+      force(v => v + 1);
+    }, 0);
   };
 
-
-  useEffect(() => {
-    if (!codeOpen) return;
-    const updateCode = () => {
-      const html = renderRef?.current?.innerHTML?.trim() || "";
-      // 여기서 예쁘게!
-      const pretty = beautifyHtml(html, { indent_size: 2 });
-      setCodeText(pretty || "<!-- 렌더된 내용이 없습니다. -->");
-    };
-    const ws = Blockly.getMainWorkspace();
-    ws && ws.addChangeListener(updateCode);
-    updateCode();
-    return () => { ws && ws.removeChangeListener(updateCode); };
-  }, [codeOpen, renderRef]);
-  
   // 리사이즈, injectionDiv 스크롤 시 위치 보정
   useEffect(() => {
     const onResizeOrScroll = () => {
@@ -278,7 +259,6 @@ function CodeFloat({ renderRef }) {
   if (!injectionEl) return null;
 
   const p = ensureInitialPos();
-
 
   const getPopupPos = () => {
     const rect = injectionEl.getBoundingClientRect();
@@ -461,25 +441,22 @@ export default function EditorShell() {
     if (!workspace) return [];
     const topBlocks = workspace.getTopBlocks(true);
 
-    // const bgBlock = topBlocks.find((b) => b.type === "style_background");
-
     // 배경 블록 감지
-const BG_TYPES = ["style_background", "background_color_block"];
-const bgBlock = topBlocks.find(
-  (b) => BG_TYPES.includes(b.type) && !b.getParent()
-);
+    const BG_TYPES = ["style_background", "background_color_block"];
+    const bgBlock = topBlocks.find(
+      (b) => BG_TYPES.includes(b.type) && !b.getParent()
+    );
 
-if (bgBlock) {
-  const colorField =
-    bgBlock.getFieldValue?.("COLOR") ||
-    bgBlock.getFieldValue?.("BG_COLOR");
-  if (colorField && globalBackgroundColor !== colorField) {
-    setGlobalBackgroundColor(colorField);
-  }
-} else if (globalBackgroundColor !== "#ffffff") {
-  setGlobalBackgroundColor("#ffffff");
-}
-
+    if (bgBlock) {
+      const colorField =
+        bgBlock.getFieldValue?.("COLOR") ||
+        bgBlock.getFieldValue?.("BG_COLOR");
+      if (colorField && globalBackgroundColor !== colorField) {
+        setGlobalBackgroundColor(colorField);
+      }
+    } else if (globalBackgroundColor !== "#ffffff") {
+      setGlobalBackgroundColor("#ffffff");
+    }
 
     const boxBlocks = topBlocks.filter(
       (block) => block.type === "container_box"
@@ -625,39 +602,33 @@ if (bgBlock) {
         onClose={() => setAlertOpen(false)}
       />
 
-      <div className="app-container">
-        
+      <div id="editor-container" className="app-container">
         <main className="app-main-box">
-            
-            
-        <div className="parent-container">
+          <div className="parent-container">
+            <section className="app-render-box-editer">
+              <div className="app-title-bar">나의 화면</div>
+              <div
+                className="app-render-content"
+                ref={renderRef}
+                style={{
+                  backgroundColor: globalBackgroundColor,
+                  minHeight: '100%',
+                  borderRadius:'10px',
+                  padding:'40px',
+                }}
+              >
+                {jsxOutput}
+              </div>
+            </section>
 
-          <section className="app-render-box-editer">
-            <div className="app-title-bar">나의 화면</div>
-            <div
-              className="app-render-content"
-              ref={renderRef}
-              style={{
-                backgroundColor: globalBackgroundColor,
-                minHeight: '100%',
-                borderRadius:'10px',
-                // padding:'40px',
-                marginTop:'40px,'
-
-              }}
-            >
-              {jsxOutput}
-            </div>
-          </section>
-
-
-          <section className="app-my-mission-box">
-            <div className="app-title-bar">나의 미션</div>
-            <div className="app-render-mission-content">
+            <section className="app-my-mission-box">
+              <div className="app-title-bar">나의 미션</div>
+              <div className="app-render-mission-content">
                 <Outlet/>
-            </div>
-          </section>
+              </div>
+            </section>
           </div>
+
           <section className="app-tool-editor-area">
             <div className="app-tab-bar">
               {tabs.map((tab) => (
@@ -674,6 +645,7 @@ if (bgBlock) {
                 </button>
               ))}
             </div>
+
             <div className="app-blockly-box">
               <div className="app-blockly-wrapper">
                 <BlocklyWorkspace
@@ -691,10 +663,6 @@ if (bgBlock) {
                   }}
                   onWorkspaceChange={handleWorkspaceChange}
                 />
-
-
-            <div style={{ margin: 20 }}>
-                </div>
                 {/* 플로팅 코드 버튼 */}
                 <CodeFloat renderRef={renderRef} />
                 {/* 로봇 아이콘 */}

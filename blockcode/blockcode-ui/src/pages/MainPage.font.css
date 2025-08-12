@@ -1,0 +1,5 @@
+/* 메인 페이지에서 BLOCKY 타일만 세리프 사용 */
+.falling-block,
+.falling-block * {
+  font-family: 'Lora', 'Roboto Slab', 'Times New Roman', serif !important;
+}

@@ -1,7 +1,7 @@
 import * as Blockly from 'blockly';
 
 /**
- * 🎨 색상 사각형이 보이는 드롭다운 필드
+ * 색상 사각형이 보이는 드롭다운 필드
  */
 export class ColourPreviewDropdown extends Blockly.FieldDropdown {
   getOptions() {

@@ -1,7 +1,7 @@
 import * as Blockly from 'blockly';
 import {COMBINE_TYPES} from "./CombineType.jsx";
 
-/* ✅ 블록 정의 */
+/* 블록 정의 */
 export function registerWritingBlocks() {
   Blockly.Blocks['text_title'] = {
     init: function () {
@@ -33,7 +33,7 @@ export function registerWritingBlocks() {
       this.setColour("#FFAB19");
       this.setPreviousStatement(true, COMBINE_TYPES);
       this.setNextStatement(true, COMBINE_TYPES);
-      
+
     }
   };
 
@@ -86,7 +86,7 @@ export function registerWritingBlocks() {
   };
 }
 
-/* ✅ JSX 변환 함수 */
+/* JSX 변환 함수 */
 export function parseWritingXmlToJSX(xml) {
   if (!xml) return null;
   const parser = new DOMParser();
@@ -187,7 +187,7 @@ export function parseSingleWritingBlock(blockXml) {
   return null;
 }
 
-/* ✅ 툴박스 반환 함수 */
+/* 툴박스 반환 함수 */
 export function getWritingTabToolbox() {
   return {
     kind: "flyoutToolbox",

@@ -1,20 +1,23 @@
-import React from "react";
+import React, { Suspense, lazy } from "react";
 import { Routes, Route } from "react-router-dom";
 import NavBar from "./components/NavBar";
-import Login from "./pages/login";
-import Mission from "./pages/mission";
-import MainPage  from "./pages/MainPage";
-import Play from "./PlayPage/App";
-import Basic from "./pages/basic";
-import Intermediate from "./pages/intermediate";
-import Advanced from "./pages/advanced";
+const Login = lazy(() => import("./pages/login"));
+const Mission = lazy(() => import("./pages/mission"));
+const MainPage = lazy(() => import("./pages/MainPage"));
+const Play = lazy(() => import("./PlayPage/App"));
+const Basic = lazy(() => import("./pages/basic"));
+const Intermediate = lazy(() => import("./pages/intermediate"));
+const Advanced = lazy(() => import("./pages/advanced"));
+const EditorShell = lazy(() => import("./pages/EditerShell"));
+const MissionPage = lazy(() => import("./pages/MissionPage"));
 
-import EditorShell from "./pages/EditerShell";   // 또는 layouts/EditorShell
-import MissionPage from "./pages/MissionPage";
+
 export default function AppRouter() {
   return (
     <>
       <NavBar />
+      <Suspense fallback={<div className="loading">Loading...</div>}>
+
       <Routes>
         <Route path="/" element={<MainPage />} />
         <Route path="/mission" element={<Mission />} />
@@ -23,7 +26,7 @@ export default function AppRouter() {
         <Route path="/advanced" element={<Advanced />} />
         <Route path="/login" element={<Login />} />
         <Route path="/play" element={<Play/>}/>
-        
+
         {/* 편집 화면이 필요한 라우트 (중첩) */}
         <Route element={<EditorShell />}>
           <Route path="/mission/:id" element={<MissionPage />} />
@@ -31,6 +34,7 @@ export default function AppRouter() {
 
         <Route path="*" element={<Mission />} />
       </Routes>
+      </Suspense>
     </>
   );
 }
