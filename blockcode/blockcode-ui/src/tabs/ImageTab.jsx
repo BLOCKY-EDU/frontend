@@ -9,7 +9,7 @@ export function registerImageBlocks() {
         .appendField("이미지 넣기")
         //에시 이미지 없을 때
         // .appendField(new Blockly.FieldTextInput("주소 입력"), "SRC");
-        //예시 이미지 링크 
+        //예시 이미지 링크
         .appendField(new Blockly.FieldTextInput("https://fastly.picsum.photos/id/177/300/300.jpg?hmac=iqXyonsAi67PWRf_09YhPkmp81Thf9Pch6MNvOkGiGo"),"SRC");
       this.setColour("#B0EACD");
       this.setPreviousStatement(true, COMBINE_TYPES);
@@ -23,7 +23,7 @@ export function registerImageBlocks() {
         .appendField("영상 넣기")
         //예시 영상 없는 코드
         // .appendField(new Blockly.FieldTextInput("주소 입력"), "SRC");
-        //예시 영상 
+        //예시 영상
         .appendField(new Blockly.FieldTextInput("https://www.w3schools.com/html/mov_bbb.mp4"), "SRC");
 
       this.setColour("#B0EACD");
@@ -74,11 +74,11 @@ export function parseImageXmlToJSX(xml) {
         let url = src;
         const match = src.match(/(?:v=|\/)([0-9A-Za-z_-]{11})/);
         const videoId = match ? match[1] : null;
-      
+
         if (videoId) {
           url = `https://www.youtube.com/embed/${videoId}`;
         }
-      
+
         output.push(
           <iframe
             key={`yt-${i}`}
@@ -92,7 +92,7 @@ export function parseImageXmlToJSX(xml) {
             style={{ marginBottom: 10 }}
           />
         );
-            
+
     }
   }
   return output;

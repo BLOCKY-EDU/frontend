@@ -1,16 +1,4 @@
-html, body {
-  margin: 0;
-  padding: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", 'Lora', 'Roboto Slab', serif;
-  background-color: #f8fafc;
-  color: #18191b;
-  font-size: 18px;
-  line-height: 1.5;
-  height: 100%;
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
-  scroll-behavior: smooth;
-}
+/* 글로벌 폰트 제거 */
 .scroll-container {
   height: 100vh;
   overflow-y: scroll;
@@ -182,7 +170,6 @@ html, body {
     0 2px 0 #fff5 inset;
 }
 
-/* 카드, 버튼, 기타 레이아웃은 기존과 동일! */
 .main-card-container {
   display: flex;
   gap: 1.15rem;

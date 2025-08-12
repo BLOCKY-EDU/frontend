@@ -1,0 +1,5 @@
+/* Editor(블록 편집기) 전용 폰트 - scope 제한 */
+#editor-container .blocklySvg text,
+#editor-container .blocklyText {
+  font-family: "Noto Sans", "Apple SD Gothic Neo", sans-serif !important;
+}

@@ -16,7 +16,7 @@ export function registerListBlocks() {
       this.setHelpUrl("");
     }
   }
-  
+
   // 리스트 항목
   Blockly.Blocks['list_item'] = {
     init: function () {
@@ -29,7 +29,7 @@ export function registerListBlocks() {
       this.setTooltip("글머리 항목을 만듭니다");
       this.setHelpUrl("");
     }
-  }; 
+  };
 
   // 숫자 목록(ol) 컨테이너
   Blockly.Blocks['list_numbered'] = {
@@ -44,7 +44,7 @@ export function registerListBlocks() {
       this.setHelpUrl("");
     }
   };
-  
+
   // 숫자 목록 항목
   Blockly.Blocks['ordered_list_item'] = {
     init: function () {

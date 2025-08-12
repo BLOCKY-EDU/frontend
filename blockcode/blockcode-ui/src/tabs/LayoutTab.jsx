@@ -37,7 +37,7 @@ export function registerLayoutBlocks() {
 //     this.setNextStatement(true, null);
 //   }
 // };
-  
+
 }
 
 export function getLayoutTabToolbox() {
@@ -51,18 +51,6 @@ export function getLayoutTabToolbox() {
   };
 }
 
-// ---------- 붙여넣을 코드 시작 ----------
-/**
- * NOTE:
- * 이 코드가 동작하려면 파일 내에 아래 함수들이 이미 존재해야 합니다:
- * - parseWritingXmlToJSX(xmlText)
- * - parseButtonXmlToJSX(xmlText)
- * - parseListXmlToJSX(xmlText)
- * - parseImageXmlToJSX(xmlText)
- * - parseNavigationXmlToJSX(xmlText)
- *
- * (사용자께서 올려주신 parseXmlToJSX에서 이 함수들이 호출되고 있으므로 동일한 네임스페이스에 있다고 가정합니다.)
- */
 
 let _containerBoxKeyCounter = 0;
 
@@ -79,12 +67,6 @@ function serializeDom(node) {
     return new XMLSerializer().serializeToString(node);
 }
 
-/**
- * 안전하게 파서들이 반환하는 값을 "렌더 가능한" 형태로 정규화합니다.
- * - 배열이면 재귀적으로 언랩하고
- * - {type, content} 같은 커스텀 구조가 오면 content로 대체합니다.
- * - React element (object) 를 건드리지 않습니다.
- */
 function unwrapParsed(parsed) {
     if (parsed == null) return null;
 
@@ -153,7 +135,7 @@ function parseSingleContainerBlock(input) {
             const innerType = inner.getAttribute('type');
 
             let parsed = null;
-            // 호출되는 파서 이름은 사용자가 제공한 네이밍과 맞춥니다.
+            // 파서 네이밍 맞추기
             if (typeof parseSingleWritingBlock === 'function' && [
                 'text_title','text_small_title','small_content','recipe_step','toggle_input','highlight_text'
             ].includes(innerType)) {
@@ -192,13 +174,6 @@ function parseSingleContainerBlock(input) {
     );
 }
 
-/**
- * parseLayoutXmlToJSX: 전달된 xml (string or DOM)에서 block(s) 뽑아
- * container_box 체인을 따라 JSX 배열로 반환.
- *
- * - xmlInput: Blockly.Xml.domToText(Blockly.Xml.blockToDom(block)) 처럼 단일 block xml string이 흔히 들어옵니다.
- * - setGlobalBackgroundColor: optional callback (여전히 지원)
- */
 export function parseLayoutXmlToJSX(xmlInput, setGlobalBackgroundColor) {
     if (!xmlInput) return null;
 
@@ -226,7 +201,7 @@ export function parseLayoutXmlToJSX(xmlInput, setGlobalBackgroundColor) {
     } else {
         // 혹시 block들을 직접 포함한 다른 element가 넘어오면 그 안의 block 찾기
         topBlocks = Array.from(rootEl.getElementsByTagName('block'));
-        // 좀 더 안전하게: 최상위로 사용하려면 루트 직계 block만 골라냄
+        // 좀 더 안전하게하기 위해 최상위로 사용하려면 루트 직계 block만 골라냄
         topBlocks = topBlocks.filter(b => b.parentNode === rootEl);
         if (topBlocks.length === 0) {
             // fallback: 문서 전체에서 가장 바깥 블록들만
@@ -272,4 +247,3 @@ export function parseLayoutXmlToJSX(xmlInput, setGlobalBackgroundColor) {
 
     return out;
 }
-// ---------- 붙여넣을 코드 끝 ----------

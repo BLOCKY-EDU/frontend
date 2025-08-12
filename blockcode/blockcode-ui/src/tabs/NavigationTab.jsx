@@ -32,7 +32,7 @@ export function getNavigationTabToolbox() {
 export function parseNavigationXmlToJSX(xmlText) {
   try {
     if (!xmlText || typeof xmlText !== 'string') {
-      console.warn("parseNavigationXmlToJSX: 잘못된 XML 입력");
+
       return null;
     }
 
@@ -42,7 +42,7 @@ export function parseNavigationXmlToJSX(xmlText) {
     const block = dom.firstChild;
 
     if (!block) {
-      console.warn("parseNavigationXmlToJSX: XML에서 block 노드를 찾을 수 없음");
+
       return null;
     }
 
@@ -79,14 +79,14 @@ export function parseNavigationXmlToJSX(xmlText) {
       </button>
     );
   } catch (error) {
-    console.error("parseNavigationXmlToJSX 오류:", error);
+
     return null;
   }
 }
 
 export function parseSingleNavigationBlock(blockXml) {
   if (!blockXml) {
-    console.warn("parseSingleNavigationBlock: block이 null 또는 undefined입니다.");
+
     return null;
   }
   const parser = new DOMParser();

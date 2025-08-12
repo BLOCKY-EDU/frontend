@@ -35,13 +35,12 @@
 //   </StrictMode>
 // );
 
-
 // src/main.jsx
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import AppRouter from "./AppRouter"; // 라우트 모음 파일
-import "./index.css"; // 네가 쓰는 글로벌 CSS
+import "./index.css"; // 글로벌 CSS
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <BrowserRouter>

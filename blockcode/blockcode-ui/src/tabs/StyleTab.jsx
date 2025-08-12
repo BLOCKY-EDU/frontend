@@ -20,7 +20,7 @@ const styleBlocks = [
 
 export const STYLE_BLOCK_TYPES = styleBlocks.map(b=>b.type);
 
-/* ✅ 1. 스타일 블록 정의 */
+/* 1. 스타일 블록 정의 */
 export function registerStyleBlocks() {
   styleBlocks.forEach(block => {
     Blockly.Blocks[block.type] = {
@@ -30,7 +30,7 @@ export function registerStyleBlocks() {
         if (block.hasColor) {
           this.appendDummyInput()
             .appendField("색상 선택")
-            .appendField(new ColourPreviewDropdown(undefined), 'COLOR'); // ✅ 커스텀 필드 사용
+            .appendField(new ColourPreviewDropdown(undefined), 'COLOR'); // 커스텀 필드 사용
         }
 
         this.setPreviousStatement(true, STYLE_BLOCK_TYPES);
@@ -41,7 +41,7 @@ export function registerStyleBlocks() {
   });
 }
 
-/* ✅ 2. 툴박스 JSON */
+/* 2. 툴박스 JSON */
 export function getStyleTabToolbox() {
   return {
     kind: "flyoutToolbox",
@@ -61,7 +61,7 @@ export function getStyleTabToolbox() {
   };
 }
 
-/* ✅ 3. style block → style object 변환 */
+/* 3. style block → style object 변환 */
 export function parseStyleStatementsToStyleObj(statements) {
   const styleObj = {};
   const blocks = statements ? statements.getElementsByTagName('block') : [];
@@ -105,7 +105,7 @@ export function parseStyleStatementsToStyleObj(statements) {
       case 'style_border':
         styleObj.border = '1px solid #ccc';
         break;
-       
+
       case 'style_shadow':
         styleObj.boxShadow = '0px 2px 4px rgba(0,0,0,0.2)';
         break;

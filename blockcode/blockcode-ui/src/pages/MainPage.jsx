@@ -2,17 +2,18 @@ import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Tilt from "react-parallax-tilt";
 import "./MainPage.css";
+import "./MainPage.font.css";
 import logo from "../assets/blocky-logo.png";
 import NavBar from "../components/NavBar";
 
 const blockyLetters = ["B", "L", "O", "C", "K", "Y"];
 const blockyConfigs = [
-  { border: "#e05555", font: "#b92424", shadow: "#fa8a8a80" }, 
-  { border: "#f4be4f", font: "#b4850d", shadow: "#f9e48b80" }, 
-  { border: "#4296d6", font: "#204775", shadow: "#9ccbf580" }, 
-  { border: "#62b769", font: "#2a7a33", shadow: "#b3e5bb80" }, 
-  { border: "#d16fad", font: "#861b5c", shadow: "#edacec80" }, 
-  { border: "#e59033", font: "#915208", shadow: "#f5cd8d80" }, 
+  { border: "#e05555", font: "#b92424", shadow: "#fa8a8a80" },
+  { border: "#f4be4f", font: "#b4850d", shadow: "#f9e48b80" },
+  { border: "#4296d6", font: "#204775", shadow: "#9ccbf580" },
+  { border: "#62b769", font: "#2a7a33", shadow: "#b3e5bb80" },
+  { border: "#d16fad", font: "#861b5c", shadow: "#edacec80" },
+  { border: "#e59033", font: "#915208", shadow: "#f5cd8d80" },
 ];
 
 export default function MainPage() {
@@ -61,7 +62,7 @@ export default function MainPage() {
             <b>웹 프론트엔드, 어렵고 복잡하게 느끼셨나요?</b><br />
             HTML, CSS, 낯설고 머릿속에 잘 안 들어오셨나요?<br /><br />
             그래서 BLOCKY가 만들었습니다.<br />
-            블록을 쌓듯 쉽고 재미있게,  
+            블록을 쌓듯 쉽고 재미있게,
             <span style={{ color: "#43c6ac", fontWeight: "700" }}>웹 프론트엔드의 모든 것</span>을 배워보세요!
           </div>
           <div className="falling-blocks-row" style={{ marginBottom: "1.7rem" }}>
@@ -148,7 +149,7 @@ export default function MainPage() {
         </div>
       </section>
 
-      {/* 3: 마지막+ 로고 */}
+      {/* 3: 마지막 + 로고 */}
       <section className="section fancy-gradient">
         <div className="main-box">
           <motion.div
