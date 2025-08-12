@@ -82,23 +82,19 @@ html, body, #root {
   max-width: 800px;
   flex: 0 0 50%;
   width: 100%;
-  background: white;
+  height: 800px;
   color: #1C1C1C;
-  /* padding: 40px; */
   padding-top: 60px;
   position: relative;
   flex: 0.5;
   border: 2px solid #A3D5FF;
-  /* border-radius: 0 0 10px 10px; */
-  border-top-left-radius: 12px;
-  border-top-right-radius: 12px; 
+  border-radius:18px;
 }
 
+
 .app-render-mission-content{
-  background: #fff;
   border: 2px solid #A3D5FF;
-  border-bottom-right-radius: 12px;
-  border-bottom-left-radius: 12px;
+ 
   border-top:none;
   min-height: 320px; /* 필요시 */
 }
@@ -109,7 +105,6 @@ html, body, #root {
   flex: 0 0 50%;
   width: 100%;
   height: 454px;
-  background: white;
   color: #1C1C1C;
   padding-top: 60px;
   position: relative;
@@ -144,9 +139,7 @@ html, body, #root {
   padding-top: 60px;
   position: relative;
   flex: 0.5;
-  /* border: 2px solid #A3D5FF; */
   border-bottom: none;
-  border-radius: 0 0 10px 10px;
   border-top-left-radius: 12px;
   border-top-right-radius: 12px; 
 }
@@ -166,9 +159,7 @@ html, body, #root {
   font-size: 20px;
   font-weight: 600;
   color: #1C1C1C;
-  border-radius: 10px;;
-  border-top-left-radius: 10px;
-  border-top-right-radius: 10px; 
+ 
   
 }
 

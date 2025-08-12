@@ -612,8 +612,7 @@ export default function EditorShell() {
                 ref={renderRef}
                 style={{
                   backgroundColor: globalBackgroundColor,
-                  minHeight: '100%',
-                  borderRadius:'10px',
+                  
                 }}
               >
                 {jsxOutput}

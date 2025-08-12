@@ -222,6 +222,7 @@ useEffect(() => {
   if (!codeOpen) return;
   const updateCode = () => {
     const html = renderRef?.current?.innerHTML?.trim() || "";
+    // 여기서 예쁘게!
     const pretty = beautifyHtml(html, { indent_size: 2 });
     setCodeText(pretty || "<!-- 렌더된 내용이 없습니다. -->");
   };
@@ -604,13 +605,11 @@ export default function App() {
           <section className="app-render-box">
             <div className="app-title-bar">나의 화면</div>
             <div
-              className="app-rendered-content"
               ref={renderRef}
               style={{
                 backgroundColor: globalBackgroundColor,
-                minHeight: '81.9vh',
-                borderBottomLeftRadius: '8px',
-                borderBottomRightRadius: '8px',
+                minHeight: '100%',
+        
               }}
             >
               {jsxOutput}
