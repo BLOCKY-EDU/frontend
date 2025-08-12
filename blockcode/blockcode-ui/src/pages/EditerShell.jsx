@@ -614,7 +614,6 @@ export default function EditorShell() {
                   backgroundColor: globalBackgroundColor,
                   minHeight: '100%',
                   borderRadius:'10px',
-                  padding:'40px',
                 }}
               >
                 {jsxOutput}
