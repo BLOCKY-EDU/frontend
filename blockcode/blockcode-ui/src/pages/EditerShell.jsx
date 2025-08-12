@@ -641,7 +641,8 @@ if (bgBlock) {
                 backgroundColor: globalBackgroundColor,
                 minHeight: '100%',
                 borderRadius:'10px',
-                padding:'40px',
+                // padding:'40px',
+                marginTop:'40px,'
 
               }}
             >
