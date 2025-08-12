@@ -1,3 +1,4 @@
+// src/pages/EditerShell.jsx
 import * as Blockly from "blockly";
 import "blockly/blocks";
 import { Outlet } from "react-router-dom";
@@ -13,6 +14,18 @@ import "./blockly-font.css";
 import blockyLogo from "../assets/blocky-logo.png";
 import "blockly/javascript";
 import "blockly/msg/ko";
+
+// === HTML 저장 도우미 ===
+const CURRENT_HTML_KEY = 'blocky_workspace_html_current';
+function saveCurrentHtmlFromRef(ref) {
+  try {
+    const el = ref?.current;
+    if (!el) return;
+    const html = el.innerHTML || '';
+    localStorage.setItem(CURRENT_HTML_KEY, html);
+  } catch (e) {}
+}
+
 import screenIcon from '../assets/icons/screen.png';
 import styleIcon from '../assets/icons/style.png';
 import textIcon from '../assets/icons/text.png';
@@ -156,10 +169,10 @@ function CodeFloat({ renderRef }) {
     return posRef.current;
   };
 
-  // 팝업 토글 (닫기 버튼 없음)
+  // 팝업 토글
   const togglePopup = () => setCodeOpen(open => !open);
 
-  // 코드 팝업이 열려있으면 실시간 innerHTML 반영(정리된 버전: 중복 cleanup 제거)
+  // 코드 팝업 열릴 때 실시간 innerHTML 반영
   useEffect(() => {
     if (!codeOpen) return;
     const updateCode = () => {
@@ -215,7 +228,7 @@ function CodeFloat({ renderRef }) {
 
     if (dist <= CLICK_TOLERANCE) togglePopup();
 
-    // 버튼이 벽에 살짝이라도 넘치면 안쪽으로 자동 이동 보정
+    // 버튼 위치 보정
     setTimeout(() => {
       if (!injectionEl) return;
       const rect = injectionEl.getBoundingClientRect();
@@ -230,7 +243,7 @@ function CodeFloat({ renderRef }) {
     }, 0);
   };
 
-  // 리사이즈, injectionDiv 스크롤 시 위치 보정
+  // 리사이즈/스크롤 보정
   useEffect(() => {
     const onResizeOrScroll = () => {
       if (!injectionEl) return;
@@ -520,6 +533,11 @@ export default function EditorShell() {
     // eslint-disable-next-line
   }, [tabXmlMap]);
 
+  // ✅ HTML 자동 저장: jsxOutput/배경 변경 시 저장 (jsxOutput 선언 이후에 위치)
+  useEffect(() => {
+    saveCurrentHtmlFromRef(renderRef);
+  }, [jsxOutput, globalBackgroundColor]);
+
   const handleTabChange = (newTab) => {
     const workspace = Blockly.getMainWorkspace();
     if (workspace) {
@@ -614,6 +632,7 @@ export default function EditorShell() {
                   backgroundColor: globalBackgroundColor,
                   minHeight: '100%',
                   borderRadius:'10px',
+                  padding:'40px',
                 }}
               >
                 {jsxOutput}
