@@ -471,16 +471,16 @@ export default function EditorShell() {
       setGlobalBackgroundColor("#ffffff");
     }
 
-    const boxBlocks = topBlocks.filter(
-      (block) => block.type === "container_box"
-    );
-    if (boxBlocks.length === 0) {
-      if (!alertOpen) setAlertOpen(true);
-      if (alertMsg !== "상자 안에 블록을 넣어주세요.")
-        setAlertMsg("상자 안에 블록을 넣어주세요.");
-      return [];
-    }
-    if (alertOpen) setAlertOpen(false);
+    // const boxBlocks = topBlocks.filter(
+    //   (block) => block.type === "container_box"
+    // );
+    // if (boxBlocks.length === 0) {
+    //   if (!alertOpen) setAlertOpen(true);
+    //   if (alertMsg !== "상자 안에 블록을 넣어주세요.")
+    //     setAlertMsg("상자 안에 블록을 넣어주세요.");
+    //   return [];
+    // }
+    // if (alertOpen) setAlertOpen(false);
 
     topBlocks.sort(
       (a, b) => a.getRelativeToSurfaceXY().y - b.getRelativeToSurfaceXY().y
@@ -573,21 +573,21 @@ export default function EditorShell() {
       }
 
       const topBlocks = workspace.getTopBlocks(true);
-      const hasBox = topBlocks.some((block) => block.type === "container_box");
-      if (!hasBox && !alertShown) {
-        let found = false;
-        topBlocks.forEach((block) => {
-          if (writingBlockTypes.includes(block.type)) {
-            block.dispose();
-            found = true;
-          }
-        });
-        if (found) {
-          setAlertMsg("상자 안에 블록을 넣어주세요.");
-          setAlertOpen(true);
-          setAlertShown(true);
-        }
-      }
+      // const hasBox = topBlocks.some((block) => block.type === "container_box");
+      // if (!hasBox && !alertShown) {
+      //   let found = false;
+      //   topBlocks.forEach((block) => {
+      //     if (writingBlockTypes.includes(block.type)) {
+      //       block.dispose();
+      //       found = true;
+      //     }
+      //   });
+      //   if (found) {
+      //     setAlertMsg("상자 안에 블록을 넣어주세요.");
+      //     setAlertOpen(true);
+      //     setAlertShown(true);
+      //   }
+      // }
     }
   };
 
