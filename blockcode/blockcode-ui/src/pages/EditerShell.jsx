@@ -631,9 +631,9 @@ export default function EditorShell() {
                 style={{
                   backgroundColor: globalBackgroundColor,
                   minHeight: '100%',
-                  borderRadius:'10px',
-                }}
-              >
+                  borderBottomLeftRadius: '8px',   // 왼쪽 아래
+                  borderBottomRightRadius: '8px',  // 오른쪽 아래                }}
+                }}>
                 {jsxOutput}
               </div>
             </section>

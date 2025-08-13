@@ -609,6 +609,8 @@ export default function App() {
               style={{
                 backgroundColor: globalBackgroundColor,
                 minHeight: '100%',
+                borderBottomLeftRadius: '16px',   // 왼쪽 아래
+                borderBottomRightRadius: '16px',  // 오른쪽 아래
         
               }}
             >
