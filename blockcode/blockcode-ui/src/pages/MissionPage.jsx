@@ -18,7 +18,7 @@ export default function MissionPage() {
   };
 
   return (
-    <div style={{ padding:20, border:"2px solid #A3D5FF", borderRadius:12, background:"#fff" }}>
+    <div style={{ padding:20, borderRadius:12, background:"#fff" }}>
       <div style={{ display:"flex", justifyContent:"space-between", marginBottom:12 }}>
         <div className="app-tab-btn active" style={{ borderBottomLeftRadius:10, borderBottomRightRadius:10 }}>
           나의 미션 — “{problem.title}”
