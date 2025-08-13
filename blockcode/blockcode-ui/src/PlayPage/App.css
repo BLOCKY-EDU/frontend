@@ -461,3 +461,30 @@ html, body, #root {
     width: 92vw;
   }
 }
+
+
+/* 전역 적용 */
+h1, h3, h5, ul, ol {
+  margin: 0;
+  padding: 0; /* 리스트라면 기본 패딩도 제거 가능 */
+}
+
+ul, ol{
+  margin-left: 16px;
+  padding:0;
+}
+
+/* 블록 전용 클래스 적용 */
+.block-title,
+.block-subtitle,
+.block-smallcontent,
+.block-list {
+  margin: 0;
+  padding: 0;
+}
+
+.ol-block-list,
+.ul-block-list{
+  margin-left: 16px;
+  padding: 0;
+}

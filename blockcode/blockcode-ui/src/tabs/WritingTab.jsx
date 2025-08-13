@@ -103,19 +103,19 @@ export function parseWritingXmlToJSX(xml) {
 
     if (type === 'text_title') {
       const title = blocks[i].getElementsByTagName('field')[0]?.textContent || "제목 없음";
-      output.push(<h1 key={`title-${i}`}>
+      output.push(<h1 key={`title-${i}`} className="block-title">
         {title}
       </h1>
       );
     } else if (type === 'text_small_title') {
       const title = blocks[i].getElementsByTagName('field')[0]?.textContent || "제목 없음";
-      output.push(<h3 key={`small_title-${i}`}  >{title}</h3>);
+      output.push(<h3 key={`small_title-${i}`} className="block-subtitle" >{title} </h3>);
     } else if (type === 'small_content') {
       const content = blocks[i].getElementsByTagName('field')[0]?.textContent || "설명 없음";
-      output.push(<h5 key={`small_content-${i}`} >{content}</h5>);
+      output.push(<h5 key={`small_content-${i}`} className="block-smallcontent">{content}</h5>);
     } else if (type === 'recipe_step') {
       const step = blocks[i].getElementsByTagName('field')[0]?.textContent || "";
-      steps.push(<li key={`step-${i}`} style={{ margin: 0 }}>{step}</li>);
+      steps.push(<li key={`step-${i}`} className="block-list">{step}</li>);
     // } else if (type === 'checkbox_block') {
     //   const label = blocks[i].getElementsByTagName('field')[0]?.textContent || "체크";
     //   checkboxes.push(

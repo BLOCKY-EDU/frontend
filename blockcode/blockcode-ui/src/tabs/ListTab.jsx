@@ -93,8 +93,8 @@ export const parseListXmlToJSX = (xmlText) => {
         current = current.querySelector('next > block');
       }
     }
-    if (type === "list_bulleted") return <ul>{items}</ul>;
-    if (type === "list_numbered") return <ol>{items}</ol>;
+    if (type === "list_bulleted") return <ul className="ul-block-list">{items}</ul>;
+    if (type === "list_numbered") return <ol className="ol-block-list">{items}</ol>;
     return null;
   }
   // 항목 블록

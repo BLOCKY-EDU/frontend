@@ -607,7 +607,7 @@ export default function App() {
             <div
               ref={renderRef}
               style={{
-                // backgroundColor: globalBackgroundColor,
+                backgroundColor: globalBackgroundColor,
                 minHeight: '100%',
         
               }}
