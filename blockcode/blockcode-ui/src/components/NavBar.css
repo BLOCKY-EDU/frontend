@@ -18,6 +18,7 @@
 .nav-left {
   display: flex;
   align-items: center;
+  height: 64px;
   gap: 20px;
 }
 
