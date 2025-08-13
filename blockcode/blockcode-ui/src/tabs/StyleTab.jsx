@@ -77,7 +77,7 @@ export function parseStyleStatementsToStyleObj(statements) {
         styleObj.padding = '16px';
         break;
       case 'style_background':
-        const color = blocks[i].getElementsByTagName('field')[0]?.textContent || '#ffffff';
+        const color = blocks[i].getElementsByTagName('field')[0]?.textContent || '#000000';
         styleObj.backgroundColor = color;
         break;
       case 'style_text_center':
