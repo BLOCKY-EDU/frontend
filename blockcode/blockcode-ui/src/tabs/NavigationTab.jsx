@@ -68,7 +68,6 @@ export function parseNavigationXmlToJSX(xmlText) {
         }}
         style={{
           padding: '10px 16px',
-          margin: '8px 0',
           borderRadius: 4,
           border: '1px solid #ccc',
           backgroundColor: '#f9f9f9',
