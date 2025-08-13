@@ -602,12 +602,12 @@ export default function App() {
 
       <div className="app-container">
         <main className="app-main-box">
-          <section className="app-render-box">
+          <section className="free-app-render-box">
             <div className="app-title-bar">나의 화면</div>
             <div
               ref={renderRef}
               style={{
-                backgroundColor: globalBackgroundColor,
+                // backgroundColor: globalBackgroundColor,
                 minHeight: '100%',
         
               }}
