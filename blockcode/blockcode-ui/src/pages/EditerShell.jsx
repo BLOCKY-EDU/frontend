@@ -9,7 +9,7 @@ Blockly.fieldRegistry.register("field_colour", FieldColour);
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import { BlocklyWorkspace } from "react-blockly";
 import { createPortal } from "react-dom";
-import "../PlayPage/App.css";
+import "../PlayPage/app.css";
 import "./blockly-font.css";
 import blockyLogo from "../assets/blocky-logo.png";
 import "blockly/javascript";
