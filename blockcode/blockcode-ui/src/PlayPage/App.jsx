@@ -107,7 +107,7 @@ registerListBlocks();
 registerNavigationBlocks();
 
 // 드래그 플로팅 버튼 + 코드 팝업(실시간)
-function CodeFloat({ renderRef }) {
+function CodeFloat({ renderRef,globalBackgroundColor }) {
   const [injectionEl, setInjectionEl] = useState(null);
   const [codeOpen, setCodeOpen] = useState(false);
   const [codeText, setCodeText] = useState("");
@@ -210,14 +210,20 @@ useEffect(() => {
   const updateCode = () => {
     const html = renderRef?.current?.innerHTML?.trim() || "";
     // 여기서 예쁘게!
-    const pretty = beautifyHtml(html, { indent_size: 2 });
-    setCodeText(pretty || "<!-- 렌더된 내용이 없습니다. -->");
+      let wrappedHtml = "";
+      if (html) {
+          wrappedHtml = `<body style="background-color: ${globalBackgroundColor};">\n${html}\n</body>`;
+      } else {
+          wrappedHtml = "<!-- 렌더된 내용이 없습니다. -->";
+      }
+      const pretty = beautifyHtml(wrappedHtml, { indent_size: 2 });
+      setCodeText(pretty);
   };
   const ws = Blockly.getMainWorkspace();
   ws && ws.addChangeListener(updateCode);
   updateCode();
   return () => { ws && ws.removeChangeListener(updateCode); };
-}, [codeOpen, renderRef]);
+}, [codeOpen, renderRef, globalBackgroundColor]);
 
   // 리사이즈, injectionDiv 스크롤 시 위치 보정
   useEffect(() => {
@@ -638,7 +644,7 @@ export default function App() {
                   onWorkspaceChange={handleWorkspaceChange}
                 />
                 {/* 플로팅 코드 버튼 */}
-                <CodeFloat renderRef={renderRef} />
+                <CodeFloat renderRef={renderRef} globalBackgroundColor={globalBackgroundColor} />
                 {/* 로봇 아이콘 */}
                 <div className="app-robot-container" style={{ position: "absolute", bottom: 20, right: 30 }}>
                   <img src={robotIcon} alt="AI 도우미" className="app-robot-icon" style={{ width: 52, height: 52 }} />
