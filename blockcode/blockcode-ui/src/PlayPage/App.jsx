@@ -209,9 +209,10 @@ useEffect(() => {
   if (!codeOpen) return;
   const updateCode = () => {
     const html = renderRef?.current?.innerHTML?.trim() || "";
+    const hasBlocks = ws?.getAllBlocks(false).length > 0;
     // 여기서 예쁘게!
       let wrappedHtml = "";
-      if (html) {
+      if (hasBlocks) {
           wrappedHtml = `<body style="background-color: ${globalBackgroundColor};">\n${html}\n</body>`;
       } else {
           wrappedHtml = "<!-- 렌더된 내용이 없습니다. -->";
