@@ -156,19 +156,6 @@ function CodeFloat({ renderRef }) {
   // 팝업 토글 (닫기 버튼 없음)
   const togglePopup = () => setCodeOpen(open => !open);
 
-  // 코드 팝업이 열려있으면 실시간 innerHTML 반영
-  useEffect(() => {
-    if (!codeOpen) return;
-    const updateCode = () => {
-      const html = renderRef?.current?.innerHTML?.trim() || "";
-      setCodeText(html || "<!-- 렌더된 내용이 없습니다. -->");
-    };
-    const ws = Blockly.getMainWorkspace();
-    ws && ws.addChangeListener(updateCode);
-    updateCode();
-    return () => { ws && ws.removeChangeListener(updateCode); };
-  }, [codeOpen, renderRef]);
-
   const handleDown = (e) => {
     if (!injectionEl) return;
     e.preventDefault();
