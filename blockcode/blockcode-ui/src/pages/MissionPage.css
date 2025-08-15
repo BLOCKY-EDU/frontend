@@ -33,7 +33,7 @@
 }
 
 .answer-panel__body {
-  padding: 12px;
+  padding: 0px;
   background: #fff;
   border-bottom-left-radius: 12px;
   border-bottom-right-radius: 12px;
@@ -51,4 +51,26 @@
 .answer-from-xml .container-box {
   /* 레이아웃 탭에서 반환하는 div에 클래스가 있다면 꾸미기 */
   /* 필요 시 스타일 */
+}
+
+.btn {
+  padding: 8px 14px;
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+  background: #fff;
+  cursor: pointer;
+}
+
+.btn:hover {
+  background: #f9fafb;
+}
+
+.btn-primary {
+  background: #2563eb;
+  border-color: #1d4ed8;
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background: #1d4ed8;
 }

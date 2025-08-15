@@ -97,17 +97,22 @@ export default function MissionPage() {
   }, [problem]);
 
   return (
-    <div style={{ padding: 20, borderRadius: 12, background: "#fff" }}>
-      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 12 }}>
-        {/* <div className="app-tab-btn active" style={{ borderBottomLeftRadius: 10, borderBottomRightRadius: 10 }}>
+    <div>
+      {/* <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 12 }}>
+        <div className="app-tab-btn active" style={{ borderBottomLeftRadius: 10, borderBottomRightRadius: 10 }}>
           나의 미션 — “{problem.title}”
-        </div> */}
-        {/* <button className="app-tab-btn" onClick={() => navigate(-1)}>문제 목록으로</button> */}
-      </div>
+        </div>
+        <button className="app-tab-btn" onClick={() => navigate(-1)}>문제 목록으로</button>
+      </div> */}
+      {showAnswer && (
+        <div className="answer-panel__body">
+          {answerPreview}
+        </div>
+      )}
 
       <div style={{ display: "flex", gap: 24, alignItems: "flex-start" }}>
         {/* 정답 예시 박스 */}
-        <div className="answer-panel">
+        {/* <div className="answer-panel">
           <div className="answer-panel__header">
             정답 예시
             <button className="answer-toggle" onClick={() => setShowAnswer(v => !v)}>
@@ -119,14 +124,17 @@ export default function MissionPage() {
               {answerPreview}
             </div>
           )}
-        </div>
+        </div> */}
+
+
+
         {/* <div style={{ flex: 1 }}>
           <h2 style={{ marginBottom: 8 }}>문제 {id}</h2>
           <p style={{ fontWeight: 600 }}>{problem.title}</p>
           <p style={{ marginTop: 8, color: "#4b5563" }}>우측 블록을 조립해 상단 “나의 화면”과 같이 만들면 성공!</p>
         </div> */}
 
-        <div style={{ marginTop: 16, padding: 12 }}>
+        {/* <div style={{ marginTop: 16, padding: 12 }}>
           <button className="missionpage-check-btn" onClick={handleGrade}>채점하기</button>
           {grade && (
             <div style={{ marginTop: 12 }}>
@@ -138,7 +146,7 @@ export default function MissionPage() {
               </ul>
             </div>
           )}
-        </div>
+        </div> */}
       </div>
     </div>
   );

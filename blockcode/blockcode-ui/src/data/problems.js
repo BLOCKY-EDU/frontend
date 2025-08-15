@@ -47,42 +47,41 @@ export const ADVANCED_PROBLEMS = [
       <block type="style_background">
         <field name="COLOR">#FAFAFA</field>
       </block>
-      <next>
-        <block type="style_padding">
-          <field name="VALUE">16</field>
-        </block>
-      </next>
-    </statement>
-  </block>
-</xml>
-    `,
-
-    starterXml: `
-<xml xmlns="https://developers.google.com/blockly/xml">
-  <block type="container_box" x="40" y="20">
-    <statement name="CONTENT">
-      <block type="text_title">
-        <field name="TITLE">쿠키 레시피</field>
-        <next>
-          <block type="paragraph">
-            <field name="TEXT">초코칩을 듬뿍 넣어보자!</field>
-          </block>
-        </next>
-      </block>
-    </statement>
-    <statement name="STYLE">
-      <block type="style_background">
-        <field name="COLOR">#FAFAFA</field>
-      </block>
     </statement>
   </block>
 </xml>`,
 
+    //     starterXml: `
+    // <xml xmlns="https://developers.google.com/blockly/xml">
+    //   <block type="container_box" x="40" y="20">
+    //     <statement name="CONTENT">
+    //       <block type="text_title">
+    //         <field name="TITLE">쿠키 레시피</field>
+    //         <next>
+    //           <block type="paragraph">
+    //             <field name="TEXT">초코칩을 듬뿍 넣어보자!</field>
+    //           </block>
+    //         </next>
+    //       </block>
+    //     </statement>
+    //     <statement name="STYLE">
+    //       <block type="style_background">
+    //         <field name="COLOR">#FAFAFA</field>
+    //       </block>
+    //     </statement>
+    //   </block>
+    // </xml>`,
+
     rules: {
-      requiredSelectors: ['h1', 'p'],        // 제목/문단은 반드시 있어야 함
-      forbiddenSelectors: ['iframe'],        // 금지 요소 예시
-      requireText: ['쿠키', '초코칩'],       // 페이지 전체 텍스트에 포함되어야 함
-      requireInlineStyles: ['background-color'], // 인라인 스타일에 이 속성이 1개 이상 존재
+      requiredSelectors: ['h1', 'p'],
+      requireTextAt: [
+        { selector: 'h1', text: '쿠키 레시피', mode: 'equals' },      // 제목 완전일치
+        { selector: 'p', text: '초코칩', mode: 'includes' },    // 문단에 '초코칩' 포함
+      ],
+      requireInlineStylesAt: [
+        { selector: 'div', prop: 'background-color', value: '#FAFAFA', mode: 'includes' },
+      ],
+      forbiddenSelectors: ['iframe'],
     },
   },
   { id: 14, title: "고급 문제 2", image: img2 },

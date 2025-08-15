@@ -650,9 +650,9 @@ export default function App() {
                 {/* 플로팅 코드 버튼 */}
                 <CodeFloat renderRef={renderRef} globalBackgroundColor={globalBackgroundColor} />
                 {/* 로봇 아이콘 */}
-                <div className="app-robot-container" style={{ position: "absolute", bottom: 20, right: 30 }}>
+                {/* <div className="app-robot-container" style={{ position: "absolute", bottom: 20, right: 30 }}>
                   <img src={robotIcon} alt="AI 도우미" className="app-robot-icon" style={{ width: 52, height: 52 }} />
-                </div>
+                </div> */}
               </div>
             </div>
           </section>

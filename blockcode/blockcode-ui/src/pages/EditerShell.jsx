@@ -15,8 +15,9 @@ import blockyLogo from "../assets/blocky-logo.png";
 import "blockly/javascript";
 import "blockly/msg/ko";
 
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { PROBLEM_BY_ID } from "../data/problems.js";
+import { htmlFromLocal, gradeHtml } from "../utils/grader.js";
 
 // === HTML 저장 도우미 ===
 const CURRENT_HTML_KEY = 'blocky_workspace_html_current';
@@ -41,6 +42,93 @@ import { html as beautifyHtml } from 'js-beautify';
 
 import { registerLayoutBlocks } from "../tabs/LayoutTab.jsx";
 registerLayoutBlocks();
+
+// 사람 친화 메시지 변환기
+function modeK(mode) {
+  if (mode === 'equals') return '정확히 같아야 해요';
+  if (mode === 'includes') return '포함되어야 해요';
+  if (mode === 'regex') return '정규식과 일치해야 해요';
+  return '조건을 만족해야 해요';
+}
+
+// target 문자열만 있는 (메타 없는) 경우를 대비한 보조 파서
+function extractQuoted(str = '') {
+  const m = String(str).match(/"([^"]+)"/);
+  return m ? m[1] : str;
+}
+function extractPropFromTarget(str = '') {
+  const m = String(str).match(/"([^"]+)"/);
+  return m ? m[1] : str;
+}
+
+function humanizeCheck(c) {
+  const m = c.meta || {};
+  switch (c.type) {
+    case '필수 요소':
+      return `${m.selector || c.target} 요소가 없어요. 해당 블록을 추가해보세요.`;
+
+    case '금지 요소':
+      return `${m.selector || c.target} 요소는 사용하면 안 돼요. 해당 블록을 제거해보세요.`;
+
+    case '텍스트(전체)':
+      return `화면 전체 텍스트에 "${m.text || extractQuoted(c.target)}"가 포함되어야 해요.`;
+
+    case '스타일(전체)':
+      return `어떤 요소든 인라인 style에 "${m.prop || extractPropFromTarget(c.target)}" 속성이 있어야 해요.`;
+
+    case '텍스트(요소별)':
+      return `${m.selector || '?'}의 텍스트가 "${m.text ?? extractQuoted(c.target)}"와 ${modeK(m.mode)}.`;
+
+    case '금지 텍스트(요소별)':
+      return `${m.selector || '?'} 안에 "${m.text ?? extractQuoted(c.target)}"가 들어가면 안 돼요.`;
+
+    case '스타일(요소별)':
+      return `${m.selector || '?'}의 인라인 스타일 "${m.prop}" 값이 "${m.value}"와 ${modeK(m.mode)}.`;
+
+    case '속성':
+      return `${m.selector || '?'}의 [${m.attr}] 속성이 "${m.value}"와 ${modeK(m.mode)}.`;
+
+    default:
+      // 안전한 폴백
+      return `[${c.type}] ${c.target}`;
+  }
+}
+
+function GradeFloat({ onGrade }) {
+  const [injectionEl, setInjectionEl] = React.useState(null);
+
+  React.useEffect(() => {
+    const ws = Blockly.getMainWorkspace();
+    if (ws) setInjectionEl(ws.getInjectionDiv());
+  }, []);
+
+  if (!injectionEl) return null;
+
+  return createPortal(
+    <button
+      onClick={onGrade}
+      title="채점하기"
+      style={{
+        position: "absolute",
+        bottom: 20,
+        left: 20,
+        width: 64,
+        height: 64,
+        borderRadius: "50%",
+        background: "#2563eb",
+        color: "#fff",
+        border: "none",
+        boxShadow: "0 8px 22px rgba(0,0,0,.2)",
+        fontWeight: 800,
+        cursor: "pointer",
+        zIndex: 2000, // injection 내부에서도 가장 위
+      }}
+    >
+      채점
+    </button>,
+    injectionEl
+  );
+}
 
 function AlertModal({ open, onClose, message }) {
   if (!open) return null;
@@ -374,6 +462,49 @@ function CodeFloat({ renderRef, globalBackgroundColor }) {
 
 export default function EditorShell() {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const problem = PROBLEM_BY_ID?.[String(id)];
+
+  // 채점 모달 상태
+  const [gradeOpen, setGradeOpen] = React.useState(false);
+  const [gradeResult, setGradeResult] = React.useState(null);
+
+  const handleGlobalGrade = () => {
+    if (!problem) return;
+    const html = htmlFromLocal();
+    const res = gradeHtml(html, problem.rules || {});
+    setGradeResult(res);
+    setGradeOpen(true);
+  };
+
+  // 단계별 범위 (3문제씩)
+  const STAGE_RANGES = {
+    basic: [1, 3],
+    intermediate: [4, 6],
+    advanced: [7, 9],
+  };
+
+  // 현재 id 기준, 같은 단계 안에서만 다음 문제 id 반환 (없으면 null)
+  const nextIdInStage = React.useMemo(() => {
+    const cur = Number(id);
+    if (!Number.isFinite(cur)) return null;
+
+    // 현재 단계 찾기
+    let stage = null;
+    for (const [name, [start, end]] of Object.entries(STAGE_RANGES)) {
+      if (cur >= start && cur <= end) {
+        stage = { name, start, end };
+        break;
+      }
+    }
+    if (!stage) return null;
+
+    const candidate = cur + 1;
+    if (candidate <= stage.end && PROBLEM_BY_ID[String(candidate)]) {
+      return String(candidate);
+    }
+    return null;
+  }, [id]);
 
   const tabs = [
     { name: "화면", color: "#B5D8FF", activeColor: "#A3D5FF", icon: screenIcon },
@@ -718,15 +849,145 @@ export default function EditorShell() {
                 />
                 {/* 플로팅 코드 버튼 */}
                 <CodeFloat renderRef={renderRef} globalBackgroundColor={globalBackgroundColor} />
+
+                {/* 전역 채점 플로팅 버튼 */}
+                <GradeFloat onGrade={handleGlobalGrade} />
+
                 {/* 로봇 아이콘 */}
-                <div className="app-robot-container" style={{ position: "absolute", bottom: 20, right: 30 }}>
+                {/* <div className="app-robot-container" style={{ position: "absolute", bottom: 20, right: 30 }}>
                   <img src={robotIcon} alt="AI 도우미" className="app-robot-icon" style={{ width: 52, height: 52 }} />
-                </div>
+                </div> */}
               </div>
             </div>
           </section>
         </main>
       </div>
+
+      {/* 채점 결과 모달 */}
+      {gradeOpen && (
+        <div
+          onClick={() => setGradeOpen(false)}
+          style={{
+            position: "fixed", inset: 0, background: "rgba(0,0,0,.45)",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            zIndex: 2000
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              width: 520, maxWidth: "90vw",
+              background: "#fff", borderRadius: 14, padding: 20,
+              boxShadow: "0 20px 60px rgba(0,0,0,.25)"
+            }}
+          >
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+              <h3 style={{ margin: 0 }}>
+                채점 결과{problem ? ` — ${problem.title}` : ""}
+              </h3>
+              <button
+                onClick={() => setGradeOpen(false)}
+                style={{ border: "none", background: "transparent", fontSize: 18, cursor: "pointer" }}
+              >
+                ✕
+              </button>
+            </div>
+
+            {gradeResult ? (() => {
+              const passedAll = gradeResult.score === gradeResult.total;
+              const fails = gradeResult.checks.filter(c => !c.pass);
+              const passes = gradeResult.checks.filter(c => c.pass);
+
+              return (
+                <>
+                  {/* 상단 배지 */}
+                  <div
+                    style={{
+                      padding: '10px 12px',
+                      borderRadius: 8,
+                      marginBottom: 12,
+                      background: passedAll ? '#ECFDF5' : '#FEF2F2',
+                      color: passedAll ? '#065F46' : '#991B1B',
+                      fontWeight: 700
+                    }}
+                  >
+                    {passedAll ? '모든 채점 기준을 통과했습니다! 🎉' : '아직 통과하지 못한 항목이 있어요. 아래를 확인해보세요.'}
+                  </div>
+
+                  {/* 점수 */}
+                  <div style={{ marginBottom: 10, fontWeight: 700 }}>
+                    점수: {gradeResult.score} / {gradeResult.total}
+                  </div>
+
+                  {/* 미통과 항목 */}
+                  {fails.length > 0 && (
+                    <div style={{ marginBottom: 12 }}>
+                      <div style={{ fontWeight: 700, marginBottom: 6 }}>미통과 항목</div>
+                      <ul style={{ maxHeight: 200, overflow: 'auto', paddingLeft: 18, lineHeight: 1.7 }}>
+                        {fails.map((c, i) => (
+                          <li key={`f-${i}`} style={{ color: '#991B1B' }}>
+                            ❌ {humanizeCheck(c)}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {/* 통과 항목 (선택) */}
+                  {passes.length > 0 && (
+                    <details style={{ marginTop: 6 }}>
+                      <summary style={{ cursor: 'pointer', fontWeight: 700, marginBottom: 6 }}>통과한 항목 보기</summary>
+                      <ul style={{ maxHeight: 160, overflow: 'auto', paddingLeft: 18, lineHeight: 1.7 }}>
+                        {passes.map((c, i) => (
+                          <li key={`p-${i}`} style={{ color: '#065F46' }}>
+                            ✅ {humanizeCheck(c)}
+                          </li>
+                        ))}
+                      </ul>
+                    </details>
+                  )}
+
+                  {/* CTA 버튼 영역 */}
+                  <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end', marginTop: 16 }}>
+                    {!passedAll ? (
+                      <button onClick={() => setGradeOpen(false)} className="btn btn-primary">
+                        다시 해보기
+                      </button>
+                    ) : (
+                      <>
+                        {nextProblemId && (
+                          <button
+                            onClick={() => {
+                              setGradeOpen(false);
+                              navigate(`/mission/${nextProblemId}`);
+                            }}
+                            className="btn btn-primary"
+                          >
+                            다음 문제로 ▶
+                          </button>
+                        )}
+                        <button
+                          onClick={() => {
+                            setGradeOpen(false);
+                            navigate('/mission');
+                          }}
+                          className="btn"
+                        >
+                          다른 문제 풀어보기
+                        </button>
+                      </>
+                    )}
+                  </div>
+                </>
+              );
+            })() : (
+              <div>채점 정보가 없습니다.</div>
+            )}
+
+          </div>
+        </div>
+      )}
+
     </>
   );
 }

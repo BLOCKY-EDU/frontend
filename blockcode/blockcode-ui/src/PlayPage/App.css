@@ -5,7 +5,9 @@
   box-sizing: border-box;
 }
 
-html, body, #root {
+html,
+body,
+#root {
   width: 100%;
   height: 100%;
   font-family: 'Pretendard', 'Noto Sans KR', sans-serif;
@@ -88,21 +90,24 @@ html, body, #root {
   position: relative;
   flex: 0.5;
   border: 2px solid #A3D5FF;
-  border-radius:18px;
+  border-radius: 18px;
 }
 
 
-.app-render-mission-content{
- 
-  border-top:none;
-  min-height: 320px; /* 필요시 */
+.app-render-mission-content {
+
+  border-top: none;
+  min-height: 320px;
+  /* 필요시 */
 }
 
 .app-render-box-editer {
-  min-width: 480px;
-  max-width: 800px;
+  aspect-ratio: 16 / 10;
+  /* 추천 비율 */
+  width: auto;
+  max-width: 726.4px;
+  /* 브라우저가 자동 계산 */
   flex: 0 0 50%;
-  width: 100%;
   height: 454px;
   color: #1C1C1C;
   padding-top: 60px;
@@ -110,15 +115,15 @@ html, body, #root {
   flex: 0.5;
   border: 2px solid #A3D5FF;
   border-radius: 0 0 10px 10px;
-  border-top-left-radius: 15px; 
- border-top-right-radius: 15px; 
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
 }
 
 
-.parent-container{
+.parent-container {
   display: flex;
-  flex-direction: column; 
-  gap:24px;
+  flex-direction: column;
+  gap: 24px;
 }
 
 
@@ -138,14 +143,14 @@ html, body, #root {
   flex: 0.5;
   border: 2px solid #A3D5FF;
   border-radius: 0 0 10px 10px;
-  border-top-left-radius: 15px; 
- border-top-right-radius: 15px; 
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
 }
 
 
 .app-title-bar {
   position: absolute;
-  top: 0; 
+  top: 0;
   left: 0;
   width: 100%;
   height: 60px;
@@ -157,15 +162,15 @@ html, body, #root {
   font-size: 20px;
   font-weight: 600;
   color: #1C1C1C;
-  border-top-left-radius:16px;
-  border-top-right-radius:16px;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
 
-  
+
 }
 
 .app-title-bar1 {
   position: absolute;
-  top: 0; 
+  top: 0;
   left: 0;
   width: 100%;
   height: 60px;
@@ -178,12 +183,13 @@ html, body, #root {
   font-weight: 600;
   color: #1C1C1C;
   border-top-left-radius: 15px;
-  border-top-right-radius: 15px; 
-  
+  border-top-right-radius: 15px;
+
 }
+
 .app-title-bar2 {
   position: absolute;
-  top: 0; 
+  top: 0;
   left: 0;
   width: 100%;
   height: 60px;
@@ -196,8 +202,8 @@ html, body, #root {
   font-weight: 600;
   color: #1C1C1C;
   border-top-left-radius: 10px;
-  border-top-right-radius: 10px; 
-  
+  border-top-right-radius: 10px;
+
 }
 
 /* Blockly 조립 화면 */
@@ -263,7 +269,7 @@ html, body, #root {
 /* 책갈피 패널 */
 .app-toolbox-panel {
   background-color: #DEF3FF;
-  margin-top: 0; 
+  margin-top: 0;
   padding: 12px 20px;
   border-bottom: 1px solid #A3D5FF;
   border-top: none;
@@ -319,12 +325,12 @@ html, body, #root {
   border: none;
   outline: none;
   cursor: grab;
-  z-index: 999; 
+  z-index: 999;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 700;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
   user-select: none;
   touch-action: none;
   transition: transform .12s ease, background-color .12s ease, box-shadow .12s ease;
@@ -333,7 +339,7 @@ html, body, #root {
 .floating-code-btn:hover {
   transform: translateY(-1px);
   background: #0d0d0d;
-  
+
   box-shadow: 0 8px 22px;
 }
 
@@ -344,17 +350,17 @@ html, body, #root {
 
 /* 호버 툴팁 */
 .floating-code-btn:hover::after {
-  content: attr(data-tip); 
+  content: attr(data-tip);
   position: absolute;
-  top: 44px;          
-  right: 0;           
+  top: 44px;
+  right: 0;
   background: #333;
   color: #fff;
   padding: 4px 8px;
   border-radius: 6px;
   font-size: 12px;
   white-space: nowrap;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
   pointer-events: none;
   opacity: 0.98;
 }
@@ -369,7 +375,7 @@ html, body, #root {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
 }
 
 .code-popup-header {
@@ -424,15 +430,19 @@ html, body, #root {
   width: 10px;
   height: 10px;
 }
+
 .code-popup-body::-webkit-scrollbar-thumb {
   background: #334155;
   border-radius: 10px;
 }
+
 .code-popup-body::-webkit-scrollbar-track {
   background: #0b1020;
 }
 
-.blocklyInjectionDiv { position: relative; }
+.blocklyInjectionDiv {
+  position: relative;
+}
 
 /* 로봇 컨테이너 */
 .app-robot-container {
@@ -464,14 +474,20 @@ html, body, #root {
 
 
 /* 전역 적용 */
-h1, h3, h5, ul, ol {
+h1,
+h3,
+h5,
+ul,
+ol {
   margin: 0;
-  padding: 0; /* 리스트라면 기본 패딩도 제거 가능 */
+  padding: 0;
+  /* 리스트라면 기본 패딩도 제거 가능 */
 }
 
-ul, ol{
+ul,
+ol {
   margin-left: 16px;
-  padding:0;
+  padding: 0;
 }
 
 /* 블록 전용 클래스 적용 */
@@ -484,7 +500,7 @@ ul, ol{
 }
 
 .ol-block-list,
-.ul-block-list{
+.ul-block-list {
   margin-left: 16px;
   padding: 0;
 }
