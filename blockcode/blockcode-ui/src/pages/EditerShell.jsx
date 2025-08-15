@@ -460,7 +460,79 @@ function CodeFloat({ renderRef, globalBackgroundColor }) {
   );
 }
 
+// 포탈 플로팅 버튼
+function ExportXmlFloat() {
+  const [inj, setInj] = React.useState(null);
+
+  React.useEffect(() => {
+    const ws = Blockly.getMainWorkspace();
+    if (ws) setInj(ws.getInjectionDiv());
+  }, []);
+
+  const onClick = (e) => {
+    const ws = Blockly.getMainWorkspace();
+    if (!ws) return alert('워크스페이스가 아직 없어요!');
+
+    // ✅ ID 제거한 DOM 생성
+    const dom = Blockly.Xml.workspaceToDom(ws, true);
+    let xmlText = Blockly.Xml.domToPrettyText(dom);
+
+    // ✅ 템플릿 리터럴 안전하게 (백틱 이스케이프)
+    xmlText = xmlText.replace(/`/g, '\\`').replace(/\r\n/g, '\n');
+
+    // Shift 누르고 클릭하면 answerXml으로 감싼 스니펫 복사
+    const wrapForProblem = e.shiftKey;
+    const payload = wrapForProblem
+      ? `answerXml: \`\n${xmlText}\n\`,`
+      : xmlText;
+
+    navigator.clipboard?.writeText(payload);
+    console.log('[Blockly XML] copied ➜\n', payload);
+    alert(
+      wrapForProblem
+        ? '문제용 answerXml 포맷으로 복사했어요! (Shift+클릭)'
+        : 'ID 제거된 XML을 클립보드에 복사했어요!'
+    );
+  };
+
+  if (!inj) return null;
+
+  return createPortal(
+    <button
+      onClick={onClick}
+      title="XML 복사 (Shift+클릭: answerXml로 감싸서 복사)"
+      style={{
+        position: 'absolute',
+        bottom: 20,
+        right: 20,
+        border: 'none',
+        borderRadius: 8,
+        padding: '8px 12px',
+        fontWeight: 700,
+        background: '#111',
+        color: '#fff',
+        boxShadow: '0 6px 18px rgba(0,0,0,0.25)',
+        cursor: 'pointer',
+        zIndex: 2000,
+      }}
+    >
+      XML 복사
+    </button>,
+    inj
+  );
+}
+
+
 export default function EditorShell() {
+  const exportXml = () => {
+    const ws = Blockly.getMainWorkspace();
+    if (!ws) return alert('워크스페이스가 아직 없어요!');
+    const xmlText = Blockly.Xml.domToPrettyText(Blockly.Xml.workspaceToDom(ws));
+    console.log('[Blockly XML]\n', xmlText);
+    navigator.clipboard?.writeText(xmlText);
+    alert('XML을 클립보드에 복사했어요!');
+  };
+
   const { id } = useParams();
   const navigate = useNavigate();
   const problem = PROBLEM_BY_ID?.[String(id)];
@@ -852,6 +924,8 @@ export default function EditorShell() {
 
                 {/* 전역 채점 플로팅 버튼 */}
                 <GradeFloat onGrade={handleGlobalGrade} />
+
+                <ExportXmlFloat />
 
                 {/* 로봇 아이콘 */}
                 {/* <div className="app-robot-container" style={{ position: "absolute", bottom: 20, right: 30 }}>

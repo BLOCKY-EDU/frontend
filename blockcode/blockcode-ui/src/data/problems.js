@@ -34,44 +34,97 @@ export const ADVANCED_PROBLEMS = [
     image: img1,
     answerXml: `
 <xml xmlns="https://developers.google.com/blockly/xml">
-  <block type="container_box" x="32" y="20">
-    <statement name="STYLE">
-      <block type="style_padding_side">
-        <field name="SIDE">all</field>
-        <field name="VALUE">12px</field>
+  <block type="container_box" x="150" y="70">
+    <statement name="CONTENT">
+      <block type="container_box">
+        <statement name="CONTENT">
+          <block type="text_small_title">
+            <field name="SMALL_TITLE">Welcome to my bakery!</field>
+          </block>
+        </statement>
+        <statement name="STYLE">
+          <block type="style_font_family">
+            <field name="FAMILY">Georgia, "Times New Roman", serif</field>
+          </block>
+        </statement>
         <next>
-          <block type="style_background">
-            <field name="COLOR">#FAFAFA</field>
+          <block type="container_box">
+            <statement name="CONTENT">
+              <block type="normal_button">
+                <field name="LABEL">로그인</field>
+                <next>
+                  <block type="normal_button">
+                    <field name="LABEL">회원가입</field>
+                  </block>
+                </next>
+              </block>
+            </statement>
+            <statement name="STYLE">
+              <block type="style_margin_side">
+                <field name="SIDE">left</field>
+                <field name="VALUE">30</field>
+                <next>
+                  <block type="style_flex_row">
+                    <next>
+                      <block type="style_gap">
+                        <field name="GAP">8px</field>
+                      </block>
+                    </next>
+                  </block>
+                </next>
+              </block>
+            </statement>
           </block>
         </next>
       </block>
     </statement>
-
-    <statement name="CONTENT">
-      <!-- ① 네비게이션 바 -->
-      <block type="container_box">
-        <statement name="STYLE">
-          <block type="style_height">
-            <field name="HEIGHT">60px</field>
+    <statement name="STYLE">
+      <block type="style_flex_row">
+        <next>
+          <block type="style_background">
+            <field name="COLOR">#ffffcc</field>
             <next>
-              <block type="style_background">
-                <field name="COLOR">#0EA5E9</field>
+              <block type="style_align_items">
+                <field name="ALIGN">center</field>
                 <next>
-                  <block type="style_flex_row">
+                  <block type="style_padding_side">
+                    <field name="SIDE">all</field>
+                    <field name="VALUE">16px</field>
                     <next>
-                      <block type="style_justify_content">
-                        <field name="JUSTIFY">space-between</field>
-                        <next>
-                          <block type="style_align_items">
-                            <field name="ALIGN">center</field>
-                            <next>
-                              <block type="style_padding_side">
-                                <field name="SIDE">all</field>
-                                <field name="VALUE">12px</field>
-                              </block>
-                            </next>
-                          </block>
-                        </next>
+                      <block type="style_shadow_custom">
+                        <field name="X">0</field>
+                        <field name="Y">0</field>
+                        <field name="BLUR">4px</field>
+                        <field name="COLOR">#c0c0c0</field>
+                      </block>
+                    </next>
+                  </block>
+                </next>
+              </block>
+            </next>
+          </block>
+        </next>
+      </block>
+    </statement>
+    <next>
+      <block type="container_box">
+        <statement name="CONTENT">
+          <block type="insert_image">
+            <field name="SRC">/images/bakery_banner.png</field>
+          </block>
+        </statement>
+        <statement name="STYLE">
+          <block type="style_flex_row">
+            <next>
+              <block type="style_justify_content">
+                <field name="JUSTIFY">center</field>
+                <next>
+                  <block type="style_height">
+                    <field name="HEIGHT">200</field>
+                    <next>
+                      <block type="style_margin_side">
+                        <field name="SIDE">top</field>
+                        <field name="VALUE">10</field>
                       </block>
                     </next>
                   </block>
@@ -80,124 +133,149 @@ export const ADVANCED_PROBLEMS = [
             </next>
           </block>
         </statement>
-
-        <statement name="CONTENT">
-          <!-- 좌: 타이틀 -->
-          <block type="text_title">
-            <field name="TITLE">Blocky Mall</field>
-          </block>
-
-          <!-- 우: 로그인 / 회원가입 -->
-          <next>
-            <block type="container_box">
-              <statement name="STYLE">
-                <block type="style_flex_row">
-                  <next>
-                    <block type="style_gap">
-                      <field name="GAP">8px</field>
-                    </block>
-                  </next>
-                </block>
-              </statement>
-              <statement name="CONTENT">
-                <block type="normal_button">
-                  <field name="LABEL">로그인</field>
-                  <next>
-                    <block type="normal_button">
-                      <field name="LABEL">회원가입</field>
-                    </block>
-                  </next>
-                </block>
-              </statement>
-            </block>
-          </next>
-        </statement>
-
-        <!-- ② 배너 (네비 다음 형제) -->
         <next>
           <block type="container_box">
-            <statement name="STYLE">
-              <block type="style_margin_side">
-                <field name="SIDE">top</field>
-                <field name="VALUE">12px</field>
-              </block>
-            </statement>
             <statement name="CONTENT">
-              <block type="insert_image">
-                <field name="SRC">https://picsum.photos/seed/blockymall/640/220</field>
-              </block>
-            </statement>
-
-            <!-- ③ 검색 영역 (배너 다음 형제) -->
-            <next>
-              <block type="container_box">
-                <statement name="STYLE">
-                  <block type="style_margin_side">
-                    <field name="SIDE">top</field>
-                    <field name="VALUE">12px</field>
+              <block type="paragraph">
+                <field name="TEXT">아이들이 안심하고 먹을 수 있는 빵만 만듭니다.</field>
+                <next>
+                  <block type="text_small_title">
+                    <field name="SMALL_TITLE">최고급 재료, 당일 제작, 당일 배송</field>
                     <next>
-                      <block type="style_flex_row">
+                      <block type="text_input">
+                        <field name="PLACEHOLDER">먹고 싶은 빵을 검색해 보세요</field>
                         <next>
-                          <block type="style_justify_content">
-                            <field name="JUSTIFY">center</field>
-                            <next>
-                              <block type="style_gap">
-                                <field name="GAP">8px</field>
+                          <block type="container_box">
+                            <statement name="CONTENT">
+                              <block type="list_bulleted">
+                                <statement name="ITEMS">
+                                  <block type="list_item">
+                                    <field name="TEXT">프레첼</field>
+                                    <next>
+                                      <block type="list_item">
+                                        <field name="TEXT">바게트</field>
+                                      </block>
+                                    </next>
+                                  </block>
+                                </statement>
+                                <next>
+                                  <block type="list_bulleted">
+                                    <statement name="ITEMS">
+                                      <block type="list_item">
+                                        <field name="TEXT">에그타르트</field>
+                                        <next>
+                                          <block type="list_item">
+                                            <field name="TEXT">초코 쿠키</field>
+                                          </block>
+                                        </next>
+                                      </block>
+                                    </statement>
+                                  </block>
+                                </next>
                               </block>
-                            </next>
+                            </statement>
+                            <statement name="STYLE">
+                              <block type="style_flex_row">
+                                <next>
+                                  <block type="style_gap">
+                                    <field name="GAP">20</field>
+                                  </block>
+                                </next>
+                              </block>
+                            </statement>
                           </block>
                         </next>
                       </block>
                     </next>
                   </block>
-                </statement>
-                <statement name="CONTENT">
-                  <block type="text_input">
-                    <field name="PLACEHOLDER">무엇이든 검색해 보세요!</field>
-                    <next>
-                      <block type="submit_button">
-                        <field name="LABEL">검색</field>
-                      </block>
-                    </next>
-                  </block>
-                </statement>
+                </next>
               </block>
-            </next>
+            </statement>
+            <statement name="STYLE">
+              <block type="style_flex_column">
+                <next>
+                  <block type="style_align_items">
+                    <field name="ALIGN">center</field>
+                  </block>
+                </next>
+              </block>
+            </statement>
           </block>
         </next>
       </block>
-    </statement>
+    </next>
   </block>
 </xml>
-  `,
+`,
+
     rules: {
-      // 필수 요소: 타이틀(H1), 배너 이미지, 검색창+제출버튼
+      // 1) 핵심 요소 존재
       requiredSelectors: [
-        "h1",
-        "img",
-        'input[type="text"]',
-        'button[type="submit"]'
+        "h3",                 // 사이트 타이틀(작은 제목)
+        "button",             // 로그인/회원가입(일반 버튼)
+        "img",                // 배너 이미지
+        'input[type="text"]', // 검색창
+        "p",                  // 소개 문단
+        "ul", "li"            // 목록
       ],
-      // 텍스트 체크 (normal_button은 type이 없으니 텍스트로 확인)
-      requireText: ["Blocky Mall", "로그인", "회원가입", "검색"],
-      // 인라인 스타일 사용 (레이아웃 핵심)
+
+      // 2) 텍스트 검사 (요소별)
+      requireTextAt: [
+        { selector: "h3", text: "Welcome to my bakery!", mode: "includes" },
+        { selector: "button", text: "로그인", mode: "includes" },
+        { selector: "button", text: "회원가입", mode: "includes" }
+      ],
+
+      // 3) 텍스트 검사 (화면 전체)
+      requireText: [
+        "아이들이 안심하고 먹을 수 있는 빵만 만듭니다",
+        "최고급 재료, 당일 제작, 당일 배송",
+        "프레첼", "바게트", "에그타르트", "초코 쿠키"
+      ],
+
+      // 4) 인라인 스타일이 실제로 쓰였는지(속성 이름만 확인)
       requireInlineStyles: [
-        "display",          // flex 사용
-        "justify-content",  // 좌우 정렬
-        "align-items",      // 수직 정렬
-        "gap",              // 버튼/검색 간격
-        "height",           // 네비바 높이
-        "background-color"  // 네비바 배경
+        "display",           // flex 사용
+        "align-items",       // 수직 정렬
+        "justify-content",   // 가운데 정렬
+        "background-color",  // 배경색
+        "padding",           // 패딩
+        "box-shadow",        // 그림자
+        "height",            // 배너 높이
+        "gap"                // 간격(헤더/리스트)
       ],
-      // 좀 더 빡빡한 값 확인
+
+      // 5) 특정 값까지 확인(빡빡)
       requireInlineStylesAt: [
-        { selector: "div", prop: "height", value: "60px", mode: "includes" },
-        { selector: "div", prop: "background-color", value: "#0EA5E9", mode: "includes" },
-        { selector: "div", prop: "justify-content", value: "space-between", mode: "includes" }, // 네비
-        { selector: "div", prop: "justify-content", value: "center", mode: "includes" },        // 검색영역
-        { selector: "div", prop: "gap", value: "8px", mode: "includes" }
+        // 헤더 컨테이너 배경
+        // { selector: "div", prop: "background-color", value: "#ffffcc", mode: "includes" },
+        // 헤더 패딩
+        { selector: "div", prop: "padding", value: "16px", mode: "includes" },
+        // 헤더 정렬
+        { selector: "div", prop: "align-items", value: "center", mode: "includes" },
+        // 헤더 그림자 색상(커스텀 쉐도우)
+        { selector: "div", prop: "box-shadow", value: "#c0c0c0", mode: "includes" },
+
+        // 배너 영역
+        { selector: "div", prop: "justify-content", value: "center", mode: "includes" },
+        { selector: "div", prop: "height", value: "200px", mode: "includes" },
+        { selector: "div", prop: "margin-top", value: "10px", mode: "includes" },
+
+        // 간격(gap) — 헤더 버튼/리스트 컨테이너
+        { selector: "div", prop: "gap", value: "8px", mode: "includes" },
+        { selector: "div", prop: "gap", value: "20px", mode: "includes" }
       ],
-      forbiddenSelectors: ["iframe"]
+
+      // 6) 속성 검사 (가능하면 사용)
+      requireAttributesAt: [
+        // 내부 이미지 경로 사용 유도
+        { selector: "img", attr: "src", value: "/images/", mode: "includes" },
+        // 검색창 placeholder 정확히 일치
+        { selector: 'input[type="text"]', attr: "placeholder", value: "먹고 싶은 빵을 검색해 보세요", mode: "equals" }
+      ],
+
+      // 7) 금지 요소
+      //forbiddenSelectors: ["iframe"]
     }
   },
 
