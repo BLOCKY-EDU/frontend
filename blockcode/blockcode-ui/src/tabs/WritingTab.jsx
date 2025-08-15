@@ -1,5 +1,5 @@
 import * as Blockly from 'blockly';
-import {COMBINE_TYPES} from "./CombineType.jsx";
+import { COMBINE_TYPES } from "./CombineType.jsx";
 
 /* 블록 정의 */
 export function registerWritingBlocks() {
@@ -84,6 +84,18 @@ export function registerWritingBlocks() {
       this.setNextStatement(true, COMBINE_TYPES);
     }
   };
+
+  // 글쓰기 탭에 "문단" 블록 추가
+  Blockly.Blocks['paragraph'] = {
+    init: function () {
+      this.appendDummyInput()
+        .appendField("문단")
+        .appendField(new Blockly.FieldTextInput("여기에 내용을 입력하세요"), "TEXT");
+      this.setColour("#FFAB19");                // 기존 글쓰기 계열 색상 유지
+      this.setPreviousStatement(true, COMBINE_TYPES);
+      this.setNextStatement(true, COMBINE_TYPES);
+    }
+  };
 }
 
 /* JSX 변환 함수 */
@@ -116,14 +128,14 @@ export function parseWritingXmlToJSX(xml) {
     } else if (type === 'recipe_step') {
       const step = blocks[i].getElementsByTagName('field')[0]?.textContent || "";
       steps.push(<li key={`step-${i}`} className="block-list">{step}</li>);
-    // } else if (type === 'checkbox_block') {
-    //   const label = blocks[i].getElementsByTagName('field')[0]?.textContent || "체크";
-    //   checkboxes.push(
-    //     <label key={`checkbox-${i}`} style={{ display: "flex", alignItems: "center", marginBottom: "8px" }}>
-    //       <input type="checkbox" style={{ marginRight: "8px" }} />
-    //       {label}
-    //     </label>
-    //   );
+      // } else if (type === 'checkbox_block') {
+      //   const label = blocks[i].getElementsByTagName('field')[0]?.textContent || "체크";
+      //   checkboxes.push(
+      //     <label key={`checkbox-${i}`} style={{ display: "flex", alignItems: "center", marginBottom: "8px" }}>
+      //       <input type="checkbox" style={{ marginRight: "8px" }} />
+      //       {label}
+      //     </label>
+      //   );
     } else if (type === 'toggle_input') {
       const mode = blocks[i].getElementsByTagName('field')[0]?.textContent;
       const value = blocks[i].getElementsByTagName('field')[1]?.textContent;
@@ -141,6 +153,14 @@ export function parseWritingXmlToJSX(xml) {
         >
           {text}
         </span>
+      );
+    } else if (type === 'paragraph') {
+      const text = blocks[i].getElementsByTagName('field')[0]?.textContent || "";
+      // 스타일 "없음" — 순수 <p>로 출력. 추후 스타일 탭에서 전역/선택자 기반 스타일링 가능
+      output.push(
+        <p key={`paragraph-${i}`} className="block-paragraph" data-blk="paragraph">
+          {text}
+        </p>
       );
     }
   }
@@ -170,7 +190,7 @@ export function parseSingleWritingBlock(blockXml) {
   } else if (type === 'small_content') {
     const content = block.getElementsByTagName('field')[0]?.textContent || "설명 없음";
     return <h5>{content}</h5>;
-  // } else if (type === 'checkbox_block') {
+    // } else if (type === 'checkbox_block') {
     // const label = block.getElementsByTagName('field')[0]?.textContent || "체크";
     // return (
     //     <label style={{ display: "flex", alignItems: "center", marginBottom: "8px" }}>
@@ -181,10 +201,15 @@ export function parseSingleWritingBlock(blockXml) {
   } else if (type === 'highlight_text') {
     const text = block.getElementsByTagName('field')[0]?.textContent || "강조";
     return (
-        <span style={{ textDecoration: 'underline', textDecorationColor: 'red' }}>
+      <span style={{ textDecoration: 'underline', textDecorationColor: 'red' }}>
         {text}
       </span>
     );
+  } else if (type === 'paragraph') {
+    const text = block.querySelector('field[name="TEXT"]')?.textContent
+      || block.getElementsByTagName('field')[0]?.textContent
+      || "";
+    return <p className="block-paragraph" data-blk="paragraph">{text}</p>;
   }
 
   return null;
@@ -198,6 +223,7 @@ export function getWritingTabToolbox() {
       { kind: "block", type: "text_title" },
       { kind: "block", type: "text_small_title" },
       { kind: "block", type: "small_content" },
+      { kind: "block", type: "paragraph" },
       // { kind: "block", type: "recipe_step" },
       // { kind: "block", type: "checkbox_block" },
       // { kind: "block", type: "toggle_input" },

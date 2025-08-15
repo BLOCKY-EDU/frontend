@@ -78,7 +78,7 @@ function unwrapParsed(parsed) {
             if (u == null) continue;
             if (Array.isArray(u)) flat.push(...u);
             else flat.push(u);
-        }ㅌ
+        }
         return flat.length ? flat : null;
     }
 
@@ -137,7 +137,7 @@ function parseSingleContainerBlock(input) {
             let parsed = null;
             // 파서 네이밍 맞추기
             if (typeof parseSingleWritingBlock === 'function' && [
-                'text_title','text_small_title','small_content','recipe_step','toggle_input','highlight_text'
+                'text_title','text_small_title','small_content','recipe_step','toggle_input','highlight_text','paragraph'
             ].includes(innerType)) {
                 parsed = parseSingleWritingBlock(serializeDom(inner));
             } else if (typeof parseSingleButtonBlock === 'function' && [

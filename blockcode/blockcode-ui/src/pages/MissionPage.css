@@ -11,5 +11,44 @@
   color: #1C1C1C;
   width: 120px;
   height: 50px;
-    
+
+}
+
+.answer-panel {
+  min-width: 260px;
+  max-width: 360px;
+  border: 1px solid #DEF3FF;
+  border-radius: 12px;
+  background: #F8FBFF;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+}
+
+.answer-panel__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  font-weight: 700;
+  border-bottom: 1px solid #E6F2FF;
+}
+
+.answer-panel__body {
+  padding: 12px;
+  background: #fff;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+}
+
+.answer-toggle {
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 8px;
+  border: 1px solid #dbeafe;
+  background: #eef6ff;
+  cursor: pointer;
+}
+
+.answer-from-xml .container-box {
+  /* 레이아웃 탭에서 반환하는 div에 클래스가 있다면 꾸미기 */
+  /* 필요 시 스타일 */
 }

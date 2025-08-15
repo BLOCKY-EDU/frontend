@@ -404,6 +404,7 @@ export default function App() {
         "recipe_step",
         "toggle_input",
         "highlight_text",
+        "paragraph",
       ].includes(type)
     ) {
       return parseWritingXmlToJSX(xmlText);

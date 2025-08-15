@@ -15,6 +15,9 @@ import blockyLogo from "../assets/blocky-logo.png";
 import "blockly/javascript";
 import "blockly/msg/ko";
 
+import { useParams } from "react-router-dom";
+import { PROBLEM_BY_ID } from "../data/problems.js";
+
 // === HTML 저장 도우미 ===
 const CURRENT_HTML_KEY = 'blocky_workspace_html_current';
 function saveCurrentHtmlFromRef(ref) {
@@ -23,7 +26,7 @@ function saveCurrentHtmlFromRef(ref) {
     if (!el) return;
     const html = el.innerHTML || '';
     localStorage.setItem(CURRENT_HTML_KEY, html);
-  } catch (e) {}
+  } catch (e) { }
 }
 
 import screenIcon from '../assets/icons/screen.png';
@@ -122,7 +125,7 @@ registerListBlocks();
 registerNavigationBlocks();
 
 // 드래그 플로팅 버튼 + 코드 팝업(실시간)
-function CodeFloat({ renderRef,globalBackgroundColor }) {
+function CodeFloat({ renderRef, globalBackgroundColor }) {
   const [injectionEl, setInjectionEl] = useState(null);
   const [codeOpen, setCodeOpen] = useState(false);
   const [codeText, setCodeText] = useState("");
@@ -177,16 +180,16 @@ function CodeFloat({ renderRef,globalBackgroundColor }) {
     if (!codeOpen) return;
     const updateCode = () => {
       const html = renderRef?.current?.innerHTML?.trim() || "";
-        const hasBlocks = ws?.getAllBlocks(false).length > 0;
-        // 여기서 예쁘게!
-        let wrappedHtml = "";
-        if (hasBlocks) {
-            wrappedHtml = `<body style="background-color: ${globalBackgroundColor};">\n${html}\n</body>`;
-        } else {
-            wrappedHtml = "<!-- 렌더된 내용이 없습니다. -->";
-        }
-        const pretty = beautifyHtml(wrappedHtml, { indent_size: 2 });
-        setCodeText(pretty);
+      const hasBlocks = ws?.getAllBlocks(false).length > 0;
+      // 여기서 예쁘게!
+      let wrappedHtml = "";
+      if (hasBlocks) {
+        wrappedHtml = `<body style="background-color: ${globalBackgroundColor};">\n${html}\n</body>`;
+      } else {
+        wrappedHtml = "<!-- 렌더된 내용이 없습니다. -->";
+      }
+      const pretty = beautifyHtml(wrappedHtml, { indent_size: 2 });
+      setCodeText(pretty);
     };
     const ws = Blockly.getMainWorkspace();
     ws && ws.addChangeListener(updateCode);
@@ -370,6 +373,8 @@ function CodeFloat({ renderRef,globalBackgroundColor }) {
 }
 
 export default function EditorShell() {
+  const { id } = useParams();
+
   const tabs = [
     { name: "화면", color: "#B5D8FF", activeColor: "#A3D5FF", icon: screenIcon },
     { name: "스타일", color: "#B5D8FF", activeColor: "#D8B4F8", icon: styleIcon },
@@ -390,6 +395,23 @@ export default function EditorShell() {
   const [alertShown, setAlertShown] = useState(false);
 
   const renderRef = useRef(null);
+
+  // 미션 바뀔 때 starterXml 로드
+  React.useEffect(() => {
+    const ws = Blockly.getMainWorkspace();
+    const starter = PROBLEM_BY_ID?.[id]?.starterXml;
+    if (ws && starter) {
+      try {
+        ws.clear();
+        Blockly.Xml.domToWorkspace(
+          Blockly.utils.xml.textToDom(starter),
+          ws
+        );
+      } catch (e) {
+        console.error('[starterXml] load failed', e);
+      }
+    }
+  }, [id]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -429,6 +451,7 @@ export default function EditorShell() {
         "recipe_step",
         "toggle_input",
         "highlight_text",
+        "paragraph",
       ].includes(type)
     ) {
       return parseWritingXmlToJSX(xmlText);
@@ -476,9 +499,9 @@ export default function EditorShell() {
         setGlobalBackgroundColor(colorField);
       }
     } else {
-        if(globalBackgroundColor !== "#ffffff") {
-            setGlobalBackgroundColor("#ffffff");
-        }
+      if (globalBackgroundColor !== "#ffffff") {
+        setGlobalBackgroundColor("#ffffff");
+      }
     }
 
     // const boxBlocks = topBlocks.filter(
@@ -643,9 +666,9 @@ export default function EditorShell() {
                   minHeight: '100%',
                   borderBottomLeftRadius: '8px',   // 왼쪽 아래
                   borderBottomRightRadius: '8px',  // 오른쪽 아래
-                    overflow: 'auto', // 스크롤바 자동 생성
-                    maxHeight: '100%', // 부모 영역 안에서만 보이게
-                    boxSizing: 'border-box', // padding 포함해서 크기 계산
+                  overflow: 'auto', // 스크롤바 자동 생성
+                  maxHeight: '100%', // 부모 영역 안에서만 보이게
+                  boxSizing: 'border-box', // padding 포함해서 크기 계산
                 }}>
                 {jsxOutput}
               </div>
@@ -654,7 +677,7 @@ export default function EditorShell() {
             <section className="app-my-mission-box">
               <div className="app-title-bar">나의 미션</div>
               <div className="app-render-mission-content">
-                <Outlet/>
+                <Outlet />
               </div>
             </section>
           </div>
@@ -694,7 +717,7 @@ export default function EditorShell() {
                   onWorkspaceChange={handleWorkspaceChange}
                 />
                 {/* 플로팅 코드 버튼 */}
-                <CodeFloat renderRef={renderRef} globalBackgroundColor={globalBackgroundColor}/>
+                <CodeFloat renderRef={renderRef} globalBackgroundColor={globalBackgroundColor} />
                 {/* 로봇 아이콘 */}
                 <div className="app-robot-container" style={{ position: "absolute", bottom: 20, right: 30 }}>
                   <img src={robotIcon} alt="AI 도우미" className="app-robot-icon" style={{ width: 52, height: 52 }} />
