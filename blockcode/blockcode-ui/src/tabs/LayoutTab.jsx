@@ -1,54 +1,56 @@
 import * as Blockly from 'blockly';
 import { parseStyleStatementsToStyleObj } from './StyleTab';
-import {parseSingleWritingBlock} from './WritingTab';
-import {parseSingleButtonBlock} from './ButtonTab';
+import { parseSingleWritingBlock } from './WritingTab';
+import { parseSingleButtonBlock } from './ButtonTab';
 import { ColourPreviewDropdown } from '../blocks/CustomFields';
 
-import {STYLE_BLOCK_TYPES} from "./StyleTab";
-import {COMBINE_TYPES} from "./CombineType.jsx";
+import { STYLE_BLOCK_TYPES } from "./StyleTab";
+import { COMBINE_TYPES } from "./CombineType.jsx";
 
-import {parseSingleNavigationBlock} from './NavigationTab';
-import {parseSingleListBlock} from './ListTab';
-import {parseSingleImageBlock} from "./ImageTab.jsx";
+import { parseSingleNavigationBlock } from './NavigationTab';
+import { parseSingleListBlock } from './ListTab';
+import { parseSingleImageBlock } from "./ImageTab.jsx";
 
 const localCombineTypes = [...COMBINE_TYPES, 'container_box'];
 
 export function registerLayoutBlocks() {
-  Blockly.Blocks['container_box'] = {
-    init: function () {
-      this.appendDummyInput().appendField("상자");
-      this.appendStatementInput("CONTENT").setCheck(localCombineTypes).appendField("내용");   // 내부 콘텐츠
-      this.appendStatementInput("STYLE").setCheck(STYLE_BLOCK_TYPES).appendField("스타일");     // 스타일 블록 연결
-      this.setColour("#A3D5FF");
-      this.setTooltip("내용을 담는 레이아웃 상자입니다.");
-      this.setPreviousStatement(true, 'container_box');
-      this.setNextStatement(true, 'container_box');
-    }
-  };
+    Blockly.Blocks['container_box'] = {
+        init: function () {
+            this.appendDummyInput().appendField("상자");
+            this.appendStatementInput("CONTENT").setCheck(localCombineTypes).appendField("내용");   // 내부 콘텐츠
+            this.appendStatementInput("STYLE").setCheck(STYLE_BLOCK_TYPES).appendField("스타일");     // 스타일 블록 연결
+            this.setColour("#A3D5FF");
+            this.setTooltip("내용을 담는 레이아웃 상자입니다.");
+            //   this.setPreviousStatement(true, 'container_box');
+            //   this.setNextStatement(true, 'container_box');
+            +   this.setPreviousStatement(true, COMBINE_TYPES); // 공통 타입으로
+            +   this.setNextStatement(true, COMBINE_TYPES); // 공통 타입으로
+        }
+    };
 
-//   Blockly.Blocks['global_background'] = {
-//   init: function () {
-//     this.appendDummyInput()
-//       .appendField("배경색")
-//       .appendField(new ColourPreviewDropdown(undefined), 'COLOR'); // ✅ 커스텀 필드 사용
-//     this.setColour("#E2B8FF");
-//     this.setTooltip("전체 배경색을 설정합니다.");
-//     this.setPreviousStatement(true, null);
-//     this.setNextStatement(true, null);
-//   }
-// };
+    //   Blockly.Blocks['global_background'] = {
+    //   init: function () {
+    //     this.appendDummyInput()
+    //       .appendField("배경색")
+    //       .appendField(new ColourPreviewDropdown(undefined), 'COLOR'); // ✅ 커스텀 필드 사용
+    //     this.setColour("#E2B8FF");
+    //     this.setTooltip("전체 배경색을 설정합니다.");
+    //     this.setPreviousStatement(true, null);
+    //     this.setNextStatement(true, null);
+    //   }
+    // };
 
 }
 
 export function getLayoutTabToolbox() {
-  return {
-    kind: "flyoutToolbox",
-    contents: [
-      { kind: "block", type: "container_box" },
-      // { kind: "block", type: "global_background" }
+    return {
+        kind: "flyoutToolbox",
+        contents: [
+            { kind: "block", type: "container_box" },
+            // { kind: "block", type: "global_background" }
 
-    ]
-  };
+        ]
+    };
 }
 
 
@@ -137,18 +139,18 @@ function parseSingleContainerBlock(input) {
             let parsed = null;
             // 파서 네이밍 맞추기
             if (typeof parseSingleWritingBlock === 'function' && [
-                'text_title','text_small_title','small_content','recipe_step','toggle_input','highlight_text','paragraph'
+                'text_title', 'text_small_title', 'small_content', 'recipe_step', 'toggle_input', 'highlight_text', 'paragraph'
             ].includes(innerType)) {
                 parsed = parseSingleWritingBlock(serializeDom(inner));
             } else if (typeof parseSingleButtonBlock === 'function' && [
-                'normal_button','submit_button','text_input','email_input','checkbox_block','select_box'
+                'normal_button', 'submit_button', 'text_input', 'email_input', 'checkbox_block', 'select_box'
             ].includes(innerType)) {
                 parsed = parseSingleButtonBlock(serializeDom(inner));
             } else if (typeof parseSingleNavigationBlock === 'function' && innerType === 'navigation_button') {
                 parsed = parseSingleNavigationBlock(serializeDom(inner));
-            } else if (typeof parseSingleListBlock === 'function' && ['list_bulleted','list_numbered','list_item','ordered_list_item'].includes(innerType)) {
+            } else if (typeof parseSingleListBlock === 'function' && ['list_bulleted', 'list_numbered', 'list_item', 'ordered_list_item'].includes(innerType)) {
                 parsed = parseSingleListBlock(serializeDom(inner));
-            } else if (typeof parseSingleImageBlock === 'function' && ['insert_image','insert_video','youtube_link'].includes(innerType)) {
+            } else if (typeof parseSingleImageBlock === 'function' && ['insert_image', 'insert_video', 'youtube_link'].includes(innerType)) {
                 parsed = parseSingleImageBlock(serializeDom(inner));
             } else if (innerType === 'container_box') {
                 parsed = parseSingleContainerBlock(inner); // 재귀 (DOM 전달)
