@@ -544,7 +544,7 @@ export default function EditorShell() {
   const handleGlobalGrade = () => {
     if (!problem) return;
     const html = htmlFromLocal();
-    const res = gradeHtml(html, problem.rules || {});
+    const res = gradeHtml(html, problem.rules || {}, globalBackgroundColor);
     setGradeResult(res);
     setGradeOpen(true);
   };

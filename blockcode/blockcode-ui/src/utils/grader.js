@@ -30,7 +30,7 @@ export function htmlFromLocal() {
  * }
  */
 
-export function gradeHtml(html, rules = {}) {
+export function gradeHtml(html, rules = {}, globalBackgroundColor) {
   const res = { checks: [], score: 0, total: 0 };
   const wrap = document.createElement('div');
   wrap.innerHTML = html || '';
@@ -127,6 +127,13 @@ export function gradeHtml(html, rules = {}) {
   if (Array.isArray(rules.requireInlineStylesAt)) {
     for (const rule of rules.requireInlineStylesAt) {
       const { selector, prop, value, mode = 'equals', caseSensitive = false } = rule || {};
+      if (selector === "body" && prop === "background-color") {
+          const actual = normalizeColorToRgbaLike(globalBackgroundColor);
+          const expected = normalizeColorToRgbaLike(value);
+          const ok = matchByMode(actual, expected, { mode, caseSensitive, normalize: false });
+          pass(ok, '스타일(요소별)', `body [style.${prop}] ${mode} "${value}"`, { selector, prop, value, mode });
+          continue;
+      }
       const els = getAll(selector);
       const ok = els.some(el => {
         const map = inlineStyleMap(el);
