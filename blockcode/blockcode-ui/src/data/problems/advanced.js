@@ -4,11 +4,11 @@ import img2 from "../../assets/robot-icon.png";
 import img3 from "../../assets/robot-icon.png";
 
 export const ADVANCED_PROBLEMS = [
-  {
-    id: 13,
-    title: "광고 홈페이지를 만들어보자!",
-    image: img1,
-    answerXml: `
+    {
+        id: 13,
+        title: "광고 홈페이지를 만들어보자!",
+        image: img1,
+        answerXml: `
 <xml xmlns="https://developers.google.com/blockly/xml">
   <block type="container_box" x="150" y="70">
     <statement name="CONTENT">
@@ -183,41 +183,45 @@ export const ADVANCED_PROBLEMS = [
   </block>
 </xml>
     `,
-    rules: {
-      requiredSelectors: [
-        "h3", "button", "img", 'input[type="text"]', "p", "ul", "li"
-      ],
-      requireTextAt: [
-        { selector: "h3", text: "Welcome to my bakery!", mode: "includes" },
-        { selector: "button", text: "로그인", mode: "includes" },
-        { selector: "button", text: "회원가입", mode: "includes" }
-      ],
-      requireText: [
-        "아이들이 안심하고 먹을 수 있는 빵만 만듭니다",
-        "최고급 재료, 당일 제작, 당일 배송",
-        "프레첼", "바게트", "에그타르트", "초코 쿠키"
-      ],
-      requireInlineStyles: [
-        "display","align-items","justify-content","background-color",
-        "padding","box-shadow","height","gap"
-      ],
-      requireInlineStylesAt: [
-        { selector: "div", prop: "padding", value: ".*", mode: "includes" },
-        { selector: "div", prop: "align-items", value: "center", mode: "includes" },
-        { selector: "div", prop: "box-shadow", value: "#c0c0c0", mode: "includes" },
-        { selector: "div", prop: "justify-content", value: "center", mode: "includes" },
-        { selector: "div", prop: "height", value: "200px", mode: "includes" },
-        { selector: "div", prop: "margin-top", value: ".*", mode: "includes" },
-        { selector: "div", prop: "gap", value: ".*", mode: "includes" },
-        { selector: "div", prop: "gap", value: ".*", mode: "includes" }
-      ],
-      requireAttributesAt: [
-        { selector: "img", attr: "src", value: "/images/", mode: "includes" },
-        { selector: 'input[type="text"]', attr: "placeholder", value: "먹고 싶은 빵을 검색해 보세요", mode: "equals" }
-      ],
-    }
-  },
+        rules: {
+            requiredSelectors: [
+                "h3", "button", "img", 'input[type="text"]', "p", "ul", "li"
+            ],
+            requireTextAt: [
+                { selector: "h3", text: "Welcome to my bakery!", mode: "includes" },
+                { selector: "button", text: "로그인", mode: "includes" },
+                { selector: "button", text: "회원가입", mode: "includes" }
+            ],
+            requireText: [
+                "아이들이 안심하고 먹을 수 있는 빵만 만듭니다",
+                "최고급 재료, 당일 제작, 당일 배송",
+                "프레첼", "바게트", "에그타르트", "초코 쿠키"
+            ],
+            requireInlineStyles: [
+                "display", "align-items", "justify-content", "background-color",
+                "padding", "box-shadow", "height", "gap"
+            ],
+            requireInlineStylesAt: [
+                // 헤더 컨테이너 배경
+                { selector: "body", prop: "background-color", value: "#ffffcc", mode: "includes" },
+                // 헤더 패딩
+                { selector: "div", prop: "padding", value: "16px", mode: "includes" },
+                // 헤더 정렬
+                { selector: "div", prop: "align-items", value: "center", mode: "includes" },
+                { selector: "div", prop: "box-shadow", value: "#c0c0c0", mode: "includes" },
+                { selector: "div", prop: "justify-content", value: "center", mode: "includes" },
+                { selector: "div", prop: "height", value: "200px", mode: "includes" },
+                { selector: "div", prop: "margin-top", value: ".*", mode: "includes" },
+                { selector: "div", prop: "gap", value: ".*", mode: "includes" },
+                { selector: "div", prop: "gap", value: ".*", mode: "includes" }
+            ],
+            requireAttributesAt: [
+                { selector: "img", attr: "src", value: "/images/", mode: "includes" },
+                { selector: 'input[type="text"]', attr: "placeholder", value: "먹고 싶은 빵을 검색해 보세요", mode: "equals" }
+            ],
+        }
+    },
 
-  { id: 14, title: "고급 문제 2", image: img2 },
-  { id: 15, title: "고급 문제 3", image: img3 },
+    { id: 14, title: "고급 문제 2", image: img2 },
+    { id: 15, title: "고급 문제 3", image: img3 },
 ];

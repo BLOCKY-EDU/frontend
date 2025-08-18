@@ -39,6 +39,9 @@ import imageIcon from '../assets/icons/image.png';
 import listIcon from '../assets/icons/list.png';
 import navIcon from '../assets/icons/nav.png';
 import robotIcon from '../assets/robot-icon.png';
+import wrongImg from "../assets/wrong.png";
+import correctImg from "../assets/correct.png";
+
 import { html as beautifyHtml } from 'js-beautify';
 
 import { registerLayoutBlocks } from "../tabs/LayoutTab.jsx";
@@ -554,7 +557,7 @@ export default function EditorShell() {
   const handleGlobalGrade = () => {
     if (!problem) return;
     const html = htmlFromLocal();
-    const res = gradeHtml(html, problem.rules || {});
+    const res = gradeHtml(html, problem.rules || {}, globalBackgroundColor);
     setGradeResult(res);
 
     // 항상 모달로 이동
@@ -1013,8 +1016,13 @@ export default function EditorShell() {
                       <div style={{ fontWeight: 700, marginBottom: 6 }}>미통과 항목</div>
                       <ul style={{ maxHeight: 200, overflow: 'auto', paddingLeft: 18, lineHeight: 1.7 }}>
                         {fails.map((c, i) => (
-                          <li key={`f-${i}`} style={{ color: '#991B1B' }}>
-                            ❌ {humanizeCheck(c)}
+                          //
+                          <li
+                            key={`f-${i}`}
+                            style={{ color: '#991B1B', display: 'flex', alignItems: 'center', gap: 6 }}
+                          >
+                            <img src={wrongImg} alt="wrong" style={{ width: 18, height: 18 }} />
+                            {humanizeCheck(c)}
                           </li>
                         ))}
                       </ul>
@@ -1027,8 +1035,13 @@ export default function EditorShell() {
                       <summary style={{ cursor: 'pointer', fontWeight: 700, marginBottom: 6 }}>통과한 항목 보기</summary>
                       <ul style={{ maxHeight: 160, overflow: 'auto', paddingLeft: 18, lineHeight: 1.7 }}>
                         {passes.map((c, i) => (
-                          <li key={`p-${i}`} style={{ color: '#065F46' }}>
-                            ✅ {humanizeCheck(c)}
+                          //
+                          <li
+                            key={`p-${i}`}
+                            style={{ color: '#065F46', display: 'flex', alignItems: 'center', gap: 6 }}
+                          >
+                            <img src={correctImg} alt="correct" style={{ width: 18, height: 18 }} />
+                            {humanizeCheck(c)}
                           </li>
                         ))}
                       </ul>
