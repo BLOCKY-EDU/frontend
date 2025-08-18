@@ -12,11 +12,12 @@ import { parseImageXmlToJSX } from "../tabs/ImageTab";
 import { parseListXmlToJSX } from "../tabs/ListTab";
 import { parseNavigationXmlToJSX } from "../tabs/NavigationTab";
 function TutorialModal({ onClose }) {
+    // 이 pages 배열에 img:이미지 이런 식으로 튜토리얼 페이지별 이미지 삽입 가능
     const pages = [
-        { title: "환영합니다!", content: "이 페이지에서는 블록을 조합해 미션을 수행할 수 있습니다." },
+        { title: "환영합니다!", content: "이 페이지에서는 블록을 조합해 미션을 수행할 수 있습니다."},
         { title: "스타일 적용", content: "상자 블록을 사용해서 위에 넣은 블록들에 아래에 넣은 스타일을 적용해보세요!" },
         { title: "코드 확인", content: "상단 '</>' 버튼을 눌러 블록을 코드로 바꾸어 확인할 수 있어요!" },
-        { title: "정답 확인", content: "하단 '채점하기' 버튼을 눌러 결과를 확인할 수 있습니다." },
+        { title: "정답 확인", content: "하단 '채점' 버튼을 눌러 결과를 확인할 수 있습니다." },
         { title: "완료!", content: "이제 직접 블록을 조합해보세요!" },
     ];
 
