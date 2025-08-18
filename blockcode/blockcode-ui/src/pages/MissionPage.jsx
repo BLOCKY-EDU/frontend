@@ -11,13 +11,19 @@ import { parseButtonXmlToJSX } from "../tabs/ButtonTab";
 import { parseImageXmlToJSX } from "../tabs/ImageTab";
 import { parseListXmlToJSX } from "../tabs/ListTab";
 import { parseNavigationXmlToJSX } from "../tabs/NavigationTab";
+import logo from "../assets/blocky-logo.png";
+import div_ex from "../assets/div-example.png";
+import bg_ex from "../assets/bg-color-example.png";
+import code_ex from "../assets/code-example.png";
+import check_ex from "../assets/check-example.png";
 function TutorialModal({ onClose }) {
     // 이 pages 배열에 img:이미지 이런 식으로 튜토리얼 페이지별 이미지 삽입 가능
     const pages = [
-        { title: "환영합니다!", content: "이 페이지에서는 블록을 조합해 미션을 수행할 수 있습니다."},
-        { title: "스타일 적용", content: "상자 블록을 사용해서 위에 넣은 블록들에 아래에 넣은 스타일을 적용해보세요!" },
-        { title: "코드 확인", content: "상단 '</>' 버튼을 눌러 블록을 코드로 바꾸어 확인할 수 있어요!" },
-        { title: "정답 확인", content: "하단 '채점' 버튼을 눌러 결과를 확인할 수 있습니다." },
+        { title: "환영합니다!", content: "블록을 조합해 미션과 같은 화면을 만드세요!"},
+        { title: "스타일 적용", content: "상자 블록의 아래 칸에 스타일 블록을 집어넣어 다양한 스타일을 적용해보세요!" ,img:div_ex },
+        { title: "배경색 변경", content: "스타일 블록은 항상 상자의 밑에 넣어야 적용되지만, 배경 색상 블록은 단독으로 전체 배경색 변경이 가능합니다.", img:bg_ex },
+        { title: "코드 확인", content: "상단 '</>' 버튼을 눌러 블록을 코드로 바꾸어 확인할 수 있어요!" , img:code_ex },
+        { title: "정답 확인", content: "하단 '채점' 버튼을 눌러 결과를 확인할 수 있습니다." , img:check_ex},
         { title: "완료!", content: "이제 직접 블록을 조합해보세요!" },
     ];
 
