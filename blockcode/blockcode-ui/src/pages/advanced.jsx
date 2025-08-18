@@ -1,10 +1,11 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import "./levels.css";
-import { ADVANCED_PROBLEMS } from "../data/problems";
+import { LEVELS } from "../data/problems/index.js";
 
 export default function Advanced() {
   const navigate = useNavigate();
+  const ADVANCED_PROBLEMS = LEVELS.advanced;
 
   return (
     <div className="problems-container">
@@ -14,7 +15,7 @@ export default function Advanced() {
           className="problem-card"
           onClick={() => navigate(`/mission/${p.id}`)}
         >
-          <small>문제 {p.id}</small>
+          <div className="problem-number">고급 문제 {p.id}</div>
           <img src={p.image} alt={p.title} />
           <h3>{p.title}</h3>
         </button>

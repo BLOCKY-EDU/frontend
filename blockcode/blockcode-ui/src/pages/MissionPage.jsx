@@ -1,8 +1,9 @@
 import React from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { PROBLEM_BY_ID } from "../data/problems";
-import { htmlFromLocal, gradeHtml } from "../utils/grader";
+import { PROBLEM_BY_ID } from "../data/problems/index.js";
+import { htmlFromLocal, gradeHtml } from "../utils/grader.js";
 import "./MissionPage.css";
+import BoxModelOverlay from "../components/BoxModelOverlay.jsx";
 
 import * as Blockly from "blockly";
 import { parseLayoutXmlToJSX } from "../tabs/LayoutTab";
@@ -67,9 +68,13 @@ function dispatchXmlToJSX(xmlOrDom) {
 export default function MissionPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const problem = PROBLEM_BY_ID[id];
+  const problem = PROBLEM_BY_ID?.[String(id)];
 
-  if (!problem) return <div>존재하지 않는 문제입니다. (id={id})</div>;
+  if (!problem) {
+    return <div style={{ padding: 12, color: '#991B1B' }}>
+      존재하지 않는 문제입니다. (id={id}) — 콘솔 에러와 data/problems/index.js 구성을 확인하세요.
+    </div>;
+  }
 
   const [grade, setGrade] = React.useState(null);
   const [showAnswer, setShowAnswer] = React.useState(true);
@@ -84,14 +89,29 @@ export default function MissionPage() {
     // 1) answerHtml이 있으면 그대로 사용
     if (problem.answerHtml) {
       return <div dangerouslySetInnerHTML={{ __html: problem.answerHtml }} />;
+      // return (
+      //   <BoxModelOverlay>
+      //     <div dangerouslySetInnerHTML={{ __html: problem.answerHtml }} />
+      //   </BoxModelOverlay>
+      // );
     }
     // 2) answerXml이 있으면 파서로 렌더
     if (problem.answerXml) {
       return <div className="answer-from-xml">{dispatchXmlToJSX(problem.answerXml)}</div>;
+      // return (
+      //   <BoxModelOverlay>
+      //     <div className="answer-from-xml">{dispatchXmlToJSX(problem.answerXml)}</div>
+      //   </BoxModelOverlay>
+      // );
     }
     // 3) 없으면 이미지 fallback
     if (problem.image) {
       return <img src={problem.image} alt={problem.title} style={{ width: 240, borderRadius: 12 }} />;
+      // return (
+      //   <BoxModelOverlay>
+      //     <img src={problem.image} alt={problem.title} style={{ width: 240, borderRadius: 12 }} />
+      //   </BoxModelOverlay>
+      // );
     }
     return null;
   }, [problem]);

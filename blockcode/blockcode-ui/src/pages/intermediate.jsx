@@ -1,10 +1,12 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import "./levels.css";
-import { INTERMEDIATE_PROBLEMS } from "../data/problems";
+import { LEVELS } from "../data/problems/index.js";
+//import { INTERMEDIATE_PROBLEMS } from "../data/problems";
 
 export default function Intermediate() {
   const navigate = useNavigate();
+  const INTERMEDIATE_PROBLEMS = LEVELS.intermediate;
 
   return (
     <div className="problems-container">
@@ -14,7 +16,7 @@ export default function Intermediate() {
           className="problem-card"
           onClick={() => navigate(`/mission/${p.id}`)}
         >
-          <small>문제 {p.id}</small>
+          <div className="problem-number">중급 문제 {p.id}</div>
           <img src={p.image} alt={p.title} />
           <h3>{p.title}</h3>
         </button>

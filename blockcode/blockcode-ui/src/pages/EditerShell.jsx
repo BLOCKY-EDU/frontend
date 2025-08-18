@@ -16,7 +16,8 @@ import "blockly/javascript";
 import "blockly/msg/ko";
 
 import { useParams, useNavigate } from "react-router-dom";
-import { PROBLEM_BY_ID } from "../data/problems.js";
+//import { PROBLEM_BY_ID } from "../data/problems.js";
+import { PROBLEM_BY_ID, nextIdInSameLevel } from "../data/problems/index.js";
 import { htmlFromLocal, gradeHtml } from "../utils/grader.js";
 
 // === HTML 저장 도우미 ===
@@ -473,11 +474,11 @@ function ExportXmlFloat() {
     const ws = Blockly.getMainWorkspace();
     if (!ws) return alert('워크스페이스가 아직 없어요!');
 
-    // ✅ ID 제거한 DOM 생성
+    // ID 제거한 DOM 생성
     const dom = Blockly.Xml.workspaceToDom(ws, true);
     let xmlText = Blockly.Xml.domToPrettyText(dom);
 
-    // ✅ 템플릿 리터럴 안전하게 (백틱 이스케이프)
+    // 템플릿 리터럴 안전하게 (백틱 이스케이프)
     xmlText = xmlText.replace(/`/g, '\\`').replace(/\r\n/g, '\n');
 
     // Shift 누르고 클릭하면 answerXml으로 감싼 스니펫 복사
@@ -541,11 +542,22 @@ export default function EditorShell() {
   const [gradeOpen, setGradeOpen] = React.useState(false);
   const [gradeResult, setGradeResult] = React.useState(null);
 
+  const resetWorkspaceAndState = React.useCallback(() => {
+    try {
+      const ws = Blockly.getMainWorkspace();
+      ws?.clear();                          // 블록 전부 삭제
+    } catch { }
+    setTabXmlMap({});                       // 탭별 저장 XML 초기화
+    localStorage.setItem(CURRENT_HTML_KEY, ''); // 렌더 HTML 캐시 초기화
+  }, []);
+
   const handleGlobalGrade = () => {
     if (!problem) return;
     const html = htmlFromLocal();
     const res = gradeHtml(html, problem.rules || {});
     setGradeResult(res);
+
+    // 항상 모달로 이동
     setGradeOpen(true);
   };
 
@@ -557,26 +569,28 @@ export default function EditorShell() {
   };
 
   // 현재 id 기준, 같은 단계 안에서만 다음 문제 id 반환 (없으면 null)
-  const nextIdInStage = React.useMemo(() => {
-    const cur = Number(id);
-    if (!Number.isFinite(cur)) return null;
+  // const nextIdInStage = React.useMemo(() => {
+  //   const cur = Number(id);
+  //   if (!Number.isFinite(cur)) return null;
 
-    // 현재 단계 찾기
-    let stage = null;
-    for (const [name, [start, end]] of Object.entries(STAGE_RANGES)) {
-      if (cur >= start && cur <= end) {
-        stage = { name, start, end };
-        break;
-      }
-    }
-    if (!stage) return null;
+  //   // 현재 단계 찾기
+  //   let stage = null;
+  //   for (const [name, [start, end]] of Object.entries(STAGE_RANGES)) {
+  //     if (cur >= start && cur <= end) {
+  //       stage = { name, start, end };
+  //       break;
+  //     }
+  //   }
+  //   if (!stage) return null;
 
-    const candidate = cur + 1;
-    if (candidate <= stage.end && PROBLEM_BY_ID[String(candidate)]) {
-      return String(candidate);
-    }
-    return null;
-  }, [id]);
+  //   const candidate = cur + 1;
+  //   if (candidate <= stage.end && PROBLEM_BY_ID[String(candidate)]) {
+  //     return String(candidate);
+  //   }
+  //   return null;
+  // }, [id]);
+
+  const nextId = React.useMemo(() => nextIdInSameLevel(id), [id]);
 
   const tabs = [
     { name: "화면", color: "#B5D8FF", activeColor: "#A3D5FF", icon: screenIcon },
@@ -1029,26 +1043,28 @@ export default function EditorShell() {
                       </button>
                     ) : (
                       <>
-                        {nextProblemId && (
+                        {nextId ? (
                           <button
                             onClick={() => {
                               setGradeOpen(false);
-                              navigate(`/mission/${nextProblemId}`);
+                              resetWorkspaceAndState();
+                              navigate(`/mission/${nextId}`);
                             }}
                             className="btn btn-primary"
                           >
-                            다음 문제로 ▶
+                            다음 문제 풀러가기 ▶
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => {
+                              setGradeOpen(false);
+                              navigate('/mission');
+                            }}
+                            className="btn btn-primary"
+                          >
+                            문제 목록으로
                           </button>
                         )}
-                        <button
-                          onClick={() => {
-                            setGradeOpen(false);
-                            navigate('/mission');
-                          }}
-                          className="btn"
-                        >
-                          다른 문제 풀어보기
-                        </button>
                       </>
                     )}
                   </div>
