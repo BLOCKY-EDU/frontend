@@ -12,10 +12,10 @@ import { parseImageXmlToJSX } from "../tabs/ImageTab";
 import { parseListXmlToJSX } from "../tabs/ListTab";
 import { parseNavigationXmlToJSX } from "../tabs/NavigationTab";
 import logo from "../assets/blocky-logo.png";
-import div_ex from "../assets/div-example.png";
-import bg_ex from "../assets/bg-color-example.png";
-import code_ex from "../assets/code-example.png";
-import check_ex from "../assets/check-example.png";
+import div_ex from "../assets/tutorial/div-example.png";
+import bg_ex from "../assets/tutorial/bg-color-example.png";
+import code_ex from "../assets/tutorial/code-example.png";
+import check_ex from "../assets/tutorial/check-example.png";
 function TutorialModal({ onClose }) {
     // 이 pages 배열에 img:이미지 이런 식으로 튜토리얼 페이지별 이미지 삽입 가능
     const pages = [
