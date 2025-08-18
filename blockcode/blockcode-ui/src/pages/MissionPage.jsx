@@ -11,6 +11,60 @@ import { parseButtonXmlToJSX } from "../tabs/ButtonTab";
 import { parseImageXmlToJSX } from "../tabs/ImageTab";
 import { parseListXmlToJSX } from "../tabs/ListTab";
 import { parseNavigationXmlToJSX } from "../tabs/NavigationTab";
+function TutorialModal({ onClose }) {
+    const pages = [
+        { title: "환영합니다!", content: "이 페이지에서는 블록을 조합해 미션을 수행할 수 있습니다." },
+        { title: "스타일 적용", content: "상자 블록을 사용해서 위에 넣은 블록들에 아래에 넣은 스타일을 적용해보세요!" },
+        { title: "코드 확인", content: "상단 '</>' 버튼을 눌러 블록을 코드로 바꾸어 확인할 수 있어요!" },
+        { title: "정답 확인", content: "하단 '채점하기' 버튼을 눌러 결과를 확인할 수 있습니다." },
+        { title: "완료!", content: "이제 직접 블록을 조합해보세요!" },
+    ];
+
+    const [page, setPage] = React.useState(0);
+
+    const handleNext = () => {
+        if (page < pages.length - 1) setPage(page + 1);
+    };
+
+    const handlePrev = () => {
+        if (page > 0) setPage(page - 1);
+    };
+
+    const handleSkip = () => {
+        localStorage.setItem("tutorial_seen", "true");
+        onClose();
+    };
+
+    const handleFinish = () => {
+        localStorage.setItem("tutorial_seen", "true");
+        onClose();
+    };
+
+    return (
+        <div className="tutorial-backdrop">
+            <div className="tutorial-modal">
+                <h2>{pages[page].title}</h2>
+                {pages[page].img && <img src={pages[page].img} alt="" style={{ maxWidth: "100%" }} />}
+                <p>{pages[page].content}</p>
+                <div className="tutorial-controls">
+                    {/* 이전 버튼: 첫 페이지가 아닐 때만 */}
+                    {page > 0 && <button onClick={handlePrev}>이전</button>}
+
+                    {page < pages.length - 1 && (
+                        <>
+                            <button onClick={handleNext}>다음</button>
+                            <button onClick={handleSkip}>건너뛰기</button>
+                        </>
+                    )}
+
+                    {page === pages.length - 1 && (
+                        <button onClick={handleFinish}>시작하기</button>
+                    )}
+                </div>
+            </div>
+        </div>
+    );
+}
 
 const WRITING_TYPES = new Set([
   "text_title", "text_small_title", "small_content", "recipe_step",
@@ -68,7 +122,14 @@ export default function MissionPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const problem = PROBLEM_BY_ID[id];
+    const [showTutorial, setShowTutorial] = React.useState(false);
 
+    React.useEffect(() => {
+        const seen = localStorage.getItem("tutorial_seen");
+        if (!seen) {
+            setShowTutorial(true);
+        }
+    }, []);
   if (!problem) return <div>존재하지 않는 문제입니다. (id={id})</div>;
 
   const [grade, setGrade] = React.useState(null);
@@ -98,12 +159,7 @@ export default function MissionPage() {
 
   return (
     <div>
-      {/* <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 12 }}>
-        <div className="app-tab-btn active" style={{ borderBottomLeftRadius: 10, borderBottomRightRadius: 10 }}>
-          나의 미션 — “{problem.title}”
-        </div>
-        <button className="app-tab-btn" onClick={() => navigate(-1)}>문제 목록으로</button>
-      </div> */}
+        {showTutorial && <TutorialModal onClose={() => setShowTutorial(false)} />}
       {showAnswer && (
         <div className="answer-panel__body">
           {answerPreview}
