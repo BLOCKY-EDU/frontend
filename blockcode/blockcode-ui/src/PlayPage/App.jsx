@@ -389,6 +389,18 @@ export default function App() {
     }
   }, [tabXmlMap]);
 
+
+  useEffect(() => {
+    const wsDiv = document.querySelector(".blocklyWorkspace");
+    if (wsDiv) {
+      wsDiv.addEventListener("focus", (e) => {
+        e.preventDefault();   // ✅ focus 되더라도 스크롤 이동 막기
+      });
+    }
+  }, []);
+  
+  
+
   const parseXmlToJSX = (block) => {
     const xml = Blockly.Xml.blockToDom(block);
     const xmlText = Blockly.Xml.domToText(xml);
