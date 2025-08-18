@@ -507,3 +507,16 @@ ol {
   margin-left: 16px;
   padding: 0;
 }
+
+/* 커진 툴팁 스타일 */
+.my-blockly-tooltip {
+  font-size: 16px !important; 
+  line-height: 1.4 !important;
+  padding: 8px 10px !important;
+  border-radius: 8px !important;
+  /* 원하면 배경/그림자도 커스텀
+  background: #111 !important;
+  color: #fff !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,.2) !important;
+  */
+}

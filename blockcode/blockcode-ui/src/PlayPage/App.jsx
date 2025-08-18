@@ -365,6 +365,7 @@ export default function App() {
   const [alertShown, setAlertShown] = useState(false);
 
   const renderRef = useRef(null);
+  const tooltipInited = useRef(false);   //툴팁 초기화 여부 체크용
 
   useEffect(() => {
     const handleResize = () => {
@@ -540,6 +541,25 @@ export default function App() {
 
   const handleWorkspaceChange = () => {
     const workspace = Blockly.getMainWorkspace();
+    // 툴팁 설정:
+    if (workspace && !tooltipInited.current) {
+      try {
+        // 툴팁 뜨는 시간
+        Blockly.Tooltip.HOVER_MS = 0.02;
+
+        // 툴팁 DOM 생성 보장 후, 커스텀 클래스 붙이기
+        Blockly.Tooltip.createDom?.();
+        const tipDiv = Blockly.Tooltip.getDiv?.();
+        if (tipDiv && !tipDiv.dataset.enhanced) {
+          tipDiv.classList.add('my-blockly-tooltip');
+          tipDiv.dataset.enhanced = '1';
+        }
+
+        tooltipInited.current = true;
+      } catch (e) {
+        console.warn("Tooltip init error", e);
+      }
+    }
     workspaceRef.current = workspace;
     if (workspace) {
       const newXml = Blockly.Xml.domToText(Blockly.Xml.workspaceToDom(workspace));
