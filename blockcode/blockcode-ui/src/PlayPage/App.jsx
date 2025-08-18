@@ -639,7 +639,7 @@ export default function App() {
                 borderBottomLeftRadius: '16px',   // 왼쪽 아래
                 borderBottomRightRadius: '16px',  // 오른쪽 아래
                   overflow: 'auto', // 스크롤바 자동 생성
-                  maxHeight: '100%', // 부모 영역 안에서만 보이게
+                  minHeight: '100%', // 부모 영역 안에서만 보이게
                   boxSizing: 'border-box', // padding 포함해서 크기 계산
               }}
             >
