@@ -6,9 +6,9 @@ export function registerNavigationBlocks() {
     init: function () {
       this.appendDummyInput()
         .appendField("이동 버튼")
-        .appendField(new Blockly.FieldTextInput("www.naver.com"), "LINK")
+        .appendField(new Blockly.FieldTextInput("(링크 주소를 넣어보세요!) 예시: www.naver.com"), "LINK")
         .appendField("버튼 이름")
-        .appendField(new Blockly.FieldTextInput("GO"), "LABEL");
+        .appendField(new Blockly.FieldTextInput("이동하기"), "LABEL");
       this.setColour("#D1B3FF");
       this.setTooltip("클릭 시 특정 링크로 이동하는 버튼입니다.");
       this.setPreviousStatement(true, COMBINE_TYPES);

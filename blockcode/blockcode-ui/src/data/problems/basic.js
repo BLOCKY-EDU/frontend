@@ -25,7 +25,7 @@ export const BASIC_PROBLEMS = [
         }
     },
     {
-        id: 2, title: "바깥 여백에 대해 알아보자!", image: img2,
+        id: 2, title: "바깥 여백(margin)에 대해 알아보자!", image: img2,
         answerXml: `
 <xml xmlns="https://developers.google.com/blockly/xml">
   <block type="container_box" x="230" y="50">

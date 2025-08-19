@@ -47,6 +47,144 @@ import { html as beautifyHtml } from 'js-beautify';
 import { registerLayoutBlocks } from "../tabs/LayoutTab.jsx";
 registerLayoutBlocks();
 
+// ✅ 추가: 문제에서 이미지 힌트 추출
+function deriveImageHints(problem) {
+  if (!problem) return [];
+  const set = new Set();
+
+  // 1) 명시적 imageHints가 있으면 우선 사용
+  if (Array.isArray(problem.imageHints)) {
+    problem.imageHints.forEach(v => typeof v === 'string' && v.trim() && set.add(v.trim()));
+  }
+
+  // 2) 규칙 스캐닝(있으면 자동 추출)
+  const rules = problem.rules || {};
+  const scan = (arr = []) => {
+    arr.forEach(r => {
+      if (r?.selector === 'img' && r?.attr === 'src' && typeof r?.value === 'string') {
+        // /images/ 경로 위주로 추출 (노이즈 방지)
+        if (r.value.includes('/images/')) set.add(r.value);
+      }
+    });
+  };
+  scan(rules.requireAttributesAt);
+  scan(rules.anyOfAttributesAt); // 선택: OR 규칙 지원 시
+
+  return Array.from(set);
+}
+
+function ImageHintFloat({ hints }) {
+  const [inj, setInj] = React.useState(null);
+  const [open, setOpen] = React.useState(false);
+
+  React.useEffect(() => {
+    const ws = Blockly.getMainWorkspace();
+    if (ws) setInj(ws.getInjectionDiv());
+  }, []);
+
+  if (!inj) return null;
+
+  const hasHints = hints && hints.length > 0;
+
+  return createPortal(
+    <>
+      <button
+        onClick={() => setOpen(true)}
+        title="이 문제에서 사용해야 하는 이미지 주소 보기"
+        style={{
+          position: 'absolute',
+          bottom: 20,
+          left: 100,          // 채점 버튼(좌하단) 근처에 배치
+          border: 'none',
+          borderRadius: 8,
+          padding: '8px 10px',
+          fontWeight: 700,
+          background: '#0ea5e9',
+          color: '#fff',
+          boxShadow: '0 6px 18px rgba(0,0,0,0.25)',
+          cursor: 'pointer',
+          zIndex: 2000,
+        }}
+      >
+        이미지 주소 보기
+      </button>
+
+      {open && (
+        <div
+          onClick={() => setOpen(false)}
+          style={{
+            position: "fixed", inset: 0, background: "rgba(0,0,0,.45)",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            zIndex: 3000
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              width: 420, maxWidth: "90vw",
+              background: "#fff", borderRadius: 14, padding: 18,
+              boxShadow: "0 20px 60px rgba(0,0,0,.25)"
+            }}
+          >
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+              <h3 style={{ margin: 0 }}>이미지 주소</h3>
+              <button
+                onClick={() => setOpen(false)}
+                style={{ border: "none", background: "transparent", fontSize: 18, cursor: "pointer" }}
+              >
+                ✕
+              </button>
+            </div>
+
+            {!hasHints ? (
+              <div style={{ color: "#555", padding: "8px 0" }}>
+                이 문제에는 별도의 이미지 주소 힌트가 없어요.
+              </div>
+            ) : (
+              <ul style={{ listStyle: "none", paddingLeft: 0, margin: 0, display: "grid", gap: 8 }}>
+                {hints.map((h, idx) => (
+                  <li key={idx} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                    <code style={{
+                      background: "#f3f4f6",
+                      padding: "6px 8px",
+                      borderRadius: 6,
+                      fontFamily: "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace",
+                      flex: 1,
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap"
+                    }}>{h}</code>
+                    <button
+                      onClick={() => navigator.clipboard.writeText(h)}
+                      style={{ padding: "6px 10px", borderRadius: 6, border: "1px solid #d1d5db", cursor: "pointer" }}
+                    >
+                      복사
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+
+            {hasHints && (
+              <div style={{ marginTop: 12, display: "flex", gap: 8, justifyContent: "flex-end" }}>
+                <button
+                  onClick={() => {
+                    navigator.clipboard.writeText(hints.join('\n'));
+                  }}
+                  style={{ padding: "8px 12px", borderRadius: 8, border: "1px solid #d1d5db", cursor: "pointer" }}
+                >
+                  모두 복사
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </>,
+    inj
+  );
+}
+
 // 사람 친화 메시지 변환기
 function modeK(mode) {
   if (mode === 'equals') return '정확히 같아야 해요';
@@ -200,7 +338,7 @@ import {
 import {
   getListTabToolbox,
   registerListBlocks,
-    parseSingleListBlock,
+  parseSingleListBlock,
 } from "../tabs/ListTab.jsx";
 import {
   registerNavigationBlocks,
@@ -540,6 +678,7 @@ export default function EditorShell() {
   const { id } = useParams();
   const navigate = useNavigate();
   const problem = PROBLEM_BY_ID?.[String(id)];
+  const imageHints = React.useMemo(() => deriveImageHints(problem), [problem]);
 
   // 채점 모달 상태
   const [gradeOpen, setGradeOpen] = React.useState(false);
@@ -655,124 +794,125 @@ export default function EditorShell() {
     }
   }, [tabXmlMap]);
 
-    const parseXmlToJSX = (block) => {
-        const xml = Blockly.Xml.blockToDom(block);
+  const parseXmlToJSX = (block) => {
+    const xml = Blockly.Xml.blockToDom(block);
+    const xmlText = Blockly.Xml.domToText(xml);
+    const type = block.type;
+
+    if (type === "list_bulleted" || type === "list_numbered") {
+      return parseSingleListBlock(xmlText);
+    }
+    if (
+      [
+        "text_title",
+        "text_small_title",
+        "small_content",
+        "recipe_step",
+        "toggle_input",
+        "highlight_text",
+        "paragraph",
+      ].includes(type)
+    ) {
+      return parseWritingXmlToJSX(xmlText);
+    } else if (
+      [
+        "normal_button",
+        "submit_button",
+        "text_input",
+        "email_input",
+        "checkbox_block",
+        "select_box",
+      ].includes(type)
+    ) {
+      return parseButtonXmlToJSX(xmlText);
+    } else if (
+      ["insert_image", "insert_video", "youtube_link"].includes(type)
+    ) {
+      return parseImageXmlToJSX(xmlText);
+    } else if (["list_item", "ordered_list_item"].includes(type)) {
+      return parseSingleListBlock(xmlText);
+    } else if (["navigation_button"].includes(type)) {
+      return parseNavigationXmlToJSX(xmlText);
+    }
+    return null;
+  };
+
+  const parseBlockChainToJSX = (block) => {
+    const jsxList = [];
+    let current = block;
+
+    while (current) {
+      let jsx;
+
+      if (current.type === "container_box") {
+        // 요구사항 1: container_box라면 직접 parseLayoutXmlToJSX 호출
+        const xml = Blockly.Xml.blockToDom(current);
         const xmlText = Blockly.Xml.domToText(xml);
-        const type = block.type;
+        jsx = parseLayoutXmlToJSX(xmlText);
 
-        if (type === "list_bulleted" || type === "list_numbered") {
-            return parseSingleListBlock(xmlText);
+        if (jsx) jsxList.push(...(Array.isArray(jsx) ? jsx : [jsx]));
+        break;
+      }
+
+      else {
+        jsx = parseXmlToJSX(current);
+        if (jsx) jsxList.push(...(Array.isArray(jsx) ? jsx : [jsx]));
+      }
+
+      current = current.getNextBlock();
+    }
+
+    return jsxList;
+  };
+
+  const jsxOutput = useMemo(() => {
+    const workspace = Blockly.getMainWorkspace();
+    if (!workspace) return [];
+    const topBlocks = workspace.getTopBlocks(true);
+
+    // 배경색 블록 바깥에 있을 때 전체 배경색상 적용
+    const bgBlock = topBlocks.find((b) => b.type === "style_background");
+    if (bgBlock && !bgBlock.getParent()) {
+      const colorField = bgBlock.getFieldValue("COLOR");
+      if (colorField && globalBackgroundColor !== colorField) {
+        setGlobalBackgroundColor(colorField);
+      }
+    } else {
+      if (globalBackgroundColor !== "#ffffff") {
+        setGlobalBackgroundColor("#ffffff");
+      }
+    }
+
+    // const boxBlocks = topBlocks.filter(
+    //   (block) => block.type === "container_box"
+    // );
+    // if (boxBlocks.length === 0) {
+    //   if (!alertOpen) setAlertOpen(true);
+    //   if (alertMsg !== "상자 안에 블록을 넣어주세요.")
+    //     setAlertMsg("상자 안에 블록을 넣어주세요.");
+    //   return [];
+    // }
+    // if (alertOpen) setAlertOpen(false);
+
+    topBlocks.sort(
+      (a, b) => a.getRelativeToSurfaceXY().y - b.getRelativeToSurfaceXY().y
+    );
+
+    const jsxList = [];
+    const visited = new Set();
+
+    topBlocks.forEach((block) => {
+      if (!visited.has(block.id)) {
+        const jsx = parseBlockChainToJSX(block);
+        if (jsx) {
+          jsxList.push(...(Array.isArray(jsx) ? jsx : [jsx]));
         }
-        if (
-            [
-                "text_title",
-                "text_small_title",
-                "small_content",
-                "recipe_step",
-                "toggle_input",
-                "highlight_text",
-                "paragraph",
-            ].includes(type)
-        ) {
-            return parseWritingXmlToJSX(xmlText);
-        } else if (
-            [
-                "normal_button",
-                "submit_button",
-                "text_input",
-                "email_input",
-                "checkbox_block",
-                "select_box",
-            ].includes(type)
-        ) {
-            return parseButtonXmlToJSX(xmlText);
-        } else if (
-            ["insert_image", "insert_video", "youtube_link"].includes(type)
-        ) {
-            return parseImageXmlToJSX(xmlText);
-        } else if (["list_item", "ordered_list_item"].includes(type)) {
-            return parseSingleListBlock(xmlText);
-        } else if (["navigation_button"].includes(type)) {
-            return parseNavigationXmlToJSX(xmlText);
-        }
-        return null;
-    };
+      }
+    });
 
-    const parseBlockChainToJSX = (block) => {
-        const jsxList = [];
-        let current = block;
-
-        while (current) {
-            let jsx;
-
-            if (current.type === "container_box") {
-                // 요구사항 1: container_box라면 직접 parseLayoutXmlToJSX 호출
-                const xml = Blockly.Xml.blockToDom(current);
-                const xmlText = Blockly.Xml.domToText(xml);
-                jsx = parseLayoutXmlToJSX(xmlText);
-            } else {
-                jsx = parseXmlToJSX(current);
-            }
-
-            if (jsx) {
-                jsxList.push(...(Array.isArray(jsx) ? jsx : [jsx]));
-            }
-
-            // next 블럭 재귀 탐색
-            current = current.getNextBlock();
-        }
-
-        return jsxList;
-    };
-
-    const jsxOutput = useMemo(() => {
-        const workspace = Blockly.getMainWorkspace();
-        if (!workspace) return [];
-        const topBlocks = workspace.getTopBlocks(true);
-
-        // 배경색 블록 바깥에 있을 때 전체 배경색상 적용
-        const bgBlock = topBlocks.find((b) => b.type === "style_background");
-        if (bgBlock && !bgBlock.getParent()) {
-            const colorField = bgBlock.getFieldValue("COLOR");
-            if (colorField && globalBackgroundColor !== colorField) {
-                setGlobalBackgroundColor(colorField);
-            }
-        } else {
-            if (globalBackgroundColor !== "#ffffff") {
-                setGlobalBackgroundColor("#ffffff");
-            }
-        }
-
-        // const boxBlocks = topBlocks.filter(
-        //   (block) => block.type === "container_box"
-        // );
-        // if (boxBlocks.length === 0) {
-        //   if (!alertOpen) setAlertOpen(true);
-        //   if (alertMsg !== "상자 안에 블록을 넣어주세요.")
-        //     setAlertMsg("상자 안에 블록을 넣어주세요.");
-        //   return [];
-        // }
-        // if (alertOpen) setAlertOpen(false);
-
-        topBlocks.sort(
-            (a, b) => a.getRelativeToSurfaceXY().y - b.getRelativeToSurfaceXY().y
-        );
-
-        const jsxList = [];
-        const visited = new Set();
-
-        topBlocks.forEach((block) => {
-            if (!visited.has(block.id)) {
-                const jsx = parseBlockChainToJSX(block);
-                if (jsx) {
-                    jsxList.push(...(Array.isArray(jsx) ? jsx : [jsx]));
-                }
-            }
-        });
-
-        return jsxList.map((jsx, i) => <React.Fragment key={i}>{jsx}</React.Fragment>);
-        // eslint-disable-next-line
-    }, [tabXmlMap]);
+    return jsxList.map((jsx, i) => <React.Fragment key={i}>{jsx}</React.Fragment>);
+    // eslint-disable-next-line
+  }, [tabXmlMap]);
 
   // ✅ HTML 자동 저장: jsxOutput/배경 변경 시 저장 (jsxOutput 선언 이후에 위치)
   useEffect(() => {
@@ -929,8 +1069,11 @@ export default function EditorShell() {
 
                 {/* 전역 채점 플로팅 버튼 */}
                 <GradeFloat onGrade={handleGlobalGrade} />
+                <ImageHintFloat hints={imageHints} />
 
                 <ExportXmlFloat />
+
+
 
                 {/* 로봇 아이콘 */}
                 {/* <div className="app-robot-container" style={{ position: "absolute", bottom: 20, right: 30 }}>
