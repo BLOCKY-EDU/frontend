@@ -655,136 +655,124 @@ export default function EditorShell() {
     }
   }, [tabXmlMap]);
 
-  const parseXmlToJSX = (block) => {
-    const xml = Blockly.Xml.blockToDom(block);
-    const xmlText = Blockly.Xml.domToText(xml);
-    const type = block.type;
+    const parseXmlToJSX = (block) => {
+        const xml = Blockly.Xml.blockToDom(block);
+        const xmlText = Blockly.Xml.domToText(xml);
+        const type = block.type;
 
-    if (type === "list_bulleted" || type === "list_numbered") {
-      return parseListXmlToJSX(xmlText);
-    }
-    if (
-      [
-        "text_title",
-        "text_small_title",
-        "small_content",
-        "recipe_step",
-        "toggle_input",
-        "highlight_text",
-        "paragraph",
-      ].includes(type)
-    ) {
-      return parseWritingXmlToJSX(xmlText);
-    } else if (
-      [
-        "normal_button",
-        "submit_button",
-        "text_input",
-        "email_input",
-        "checkbox_block",
-        "select_box",
-      ].includes(type)
-    ) {
-      return parseButtonXmlToJSX(xmlText);
-    } else if (
-      ["insert_image", "insert_video", "youtube_link"].includes(type)
-    ) {
-      return parseImageXmlToJSX(xmlText);
-    } else if (["list_item", "ordered_list_item"].includes(type)) {
-      return parseListXmlToJSX(xmlText);
-    } else if (["navigation_button"].includes(type)) {
-      return parseNavigationXmlToJSX(xmlText);
-    } else if (["container_box"].includes(type)) {
-      return parseLayoutXmlToJSX(xmlText);
-    }
-    return null;
-  };
-
-  const jsxOutput = useMemo(() => {
-    const workspace = Blockly.getMainWorkspace();
-    if (!workspace) return [];
-    const topBlocks = workspace.getTopBlocks(true);
-
-    // 배경 블록 감지
-    const BG_TYPES = ["style_background", "background_color_block"];
-    const bgBlock = topBlocks.find(
-      (b) => BG_TYPES.includes(b.type) && !b.getParent()
-    );
-
-    if (bgBlock) {
-      const colorField =
-        bgBlock.getFieldValue?.("COLOR") ||
-        bgBlock.getFieldValue?.("BG_COLOR");
-      if (colorField && globalBackgroundColor !== colorField) {
-        setGlobalBackgroundColor(colorField);
-      }
-    } else {
-      if (globalBackgroundColor !== "#ffffff") {
-        setGlobalBackgroundColor("#ffffff");
-      }
-    }
-
-    // const boxBlocks = topBlocks.filter(
-    //   (block) => block.type === "container_box"
-    // );
-    // if (boxBlocks.length === 0) {
-    //   if (!alertOpen) setAlertOpen(true);
-    //   if (alertMsg !== "상자 안에 블록을 넣어주세요.")
-    //     setAlertMsg("상자 안에 블록을 넣어주세요.");
-    //   return [];
-    // }
-    // if (alertOpen) setAlertOpen(false);
-
-    topBlocks.sort(
-      (a, b) => a.getRelativeToSurfaceXY().y - b.getRelativeToSurfaceXY().y
-    );
-
-    const jsxList = [];
-    const visited = new Set();
-
-    topBlocks.forEach((block) => {
-      if (
-        (block.type === "list_item" || block.type === "ordered_list_item") &&
-        !visited.has(block.id)
-      ) {
-        const group = [];
-        let current = block;
-        while (
-          current &&
-          !visited.has(current.id) &&
-          current.type === block.type
+        if (type === "list_bulleted" || type === "list_numbered") {
+            return parseListXmlToJSX(xmlText);
+        }
+        if (
+            [
+                "text_title",
+                "text_small_title",
+                "small_content",
+                "recipe_step",
+                "toggle_input",
+                "highlight_text",
+                "paragraph",
+            ].includes(type)
         ) {
-          const parsed = parseListXmlToJSX(
-            Blockly.Xml.domToText(Blockly.Xml.blockToDom(current))
-          );
-          if (parsed) group.push(parsed.content);
-          visited.add(current.id);
-          current = current.getNextBlock();
+            return parseWritingXmlToJSX(xmlText);
+        } else if (
+            [
+                "normal_button",
+                "submit_button",
+                "text_input",
+                "email_input",
+                "checkbox_block",
+                "select_box",
+            ].includes(type)
+        ) {
+            return parseButtonXmlToJSX(xmlText);
+        } else if (
+            ["insert_image", "insert_video", "youtube_link"].includes(type)
+        ) {
+            return parseImageXmlToJSX(xmlText);
+        } else if (["list_item", "ordered_list_item"].includes(type)) {
+            return parseListXmlToJSX(xmlText);
+        } else if (["navigation_button"].includes(type)) {
+            return parseNavigationXmlToJSX(xmlText);
+        }
+        return null;
+    };
+
+    const parseBlockChainToJSX = (block) => {
+        const jsxList = [];
+        let current = block;
+
+        while (current) {
+            let jsx;
+
+            if (current.type === "container_box") {
+                // 요구사항 1: container_box라면 직접 parseLayoutXmlToJSX 호출
+                const xml = Blockly.Xml.blockToDom(current);
+                const xmlText = Blockly.Xml.domToText(xml);
+                jsx = parseLayoutXmlToJSX(xmlText);
+            } else {
+                jsx = parseXmlToJSX(current);
+            }
+
+            if (jsx) {
+                jsxList.push(...(Array.isArray(jsx) ? jsx : [jsx]));
+            }
+
+            // next 블럭 재귀 탐색
+            current = current.getNextBlock();
         }
 
-        if (group.length > 0) {
-          const Tag = block.type === "ordered_list_item" ? "ol" : "ul";
-          jsxList.push(
-            <Tag key={block.id}>
-              {group.map((content, i) => (
-                <li key={i}>{content}</li>
-              ))}
-            </Tag>
-          );
-        }
-      } else if (!visited.has(block.id)) {
-        const jsx = parseXmlToJSX(block);
-        if (jsx && typeof jsx === "object" && jsx.type && jsx.content) {
-          // 이미 위에서 처리됨
-        } else if (jsx) {
-          jsxList.push(...(Array.isArray(jsx) ? jsx : [jsx]));
-        }
-      }
-    });
+        return jsxList;
+    };
 
-    return jsxList.map((jsx, i) => <React.Fragment key={i}>{jsx}</React.Fragment>);
-    // eslint-disable-next-line
-  }, [tabXmlMap]);
+    const jsxOutput = useMemo(() => {
+        const workspace = Blockly.getMainWorkspace();
+        if (!workspace) return [];
+        const topBlocks = workspace.getTopBlocks(true);
+
+        // 배경색 블록 바깥에 있을 때 전체 배경색상 적용
+        const bgBlock = topBlocks.find((b) => b.type === "style_background");
+        if (bgBlock && !bgBlock.getParent()) {
+            const colorField = bgBlock.getFieldValue("COLOR");
+            if (colorField && globalBackgroundColor !== colorField) {
+                setGlobalBackgroundColor(colorField);
+            }
+        } else {
+            if (globalBackgroundColor !== "#ffffff") {
+                setGlobalBackgroundColor("#ffffff");
+            }
+        }
+
+        // const boxBlocks = topBlocks.filter(
+        //   (block) => block.type === "container_box"
+        // );
+        // if (boxBlocks.length === 0) {
+        //   if (!alertOpen) setAlertOpen(true);
+        //   if (alertMsg !== "상자 안에 블록을 넣어주세요.")
+        //     setAlertMsg("상자 안에 블록을 넣어주세요.");
+        //   return [];
+        // }
+        // if (alertOpen) setAlertOpen(false);
+
+        topBlocks.sort(
+            (a, b) => a.getRelativeToSurfaceXY().y - b.getRelativeToSurfaceXY().y
+        );
+
+        const jsxList = [];
+        const visited = new Set();
+
+        topBlocks.forEach((block) => {
+            if (!visited.has(block.id)) {
+                const jsx = parseBlockChainToJSX(block);
+                if (jsx) {
+                    jsxList.push(...(Array.isArray(jsx) ? jsx : [jsx]));
+                }
+            }
+        });
+
+        return jsxList.map((jsx, i) => <React.Fragment key={i}>{jsx}</React.Fragment>);
+        // eslint-disable-next-line
+    }, [tabXmlMap]);
 
   // ✅ HTML 자동 저장: jsxOutput/배경 변경 시 저장 (jsxOutput 선언 이후에 위치)
   useEffect(() => {
