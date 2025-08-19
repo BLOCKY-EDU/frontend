@@ -2,6 +2,7 @@
 import * as Blockly from "blockly";
 import "blockly/blocks";
 import { Outlet } from "react-router-dom";
+import robotIcon_smile from "../assets/locky_selected.png";
 
 import { FieldColour } from "@blockly/field-colour";
 Blockly.fieldRegistry.register("field_colour", FieldColour);
@@ -94,10 +95,11 @@ function ImageHintFloat({ hints }) {
         style={{
           position: 'absolute',
           bottom: 20,
-          left: 100,          // 채점 버튼(좌하단) 근처에 배치
+          left: 180,          // 채점 버튼(좌하단) 근처에 배치
           border: 'none',
-          borderRadius: 8,
-          padding: '8px 10px',
+          padding: "20px",
+          height: "58px",
+          borderRadius: "16px",
           fontWeight: 700,
           background: '#0ea5e9',
           color: '#fff',
@@ -106,7 +108,7 @@ function ImageHintFloat({ hints }) {
           zIndex: 2000,
         }}
       >
-        이미지 주소 보기
+        이미지/이동 블록 주소 보기
       </button>
 
       {open && (
@@ -254,19 +256,29 @@ function GradeFloat({ onGrade }) {
         position: "absolute",
         bottom: 20,
         left: 20,
-        width: 64,
-        height: 64,
-        borderRadius: "50%",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: "12px",
+        padding: "20px",
+        height: "58px",
+        borderRadius: "16px",        // 둥근 네모
         background: "#2563eb",
         color: "#fff",
         border: "none",
         boxShadow: "0 8px 22px rgba(0,0,0,.2)",
-        fontWeight: 800,
+        fontWeight: 700,
+        fontSize: "16px",
         cursor: "pointer",
-        zIndex: 2000, // injection 내부에서도 가장 위
+        zIndex: 2000,
       }}
     >
-      채점
+      <img
+        src={robotIcon_smile}
+        alt="robot"
+        style={{ width: 28, height: 28 }} // 로봇 아이콘 크기
+      />
+      채점하기
     </button>,
     injectionEl
   );
@@ -1071,7 +1083,8 @@ export default function EditorShell() {
                 <GradeFloat onGrade={handleGlobalGrade} />
                 <ImageHintFloat hints={imageHints} />
 
-                <ExportXmlFloat />
+                {/* xml 플로팅 버튼 */}
+                {/* <ExportXmlFloat /> */}
 
 
 

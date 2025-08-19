@@ -5,6 +5,7 @@ import "./MainPage.css";
 import "./MainPage.font.css";
 import logo from "../assets/blocky-logo.png";
 import NavBar from "../components/NavBar";
+import { Link } from "react-router-dom";
 
 const blockyLetters = ["B", "L", "O", "C", "K", "Y"];
 const blockyConfigs = [
@@ -77,27 +78,27 @@ export default function MainPage() {
                 animate={
                   fall
                     ? {
-                        y: 120,
-                        rotate: (Math.random() - 0.5) * 70,
-                        boxShadow: `0 10px 32px 0 ${blockyConfigs[idx].shadow}`,
-                        transition: {
-                          type: "spring",
-                          stiffness: 330,
-                          damping: 15,
-                          delay: idx * 0.07,
-                        }
+                      y: 120,
+                      rotate: (Math.random() - 0.5) * 70,
+                      boxShadow: `0 10px 32px 0 ${blockyConfigs[idx].shadow}`,
+                      transition: {
+                        type: "spring",
+                        stiffness: 330,
+                        damping: 15,
+                        delay: idx * 0.07,
                       }
+                    }
                     : {
-                        y: 0,
-                        rotate: 0,
-                        boxShadow: `0 4px 18px 0 ${blockyConfigs[idx].shadow}`,
-                        transition: {
-                          type: "spring",
-                          stiffness: 130,
-                          damping: 15,
-                          delay: idx * 0.02,
-                        }
+                      y: 0,
+                      rotate: 0,
+                      boxShadow: `0 4px 18px 0 ${blockyConfigs[idx].shadow}`,
+                      transition: {
+                        type: "spring",
+                        stiffness: 130,
+                        damping: 15,
+                        delay: idx * 0.02,
                       }
+                    }
                 }
                 style={{
                   "--blocky-border": blockyConfigs[idx].border,
@@ -130,19 +131,19 @@ export default function MainPage() {
             코딩의 벽 없이 바로 배우고, 바로 응용할 수 있습니다.
           </div>
           <div className="main-card-container">
-            <Tilt tiltMaxAngleX={17} tiltMaxAngleY={17} glareEnable={true} glareColor="#b4e2ff" glareMaxOpacity={0.16} style={{ margin: 0 }}>
-              <div className="main-card fade-up" style={{ transitionDelay: "0.07s" }}>
-                <span className="emoji">⚡</span> 블록을 조립하면 코드가 실시간 생성!
+            <Tilt tiltMaxAngleX={17} tiltMaxAngleY={17} glareEnable glareColor="#b4e2ff" glareMaxOpacity={0.16} style={{ margin: 0 }}>
+              <div className="main-card card-lg fade-up" style={{ transitionDelay: "0.07s" }}>
+                <span className="emoji emoji-lg">⚡</span> 블록을 조립하면 <b>코드가 실시간 생성!</b>
               </div>
             </Tilt>
-            <Tilt tiltMaxAngleX={17} tiltMaxAngleY={17} glareEnable={true} glareColor="#ffdaee" glareMaxOpacity={0.15} style={{ margin: 0 }}>
-              <div className="main-card fade-up" style={{ transitionDelay: "0.14s" }}>
-                <span className="emoji">👁️</span> 결과 미리보기로 즉시 확인!
+            <Tilt tiltMaxAngleX={17} tiltMaxAngleY={17} glareEnable glareColor="#ffdaee" glareMaxOpacity={0.15} style={{ margin: 0 }}>
+              <div className="main-card card-lg fade-up" style={{ transitionDelay: "0.14s" }}>
+                <span className="emoji emoji-lg">👁️</span> <b>결과 미리보기</b>로 즉시 확인!
               </div>
             </Tilt>
-            <Tilt tiltMaxAngleX={17} tiltMaxAngleY={17} glareEnable={true} glareColor="#ffe6be" glareMaxOpacity={0.15} style={{ margin: 0 }}>
-              <div className="main-card fade-up" style={{ transitionDelay: "0.21s" }}>
-                <span className="emoji">🎨</span> 다양한 스타일과 자유로운 커스터마이즈!
+            <Tilt tiltMaxAngleX={17} tiltMaxAngleY={17} glareEnable glareColor="#ffe6be" glareMaxOpacity={0.15} style={{ margin: 0 }}>
+              <div className="main-card card-lg fade-up" style={{ transitionDelay: "0.21s" }}>
+                <span className="emoji emoji-lg">🎨</span> 다양한 스타일, <b>자유로운 커스터마이즈!</b>
               </div>
             </Tilt>
           </div>
@@ -175,6 +176,10 @@ export default function MainPage() {
               margin: "2.5rem auto 2.5rem"
             }}
           />
+
+          <div className="cta-wrap fade-up" style={{ transitionDelay: "0.12s" }}>
+            <Link to="/play" className="main-action-btn shiny-btn cta-big">자유롭게 놀기</Link>
+          </div>
         </div>
       </section>
     </div>
