@@ -203,7 +203,7 @@ export const ADVANCED_PROBLEMS = [
             ],
             requireInlineStylesAt: [
                 // 헤더 컨테이너 배경
-                { selector: "body", prop: "background-color", value: "#ffffcc", mode: "includes" },
+                // { selector: "body", prop: "background-color", value: "#ffffcc", mode: "includes" },
                 // 헤더 패딩
                 { selector: "div", prop: "padding", value: "16px", mode: "includes" },
                 // 헤더 정렬
