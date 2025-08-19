@@ -21,10 +21,10 @@ export function registerLayoutBlocks() {
             this.appendStatementInput("STYLE").setCheck(STYLE_BLOCK_TYPES).appendField("스타일");     // 스타일 블록 연결
             this.setColour("#A3D5FF");
             this.setTooltip("내용을 담는 레이아웃 상자입니다.");
-              this.setPreviousStatement(true, 'container_box');
-              this.setNextStatement(true, 'container_box');
-            // +   this.setPreviousStatement(true, COMBINE_TYPES); // 공통 타입으로
-            // +   this.setNextStatement(true, COMBINE_TYPES); // 공통 타입으로
+              // this.setPreviousStatement(true, 'container_box');
+              // this.setNextStatement(true, 'container_box');
+            this.setPreviousStatement(true, COMBINE_TYPES); // 공통 타입으로
+            this.setNextStatement(true, COMBINE_TYPES); // 공통 타입으로
         }
     };
 

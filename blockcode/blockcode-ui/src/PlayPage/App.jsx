@@ -440,13 +440,38 @@ export default function App() {
       return parseListXmlToJSX(xmlText);
     } else if (["navigation_button"].includes(type)) {
       return parseNavigationXmlToJSX(xmlText);
-    } else if (["container_box"].includes(type)) {
-      return parseLayoutXmlToJSX(xmlText);
     }
     return null;
   };
 
-  const jsxOutput = useMemo(() => {
+    const parseBlockChainToJSX = (block) => {
+        const jsxList = [];
+        let current = block;
+
+        while (current) {
+            let jsx;
+
+            if (current.type === "container_box") {
+                // 요구사항 1: container_box라면 직접 parseLayoutXmlToJSX 호출
+                const xml = Blockly.Xml.blockToDom(current);
+                const xmlText = Blockly.Xml.domToText(xml);
+                jsx = parseLayoutXmlToJSX(xmlText);
+            } else {
+                jsx = parseXmlToJSX(current);
+            }
+
+            if (jsx) {
+                jsxList.push(...(Array.isArray(jsx) ? jsx : [jsx]));
+            }
+
+            // next 블럭 재귀 탐색
+            current = current.getNextBlock();
+        }
+
+        return jsxList;
+    };
+
+    const jsxOutput = useMemo(() => {
     const workspace = Blockly.getMainWorkspace();
     if (!workspace) return [];
     const topBlocks = workspace.getTopBlocks(true);
@@ -483,40 +508,9 @@ export default function App() {
     const visited = new Set();
 
     topBlocks.forEach((block) => {
-      if (
-        (block.type === "list_item" || block.type === "ordered_list_item") &&
-        !visited.has(block.id)
-      ) {
-        const group = [];
-        let current = block;
-        while (
-          current &&
-          !visited.has(current.id) &&
-          current.type === block.type
-        ) {
-          const parsed = parseListXmlToJSX(
-            Blockly.Xml.domToText(Blockly.Xml.blockToDom(current))
-          );
-          if (parsed) group.push(parsed.content);
-          visited.add(current.id);
-          current = current.getNextBlock();
-        }
-
-        if (group.length > 0) {
-          const Tag = block.type === "ordered_list_item" ? "ol" : "ul";
-          jsxList.push(
-            <Tag key={block.id}>
-              {group.map((content, i) => (
-                <li key={i}>{content}</li>
-              ))}
-            </Tag>
-          );
-        }
-      } else if (!visited.has(block.id)) {
-        const jsx = parseXmlToJSX(block);
-        if (jsx && typeof jsx === "object" && jsx.type && jsx.content) {
-          // 이미 위에서 처리됨
-        } else if (jsx) {
+      if (!visited.has(block.id)) {
+        const jsx = parseBlockChainToJSX(block);
+        if (jsx) {
           jsxList.push(...(Array.isArray(jsx) ? jsx : [jsx]));
         }
       }
