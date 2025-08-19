@@ -9,7 +9,7 @@ export const COMBINE_TYPES = [
     // 미디어
     'insert_image', 'insert_video', 'youtube_link',
     // 리스트
-    'list_bulleted', 'list_numbered', 'list_item', 'ordered_list_item',
+    'list_bulleted', 'list_numbered',
     // 이동
     'navigation_button',
 ];
