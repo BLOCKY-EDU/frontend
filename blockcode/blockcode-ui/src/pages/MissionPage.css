@@ -75,7 +75,9 @@
   background: #1d4ed8;
 }
 
-.tutorial-backdrop {
+
+/* 튜토리얼 */
+/* .tutorial-backdrop {
     position: fixed;
     inset: 0;
     background: rgba(0,0,0,0.6);
@@ -98,4 +100,101 @@
     display: flex;
     justify-content: center;
     gap: 12px;
+} */
+
+
+/* 튜토리얼 배경 */
+.tutorial-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 3000;
+}
+
+/* 튜토리얼 모달 */
+.tutorial-modal {
+  background: #ffffff;
+  padding: 40px 50px;
+  border-radius: 18px;
+  max-width: 960px;   /* 기존 720px → 크게 변경 */
+  width: 90%;
+  text-align: center;
+  border: 2px solid #A3D5FF;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.25);
+}
+
+/* 제목 */
+
+.tutorial-title{
+  font-size: 32px;
+  font-weight: 700;
+  color: #1C1C1C;
+  margin-bottom: 16px;
+  font-family: 'Pretendard', 'Noto Sans KR', sans-serif;
+
+}
+
+
+/* 설명 */
+.tutorial-modal p {
+  font-size: 22px;
+  color: #374151;
+  margin-top: 12px;
+  line-height: 1.6;
+}
+
+/* 이미지 */
+.tutorial-modal img {
+  max-width: 80%;
+  margin: 20px auto;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+
+}
+
+/* 버튼 영역 */
+.tutorial-controls {
+  margin-top: 28px;
+  display: flex;
+  justify-content: center; /* 기본은 이전/다음 버튼 가운데 */
+  gap: 16px;
+  position: relative; /* skip 버튼을 절대 위치시킬 수 있도록 */
+}
+
+/* 이전/다음 버튼 공통 */
+.tutorial-controls button {
+  padding: 12px 24px;       
+  min-width: 140px;         
+  border-radius: 10px;
+  border: 1px solid #A3D5FF;
+  font-size: 20px;
+  font-weight: 600;
+  cursor: pointer;
+  background-color: #C9E2F1;
+  color: #1C1C1C;
+  transition: background-color 0.2s ease;
+}
+
+.tutorial-controls button:hover {
+  background-color: #FFEE95;
+}
+
+/* 건너뛰기 버튼만 별도 스타일 */
+.tutorial-controls .skip-btn {
+  position: absolute;
+  right: 0;
+  font-size: 16px;
+  background: none;
+  border: none;
+  color: #6b7280;  /* 회색 계열 */
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.tutorial-controls .skip-btn:hover {
+  text-decoration: underline;
+  color: #374151;
 }
