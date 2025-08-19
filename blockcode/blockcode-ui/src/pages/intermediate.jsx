@@ -13,32 +13,32 @@ export default function Intermediate() {
   const [hoverId, setHoverId] = useState(null);
 
   return (
-      <div className="problems-container">
-        {INTERMEDIATE_PROBLEMS.map((p) => {
-          const isHover = hoverId === p.id;
-          return (
-            <button
-              key={p.id}
-              className="problem-card"
-              onClick={() => navigate(`/mission/${p.id}`)}
-              onMouseEnter={() => setHoverId(p.id)}
-              onMouseLeave={() => setHoverId(null)}
-              onFocus={() => setHoverId(p.id)}    // 키보드 접근성
-              onBlur={() => setHoverId(null)}
-            >
-              <div className="problem-number">중급 문제 {p.id}</div>
-  
-              {/* p.image 대신 고정 이미지 사용 + hover 시 교체 */}
-              <img
-                src={isHover ? locky_selected : locky_unselected}
-                alt={p.title}
-                className="problem-image"
-              />
-  
-              <h3>{p.title}</h3>
-            </button>
-          );
-        })}
-      </div>
-    );
+    <div className="problems-container">
+      {INTERMEDIATE_PROBLEMS.map((p, idx) => {
+        const isHover = hoverId === p.id;
+        return (
+          <button
+            key={p.id}
+            className="problem-card"
+            onClick={() => navigate(`/mission/${p.id}`)}
+            onMouseEnter={() => setHoverId(p.id)}
+            onMouseLeave={() => setHoverId(null)}
+            onFocus={() => setHoverId(p.id)}    // 키보드 접근성
+            onBlur={() => setHoverId(null)}
+          >
+            <div className="problem-number">중급 문제 {idx + 1}</div>
+
+            {/* p.image 대신 고정 이미지 사용 + hover 시 교체 */}
+            <img
+              src={isHover ? locky_selected : locky_unselected}
+              alt={p.title}
+              className="problem-image"
+            />
+
+            <h3>{p.title}</h3>
+          </button>
+        );
+      })}
+    </div>
+  );
 }

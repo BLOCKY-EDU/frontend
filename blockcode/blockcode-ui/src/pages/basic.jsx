@@ -14,7 +14,7 @@ export default function Basic() {
 
   return (
     <div className="problems-container">
-      {BASIC_PROBLEMS.map((p) => {
+      {BASIC_PROBLEMS.map((p, idx) => {
         const isHover = hoverId === p.id;
         return (
           <button
@@ -26,7 +26,7 @@ export default function Basic() {
             onFocus={() => setHoverId(p.id)}    // 키보드 접근성
             onBlur={() => setHoverId(null)}
           >
-            <div className="problem-number">초급 문제 {p.id}</div>
+            <div className="problem-number">초급 문제 {idx + 1}</div>
 
             {/* p.image 대신 고정 이미지 사용 + hover 시 교체 */}
             <img
