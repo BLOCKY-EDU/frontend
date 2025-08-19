@@ -107,37 +107,61 @@ export const parseListXmlToJSX = (xmlText) => {
 };
 
 export function parseSingleListBlock(blockXml) {
-  if (!blockXml) return null;
+    if (!blockXml) return null;
 
-  const parser = new DOMParser();
-  const dom = parser.parseFromString(blockXml, 'text/xml');
-  const block = dom.getElementsByTagName('block')[0];
-  const type = block.getAttribute('type');
+    const parser = new DOMParser();
+    const dom = parser.parseFromString(blockXml, 'text/xml');
+    const block = dom.getElementsByTagName('block')[0];
+    if (!block) return null;
 
-  // 리스트 항목 단일 블록 처리
-  if (type === 'list_item' || type === 'ordered_list_item') {
-    const field = block.querySelector('field[name="TEXT"]');
-    const text = field?.textContent?.trim() || '';
-    return <li>{text}</li>;
-  }
+    const type = block.getAttribute('type');
 
-  // 리스트 컨테이너 (ul / ol) 처리
-  if (type === 'list_bulleted' || type === 'list_numbered') {
-    const statement = block.querySelector('statement[name="ITEMS"]');
-    const items = [];
-
-    if (statement) {
-      let current = statement.firstElementChild; // <block>
-      while (current) {
-        const field = current.querySelector('field[name="TEXT"]');
-        const text = field?.textContent?.trim() || '';
-        items.push(<li key={text + Math.random()}>{text}</li>);
-        current = current.querySelector('next > block');
-      }
+    // 단일 리스트 항목
+    if (type === 'list_item' || type === 'ordered_list_item') {
+        const field = Array.from(block.children).find(
+            (el) => el.tagName === 'field' && el.getAttribute('name') === 'TEXT'
+        );
+        const text = field?.textContent?.trim();
+        if (!text) return null;
+        return <li>{text}</li>;
     }
 
-    return type === 'list_bulleted' ? <ul>{items}</ul> : <ol>{items}</ol>;
-  }
+    // 리스트 컨테이너 (ul / ol)
+    if (type === 'list_bulleted' || type === 'list_numbered') {
+        const statement = Array.from(block.children).find(
+            (el) => el.tagName === 'statement' && el.getAttribute('name') === 'ITEMS'
+        );
+        if (!statement) return type === 'list_bulleted' ? <ul /> : <ol />;
 
-  return null;
+        const items = [];
+        let current = Array.from(statement.children).find((el) => el.tagName === 'block');
+
+        while (current) {
+            const currentType = current.getAttribute('type');
+
+            // 컨테이너 타입과 항목 타입 일치 여부 체크
+            const isValidItem =
+                (type === 'list_bulleted' && currentType === 'list_item') ||
+                (type === 'list_numbered' && currentType === 'ordered_list_item');
+
+            if (isValidItem) {
+                const field = Array.from(current.children).find(
+                    (el) => el.tagName === 'field' && el.getAttribute('name') === 'TEXT'
+                );
+                const text = field?.textContent?.trim();
+                if (text) {
+                    const id = current.getAttribute('id') || text;
+                    items.push(<li key={id}>{text}</li>);
+                }
+            }
+
+            // 직계 next 블록으로 이동
+            const nextEl = Array.from(current.children).find((el) => el.tagName === 'next');
+            current = nextEl ? Array.from(nextEl.children).find((el) => el.tagName === 'block') : null;
+        }
+
+        return type === 'list_bulleted' ? <ul>{items}</ul> : <ol>{items}</ol>;
+    }
+
+    return null;
 }

@@ -91,7 +91,7 @@ import {
 import {
   getListTabToolbox,
   registerListBlocks,
-  parseListXmlToJSX,
+    parseSingleListBlock,
 } from "../tabs/ListTab.jsx";
 import {
   registerNavigationBlocks,
@@ -407,9 +407,9 @@ export default function App() {
     const type = block.type;
 
     if (type === "list_bulleted" || type === "list_numbered") {
-      return parseListXmlToJSX(xmlText);
+      return parseSingleListBlock(xmlText);
     }
-    if (
+    else if (
       [
         "text_title",
         "text_small_title",
@@ -437,7 +437,7 @@ export default function App() {
     ) {
       return parseImageXmlToJSX(xmlText);
     } else if (["list_item", "ordered_list_item"].includes(type)) {
-      return parseListXmlToJSX(xmlText);
+      return parseSingleListBlock(xmlText);
     } else if (["navigation_button"].includes(type)) {
       return parseNavigationXmlToJSX(xmlText);
     }
