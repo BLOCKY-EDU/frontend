@@ -32,7 +32,7 @@ export function registerButtonBlocks() {
     init: function () {
       this.appendDummyInput()
         .appendField("글 입력칸")
-        .appendField(new Blockly.FieldTextInput("placeholder"), "PLACEHOLDER");
+        .appendField(new Blockly.FieldTextInput("글을 입력해보세요"), "PLACEHOLDER");
       this.setColour("#FFCDD6");
       this.setPreviousStatement(true, COMBINE_TYPES);
       this.setNextStatement(true, COMBINE_TYPES);
@@ -54,7 +54,7 @@ export function registerButtonBlocks() {
       init: function () {
           this.appendDummyInput()
               .appendField("체크박스")
-              .appendField(new Blockly.FieldTextInput("밀가루"), "LABEL");
+              .appendField(new Blockly.FieldTextInput("텍스트를 넣어보세요"), "LABEL");
           this.setColour("#FFCDD6");
           this.setPreviousStatement(true, COMBINE_TYPES);
           this.setNextStatement(true, COMBINE_TYPES);

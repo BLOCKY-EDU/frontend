@@ -110,8 +110,7 @@ export const INTERMEDIATE_PROBLEMS = [
         rules: {
             requiredSelectors: [
                 "h1",
-                "input[type=\"checkbox\"]",
-                "input[type=\"checkbox\"]:nth-of-type(4)" // 최소 4개 체크박스
+                "input[type=\"checkbox\"]"
             ],
             // 체크 항목 라벨은 어디에 들어가든 텍스트만 있으면 통과
             requireText: [
