@@ -201,7 +201,7 @@ const SELECTOR_NAMES = {
   button: '일반 버튼 블록',
   ul: '글머리 블록',
   ol: '숫자 목록 블록',
-  li: '글머리 내용 블록',
+  li: '내용 블록',
   div: '상자 블록',
   'input[type="text"]': '글 입력칸 블록',
   'input[type="checkbox"]': '체크박스 블록',
@@ -213,13 +213,13 @@ const PROP_NAMES = {
   'align-items': '세로 정렬',
   'justify-content': '가로 정렬',
   'background-color': '배경색',
-  padding: '패딩',
-  margin: '여백',
+  padding: '안쪽 여백',
+  margin: '바깥 여백',
   'margin-top': '위쪽 여백',
   'box-shadow': '그림자',
   height: '높이',
-  width: '가로 너비',
-  gap: '간격',
+  width: '너비',
+  gap: '사이 간격',
   'border-radius': '모서리 굴곡',
   'border-top-left-radius': '왼쪽 위 굴곡',
   'border-top-right-radius': '오른쪽 위 굴곡',
@@ -281,7 +281,7 @@ function explainDescendant(rawSel) {
 function showSelectorSingle(raw = '') {
   const nth = explainNthOfType(raw);
   if (nth) {
-    return `${raw} (${nth.friendly})`;
+    return `${nth.base} (${nth.friendly})`;
   }
   const friendly = SELECTOR_NAMES[raw];
   return friendly ? `${raw}(${friendly})` : raw || '?';
@@ -331,16 +331,18 @@ function humanizeCheck(c) {
 
   const needAmong = selPart.useAmong;             // “중 하나” 문구 쓸지
   const friendlyForParticle = selPart.friendly;   // 조사 계산용 친화명(단일일 때)
+  //
+  // // 공통 포맷터
+  // const lackMsg = needAmong
+  //   ? `${selShown} 중 하나가 없어요.`
+  //   : `${selShown}${iga(friendlyForParticle)} 없어요.`;
+  // const addMsg = needAmong
+  //   ? `${selShown} 중 하나를 추가해보세요.`
+  //   : `${selShown}${eulreul(friendlyForParticle)} 추가해보세요.`;
+    const lackMsg = `${selShown}${iga(friendlyForParticle)} 없어요.`;
+    const addMsg = `${selShown}${eulreul(friendlyForParticle)} 추가해보세요.`;
 
-  // 공통 포맷터
-  const lackMsg = needAmong
-    ? `${selShown} 중 하나가 없어요.`
-    : `${selShown}${iga(friendlyForParticle)} 없어요.`;
-  const addMsg = needAmong
-    ? `${selShown} 중 하나를 추가해보세요.`
-    : `${selShown}${eulreul(friendlyForParticle)} 추가해보세요.`;
-
-  switch (c.type) {
+    switch (c.type) {
     case '필수 요소':
       return `${lackMsg} ${addMsg}`;
 
@@ -356,15 +358,21 @@ function humanizeCheck(c) {
       return `어떤 요소든 인라인 style에 "${propShown}" 속성이 ${modeK(m.mode || 'includes')}.`;
 
     case '텍스트(요소별)':
-      return `${selShown}의 텍스트가 "${txt}"와 ${modeK(m.mode)}.`;
+      return `${selShown}의 텍스트가 "${txt}"가 ${modeK(m.mode)}.`;
 
     case '금지 텍스트(요소별)':
       return `${selShown} 안에 "${txt}"가 들어가면 안 돼요.`;
 
     case '스타일(요소별)':
+      if(val===".*"){
+          return `${selShown}의 인라인 스타일 "${propShown}" 값이 어떤 값이든 지정되어야 해요.`;
+      }
       return `${selShown}의 인라인 스타일 "${propShown}" 값이 "${val}"와 ${modeK(m.mode)}.`;
 
     case '속성':
+      if(val===".*"){
+          return `${selShown}의 [${m.attr}] 속성이 어떤 값이든 지정되어야 해요.`;
+      }  
       return `${selShown}의 [${m.attr}] 속성이 "${val}"와 ${modeK(m.mode)}.`;
 
     default:

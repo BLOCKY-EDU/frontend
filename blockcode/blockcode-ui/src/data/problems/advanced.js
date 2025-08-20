@@ -213,7 +213,7 @@ export const ADVANCED_PROBLEMS = [
         { selector: "div", prop: "justify-content", value: "center", mode: "includes" },
         { selector: "div", prop: "height", value: "200px", mode: "includes" },
         { selector: "div", prop: "margin-top", value: ".*", mode: "includes" },
-        { selector: "div", prop: "gap", value: ".*", mode: "includes" },
+        // { selector: "div", prop: "gap", value: ".*", mode: "includes" },
         { selector: "div", prop: "gap", value: ".*", mode: "includes" }
       ],
       requireAttributesAt: [
