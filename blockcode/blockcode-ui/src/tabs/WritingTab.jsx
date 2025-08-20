@@ -7,7 +7,7 @@ export function registerWritingBlocks() {
     init: function () {
       this.appendDummyInput()
         .appendField("큰 제목")
-        .appendField(new Blockly.FieldTextInput("쿠키 레시피 만드는 법"), "TITLE");
+        .appendField(new Blockly.FieldTextInput("텍스트를 넣어보세요."), "TITLE");
       this.setColour("#FFAB19");
       this.setPreviousStatement(true, COMBINE_TYPES);
       this.setNextStatement(true, COMBINE_TYPES);
@@ -18,7 +18,7 @@ export function registerWritingBlocks() {
     init: function () {
       this.appendDummyInput()
         .appendField("작은 제목")
-        .appendField(new Blockly.FieldTextInput("쿠키 레시피 만드는 법"), "SMALL_TITLE");
+        .appendField(new Blockly.FieldTextInput("텍스트를 넣어보세요."), "SMALL_TITLE");
       this.setColour("#FFAB19");
       this.setPreviousStatement(true, COMBINE_TYPES);
       this.setNextStatement(true, COMBINE_TYPES);
@@ -29,7 +29,7 @@ export function registerWritingBlocks() {
     init: function () {
       this.appendDummyInput()
         .appendField("작은 설명")
-        .appendField(new Blockly.FieldTextInput("르뱅쿠키 만들기"), "SMALL_CONTENT");
+        .appendField(new Blockly.FieldTextInput("텍스트를 넣어보세요."), "SMALL_CONTENT");
       this.setColour("#FFAB19");
       this.setPreviousStatement(true, COMBINE_TYPES);
       this.setNextStatement(true, COMBINE_TYPES);
@@ -78,7 +78,7 @@ export function registerWritingBlocks() {
     init: function () {
       this.appendDummyInput()
         .appendField("강조하기")
-        .appendField(new Blockly.FieldTextInput("중요한 단어"), "HIGHLIGHT");
+        .appendField(new Blockly.FieldTextInput("중요한 단어를 넣어보세요."), "HIGHLIGHT");
       this.setColour("#FFA5A5");
       this.setPreviousStatement(true, COMBINE_TYPES);
       this.setNextStatement(true, COMBINE_TYPES);
@@ -90,7 +90,7 @@ export function registerWritingBlocks() {
     init: function () {
       this.appendDummyInput()
         .appendField("문단")
-        .appendField(new Blockly.FieldTextInput("여기에 내용을 입력하세요"), "TEXT");
+        .appendField(new Blockly.FieldTextInput("텍스트를 넣어보세요."), "TEXT");
       this.setColour("#FFAB19");                // 기존 글쓰기 계열 색상 유지
       this.setPreviousStatement(true, COMBINE_TYPES);
       this.setNextStatement(true, COMBINE_TYPES);
