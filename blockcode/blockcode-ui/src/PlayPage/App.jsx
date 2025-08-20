@@ -2,6 +2,7 @@ import * as Blockly from "blockly";
 import "blockly/blocks";
 import { FieldColour } from "@blockly/field-colour";
 Blockly.fieldRegistry.register("field_colour", FieldColour);
+import { copyToClipboard } from "../utils/copy.js";
 
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import { BlocklyWorkspace } from "react-blockly";
@@ -331,7 +332,13 @@ function CodeFloat({ renderRef, globalBackgroundColor }) {
           <div className="code-popup-header">
             <span>HTML 코드</span>
             <div style={{ display: "flex", gap: 8 }}>
-              <button onClick={() => navigator.clipboard.writeText(codeText)}>
+              <button
+                onClick={() =>
+                  copyToClipboard(codeText)
+                    .then(() => alert("복사!"))
+                    .catch(e => alert("복사 실패: " + e.message))
+                }
+              >
                 복사
               </button>
             </div>
