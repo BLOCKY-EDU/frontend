@@ -16,6 +16,8 @@ import blockyLogo from "../assets/blocky-logo.png";
 import "blockly/javascript";
 import "blockly/msg/ko";
 
+import { copyToClipboard } from "../utils/copy.js";
+
 import { useParams, useNavigate } from "react-router-dom";
 //import { PROBLEM_BY_ID } from "../data/problems.js";
 import { PROBLEM_BY_ID, nextIdInSameLevel } from "../data/problems/index.js";
@@ -157,7 +159,7 @@ function ImageHintFloat({ hints }) {
                       whiteSpace: "nowrap"
                     }}>{h}</code>
                     <button
-                      onClick={() => navigator.clipboard.writeText(h)}
+                      onClick={() => copyToClipboard(h).then(() => alert("복사했어요!")).catch(e => alert("복사 실패: " + e.message))}
                       style={{ padding: "6px 10px", borderRadius: 6, border: "1px solid #d1d5db", cursor: "pointer" }}
                     >
                       복사
@@ -170,9 +172,7 @@ function ImageHintFloat({ hints }) {
             {hasHints && (
               <div style={{ marginTop: 12, display: "flex", gap: 8, justifyContent: "flex-end" }}>
                 <button
-                  onClick={() => {
-                    navigator.clipboard.writeText(hints.join('\n'));
-                  }}
+                  onClick={() => copyToClipboard(hints.join('\n')).then(() => alert("모두 복사했어요!")).catch(e => alert("복사 실패: " + e.message))}
                   style={{ padding: "8px 12px", borderRadius: 8, border: "1px solid #d1d5db", cursor: "pointer" }}
                 >
                   모두 복사
@@ -745,7 +745,7 @@ function CodeFloat({ renderRef, globalBackgroundColor }) {
           <div className="code-popup-header">
             <span>HTML 코드</span>
             <div style={{ display: "flex", gap: 8 }}>
-              <button onClick={() => navigator.clipboard.writeText(codeText)}>
+              <button onClick={() => copyToClipboard(codeText).then(() => alert("복사!")).catch(e => alert("복사 실패: " + e.message))}>
                 복사
               </button>
             </div>
@@ -784,7 +784,7 @@ function ExportXmlFloat() {
       ? `answerXml: \`\n${xmlText}\n\`,`
       : xmlText;
 
-    navigator.clipboard?.writeText(payload);
+    copyToClipboard(payload).then(() => alert("복사 완료")).catch(e => alert("복사 실패: " + e.message));
     console.log('[Blockly XML] copied ➜\n', payload);
     alert(
       wrapForProblem
