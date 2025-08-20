@@ -187,7 +187,56 @@ function ImageHintFloat({ hints }) {
   );
 }
 
-// 사람 친화 메시지 변환기
+
+//여기
+// ===== 사람 친화 매핑(확장) =====
+const SELECTOR_NAMES = {
+  h1: '큰 제목 블록',
+  // h2: '',
+  h3: '작은 제목 블록',
+  h5: '작은 설명 블록',
+  p: '문단',
+  img: '이미지 넣기 블록',
+  a: '이동 버튼 블록',
+  button: '일반 버튼 블록',
+  ul: '글머리 블록',
+  ol: '숫자 목록 블록',
+  li: '글머리 내용 블록',
+  div: '상자 블록',
+  'input[type="text"]': '글 입력칸 블록',
+  'input[type="checkbox"]': '체크박스 블록',
+};
+
+const PROP_NAMES = {
+  display: '디스플레이',
+  'flex-direction': '플렉스 방향',
+  'align-items': '세로 정렬',
+  'justify-content': '가로 정렬',
+  'background-color': '배경색',
+  padding: '패딩',
+  margin: '여백',
+  'margin-top': '위쪽 여백',
+  'box-shadow': '그림자',
+  height: '높이',
+  width: '가로 너비',
+  gap: '간격',
+  'border-radius': '모서리 굴곡',
+  'border-top-left-radius': '왼쪽 위 굴곡',
+  'border-top-right-radius': '오른쪽 위 굴곡',
+  'border-bottom-left-radius': '왼쪽 아래 굴곡',
+  'border-bottom-right-radius': '오른쪽 아래 굴곡',
+};
+
+// ===== 조사 보정(간단) =====
+function hasJong(str='') {
+  const ch = str.charCodeAt(str.length - 1);
+  if (ch < 0xAC00 || ch > 0xD7A3) return false;
+  return ((ch - 0xAC00) % 28) !== 0;
+}
+const eulreul = (s='') => hasJong(s) ? '을' : '를';
+const iga = (s='') => hasJong(s) ? '이' : '가';
+
+// ===== 모드 문구 =====
 function modeK(mode) {
   if (mode === 'equals') return '정확히 같아야 해요';
   if (mode === 'includes') return '포함되어야 해요';
@@ -195,7 +244,7 @@ function modeK(mode) {
   return '조건을 만족해야 해요';
 }
 
-// target 문자열만 있는 (메타 없는) 경우를 대비한 보조 파서
+// ===== 보조 파서 =====
 function extractQuoted(str = '') {
   const m = String(str).match(/"([^"]+)"/);
   return m ? m[1] : str;
@@ -205,38 +254,125 @@ function extractPropFromTarget(str = '') {
   return m ? m[1] : str;
 }
 
+// :nth-of-type(n) → “n번째 XXX”
+function explainNthOfType(rawSel) {
+  const m = String(rawSel).match(/^([^\:]+):nth-of-type\((\d+)\)$/);
+  if (!m) return null;
+  const base = m[1].trim();
+  const nth = Number(m[2]);
+  const baseFriendly = SELECTOR_NAMES[base] || base;
+  return {
+    base,
+    nth,
+    friendly: `${nth}번째 ${baseFriendly}`,
+  };
+}
+
+// 자손 선택자: "ol li" → "ol(숫자 목록) 안의 li(목록 항목)"
+function explainDescendant(rawSel) {
+  const parts = String(rawSel).trim().split(/\s+/);
+  if (parts.length < 2) return null;
+  const shown = parts.map(p => showSelectorSingle(p)).join(' 안의 ');
+  const friendlyLast = SELECTOR_NAMES[parts[parts.length - 1]] || parts[parts.length - 1];
+  return { shown, friendlyLast };
+}
+
+// 하나의 셀렉터를 “원문(친화명)”으로
+function showSelectorSingle(raw = '') {
+  const nth = explainNthOfType(raw);
+  if (nth) {
+    return `${raw} (${nth.friendly})`;
+  }
+  const friendly = SELECTOR_NAMES[raw];
+  return friendly ? `${raw}(${friendly})` : raw || '?';
+}
+
+// 콤마 셀렉터: "h2, h3" → "h2(중간 제목 블록) 또는 h3(소제목 블록)"
+function showSelector(raw = '') {
+  // 쉼표로 분기
+  const list = String(raw).split(',').map(s => s.trim()).filter(Boolean);
+  if (list.length > 1) {
+    return list.map(s => showSelectorSingle(s)).join(' 또는 ');
+  }
+  // 자손(스페이스)
+  const desc = explainDescendant(raw);
+  if (desc) return desc.shown;
+  // 단일
+  return showSelectorSingle(raw);
+}
+
+function showProp(raw = '') {
+  const friendly = PROP_NAMES[raw];
+  return friendly ? `${raw}(${friendly})` : raw || '?';
+}
+
+// 메시지에서 조사를 붙일 때는 "친화명" 기준으로 자연스럽게
+function particleTarget(rawSel='') {
+  // 콤마/자손인 경우는 “중 하나/안의 …” 표현을 쓰므로 일반 조사 대신 고정 문구 사용
+  const many = rawSel.includes(',') || /\s/.test(rawSel);
+  if (many) return { useAmong: true, friendly: '' };
+  const nth = explainNthOfType(rawSel);
+  const base = nth ? (SELECTOR_NAMES[nth.base] || nth.base) : (SELECTOR_NAMES[rawSel] || rawSel);
+  return { useAmong: false, friendly: base };
+}
+
+// ===== 메인: 사람 친화 메시지 변환기 =====
 function humanizeCheck(c) {
   const m = c.meta || {};
+  const rawSel = m.selector || c.target;
+  const selShown = showSelector(rawSel);          // 예: "h2, h3" → "h2(중간 제목 블록) 또는 h3(소제목 블록)"
+  const selPart = particleTarget(rawSel);
+
+  const rawProp = m.prop || extractPropFromTarget(c.target);
+  const propShown = showProp(rawProp);            // 'background-color(배경색)' 등
+
+  const txt = m.text ?? extractQuoted(c.target);
+  const val = m.value;
+
+  const needAmong = selPart.useAmong;             // “중 하나” 문구 쓸지
+  const friendlyForParticle = selPart.friendly;   // 조사 계산용 친화명(단일일 때)
+
+  // 공통 포맷터
+  const lackMsg = needAmong
+    ? `${selShown} 중 하나가 없어요.`
+    : `${selShown}${iga(friendlyForParticle)} 없어요.`;
+  const addMsg = needAmong
+    ? `${selShown} 중 하나를 추가해보세요.`
+    : `${selShown}${eulreul(friendlyForParticle)} 추가해보세요.`;
+
   switch (c.type) {
     case '필수 요소':
-      return `${m.selector || c.target} 요소가 없어요. 해당 블록을 추가해보세요.`;
+      return `${lackMsg} ${addMsg}`;
 
     case '금지 요소':
-      return `${m.selector || c.target} 요소는 사용하면 안 돼요. 해당 블록을 제거해보세요.`;
+      return needAmong
+        ? `${selShown} 중 하나가 사용되면 안 돼요. ${selShown} 중 하나를 제거해보세요.`
+        : `${selShown}${iga(friendlyForParticle)} 사용되면 안 돼요. ${selShown}${eulreul(friendlyForParticle)} 제거해보세요.`;
 
     case '텍스트(전체)':
-      return `화면 전체 텍스트에 "${m.text || extractQuoted(c.target)}"가 포함되어야 해요.`;
+      return `화면 전체 텍스트에 "${txt}"가 ${modeK(m.mode || 'includes')}.`;
 
     case '스타일(전체)':
-      return `어떤 요소든 인라인 style에 "${m.prop || extractPropFromTarget(c.target)}" 속성이 있어야 해요.`;
+      return `어떤 요소든 인라인 style에 "${propShown}" 속성이 ${modeK(m.mode || 'includes')}.`;
 
     case '텍스트(요소별)':
-      return `${m.selector || '?'}의 텍스트가 "${m.text ?? extractQuoted(c.target)}"와 ${modeK(m.mode)}.`;
+      return `${selShown}의 텍스트가 "${txt}"와 ${modeK(m.mode)}.`;
 
     case '금지 텍스트(요소별)':
-      return `${m.selector || '?'} 안에 "${m.text ?? extractQuoted(c.target)}"가 들어가면 안 돼요.`;
+      return `${selShown} 안에 "${txt}"가 들어가면 안 돼요.`;
 
     case '스타일(요소별)':
-      return `${m.selector || '?'}의 인라인 스타일 "${m.prop}" 값이 "${m.value}"와 ${modeK(m.mode)}.`;
+      return `${selShown}의 인라인 스타일 "${propShown}" 값이 "${val}"와 ${modeK(m.mode)}.`;
 
     case '속성':
-      return `${m.selector || '?'}의 [${m.attr}] 속성이 "${m.value}"와 ${modeK(m.mode)}.`;
+      return `${selShown}의 [${m.attr}] 속성이 "${val}"와 ${modeK(m.mode)}.`;
 
     default:
-      // 안전한 폴백
       return `[${c.type}] ${c.target}`;
   }
 }
+
+//여기
 
 function GradeFloat({ onGrade }) {
   const [injectionEl, setInjectionEl] = React.useState(null);
