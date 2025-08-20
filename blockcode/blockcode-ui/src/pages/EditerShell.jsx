@@ -48,7 +48,7 @@ import { html as beautifyHtml } from 'js-beautify';
 import { registerLayoutBlocks } from "../tabs/LayoutTab.jsx";
 registerLayoutBlocks();
 
-// ✅ 추가: 문제에서 이미지 힌트 추출
+// 추가: 문제에서 이미지 힌트 추출
 function deriveImageHints(problem) {
   if (!problem) return [];
   const set = new Set();
@@ -228,13 +228,13 @@ const PROP_NAMES = {
 };
 
 // ===== 조사 보정(간단) =====
-function hasJong(str='') {
+function hasJong(str = '') {
   const ch = str.charCodeAt(str.length - 1);
   if (ch < 0xAC00 || ch > 0xD7A3) return false;
   return ((ch - 0xAC00) % 28) !== 0;
 }
-const eulreul = (s='') => hasJong(s) ? '을' : '를';
-const iga = (s='') => hasJong(s) ? '이' : '가';
+const eulreul = (s = '') => hasJong(s) ? '을' : '를';
+const iga = (s = '') => hasJong(s) ? '이' : '가';
 
 // ===== 모드 문구 =====
 function modeK(mode) {
@@ -307,7 +307,7 @@ function showProp(raw = '') {
 }
 
 // 메시지에서 조사를 붙일 때는 "친화명" 기준으로 자연스럽게
-function particleTarget(rawSel='') {
+function particleTarget(rawSel = '') {
   // 콤마/자손인 경우는 “중 하나/안의 …” 표현을 쓰므로 일반 조사 대신 고정 문구 사용
   const many = rawSel.includes(',') || /\s/.test(rawSel);
   if (many) return { useAmong: true, friendly: '' };
@@ -339,10 +339,10 @@ function humanizeCheck(c) {
   // const addMsg = needAmong
   //   ? `${selShown} 중 하나를 추가해보세요.`
   //   : `${selShown}${eulreul(friendlyForParticle)} 추가해보세요.`;
-    const lackMsg = `${selShown}${iga(friendlyForParticle)} 없어요.`;
-    const addMsg = `${selShown}${eulreul(friendlyForParticle)} 추가해보세요.`;
+  const lackMsg = `${selShown}${iga(friendlyForParticle)} 없어요.`;
+  const addMsg = `${selShown}${eulreul(friendlyForParticle)} 추가해보세요.`;
 
-    switch (c.type) {
+  switch (c.type) {
     case '필수 요소':
       return `${lackMsg} ${addMsg}`;
 
@@ -364,15 +364,15 @@ function humanizeCheck(c) {
       return `${selShown} 안에 "${txt}"가 들어가면 안 돼요.`;
 
     case '스타일(요소별)':
-      if(val===".*"){
-          return `${selShown}의 인라인 스타일 "${propShown}" 값이 어떤 값이든 지정되어야 해요.`;
+      if (val === ".*") {
+        return `${selShown}의 인라인 스타일 "${propShown}" 값이 어떤 값이든 지정되어야 해요.`;
       }
       return `${selShown}의 인라인 스타일 "${propShown}" 값이 "${val}"와 ${modeK(m.mode)}.`;
 
     case '속성':
-      if(val===".*"){
-          return `${selShown}의 [${m.attr}] 속성이 어떤 값이든 지정되어야 해요.`;
-      }  
+      if (val === ".*") {
+        return `${selShown}의 [${m.attr}] 속성이 어떤 값이든 지정되어야 해요.`;
+      }
       return `${selShown}의 [${m.attr}] 속성이 "${val}"와 ${modeK(m.mode)}.`;
 
     default:
@@ -492,9 +492,9 @@ import {
   getStyleTabToolbox,
 } from "../tabs/StyleTab.jsx";
 import {
-    getListTabToolbox,
-    registerListBlocks,
-    parseSingleListBlock, parseListXmlToJSX,
+  getListTabToolbox,
+  registerListBlocks,
+  parseSingleListBlock, parseListXmlToJSX,
 } from "../tabs/ListTab.jsx";
 import {
   registerNavigationBlocks,
@@ -950,81 +950,84 @@ export default function EditorShell() {
     }
   }, [tabXmlMap]);
 
-    const parseXmlToJSX = (block) => {
-        const xml = Blockly.Xml.blockToDom(block);
+  const parseXmlToJSX = (block) => {
+    const xml = Blockly.Xml.blockToDom(block);
+    const xmlText = Blockly.Xml.domToText(xml);
+    const type = block.type;
+
+    if (type === "list_bulleted" || type === "list_numbered") {
+      return parseListXmlToJSX(xmlText);
+    }
+    else if (
+      [
+        "text_title",
+        "text_small_title",
+        "small_content",
+        "recipe_step",
+        "toggle_input",
+        "highlight_text",
+        "paragraph",
+      ].includes(type)
+    ) {
+      return parseWritingXmlToJSX(xmlText);
+    } else if (
+      [
+        "normal_button",
+        "submit_button",
+        "text_input",
+        "email_input",
+        "checkbox_block",
+        "select_box",
+      ].includes(type)
+    ) {
+      return parseButtonXmlToJSX(xmlText);
+    } else if (
+      ["insert_image", "insert_video", "youtube_link"].includes(type)
+    ) {
+      return parseImageXmlToJSX(xmlText);
+    } else if (["list_item", "ordered_list_item"].includes(type)) {
+      return parseListXmlToJSX(xmlText);
+    } else if (["navigation_button"].includes(type)) {
+      return parseNavigationXmlToJSX(xmlText);
+    }
+    return null;
+  };
+
+  const parseBlockChainToJSX = (block) => {
+    const jsxList = [];
+    let current = block;
+
+    while (current) {
+      let jsx;
+
+      if (current.type === "container_box") {
+        // 이 호출이 container + next 체인을 전부 렌더함
+        const xml = Blockly.Xml.blockToDom(current);
         const xmlText = Blockly.Xml.domToText(xml);
-        const type = block.type;
+        jsx = parseLayoutXmlToJSX(xmlText);
+        if (jsx) jsxList.push(...(Array.isArray(jsx) ? jsx : [jsx]));
+        // 더 내려가면 중복 렌더 → 여기서 종료
+        break;
 
-        if (type === "list_bulleted" || type === "list_numbered") {
-            return parseListXmlToJSX(xmlText);
-        }
-        else if (
-            [
-                "text_title",
-                "text_small_title",
-                "small_content",
-                "recipe_step",
-                "toggle_input",
-                "highlight_text",
-                "paragraph",
-            ].includes(type)
-        ) {
-            return parseWritingXmlToJSX(xmlText);
-        } else if (
-            [
-                "normal_button",
-                "submit_button",
-                "text_input",
-                "email_input",
-                "checkbox_block",
-                "select_box",
-            ].includes(type)
-        ) {
-            return parseButtonXmlToJSX(xmlText);
-        } else if (
-            ["insert_image", "insert_video", "youtube_link"].includes(type)
-        ) {
-            return parseImageXmlToJSX(xmlText);
-        } else if (["list_item", "ordered_list_item"].includes(type)) {
-            return parseListXmlToJSX(xmlText);
-        } else if (["navigation_button"].includes(type)) {
-            return parseNavigationXmlToJSX(xmlText);
-        }
-        return null;
-    };
+      } else if (current.type === "list_item" || current.type === "ordered_list_item") {
+        const xml = Blockly.Xml.blockToDom(current);
+        const xmlText = Blockly.Xml.domToText(xml);
+        jsx = parseListXmlToJSX(xmlText);
+        if (jsx) jsxList.push(...(Array.isArray(jsx) ? jsx : [jsx]));
+        break; // 체인 밖(top)에서만 쓰는 함수라면 여기서 끊는 편이 안전
+      } else {
+        const xml = Blockly.Xml.blockToDom(current);
+        const xmlText = Blockly.Xml.domToText(xml);
+        jsx = parseXmlToJSX(current);
+        if (jsx) jsxList.push(...(Array.isArray(jsx) ? jsx : [jsx]));
+        break; // non-container는 한 블록만 처리하고 종료 (기존 로직 유지)
+      }
 
-    const parseBlockChainToJSX = (block) => {
-        const jsxList = [];
-        let current = block;
+      // 위에서 모두 break 처리됨. 여기에 도달하지 않음.
+    }
 
-        while (current) {
-            let jsx;
-
-            if (current.type === "container_box") {
-                // 요구사항 1: container_box라면 직접 parseLayoutXmlToJSX 호출
-                const xml = Blockly.Xml.blockToDom(current);
-                const xmlText = Blockly.Xml.domToText(xml);
-                jsx = parseLayoutXmlToJSX(xmlText);
-            } else if(current.type === "list_item"|| current.type === "ordered_list_item"){
-                jsx=parseListXmlToJSX(current);
-            } else {
-                jsx = parseXmlToJSX(current);
-                if (jsx) {
-                    jsxList.push(...(Array.isArray(jsx) ? jsx : [jsx]));
-                }
-                break;
-            }
-
-            if (jsx) {
-                jsxList.push(...(Array.isArray(jsx) ? jsx : [jsx]));
-            }
-
-            // next 블럭 재귀 탐색
-            current = current.getNextBlock();
-        }
-
-        return jsxList;
-    };
+    return jsxList;
+  };
 
   const jsxOutput = useMemo(() => {
     const workspace = Blockly.getMainWorkspace();

@@ -91,7 +91,7 @@ import {
 import {
   getListTabToolbox,
   registerListBlocks,
-    parseListXmlToJSX,
+  parseListXmlToJSX,
 } from "../tabs/ListTab.jsx";
 import {
   registerNavigationBlocks,
@@ -107,7 +107,7 @@ registerListBlocks();
 registerNavigationBlocks();
 
 // 드래그 플로팅 버튼 + 코드 팝업(실시간)
-function CodeFloat({ renderRef,globalBackgroundColor }) {
+function CodeFloat({ renderRef, globalBackgroundColor }) {
   const [injectionEl, setInjectionEl] = useState(null);
   const [codeOpen, setCodeOpen] = useState(false);
   const [codeText, setCodeText] = useState("");
@@ -205,26 +205,26 @@ function CodeFloat({ renderRef,globalBackgroundColor }) {
     }, 0);
   };
 
-useEffect(() => {
-  if (!codeOpen) return;
-  const updateCode = () => {
-    const html = renderRef?.current?.innerHTML?.trim() || "";
-    const hasBlocks = ws?.getAllBlocks(false).length > 0;
-    // 여기서 예쁘게!
+  useEffect(() => {
+    if (!codeOpen) return;
+    const updateCode = () => {
+      const html = renderRef?.current?.innerHTML?.trim() || "";
+      const hasBlocks = ws?.getAllBlocks(false).length > 0;
+      // 여기서 예쁘게!
       let wrappedHtml = "";
       if (hasBlocks) {
-          wrappedHtml = `<body style="background-color: ${globalBackgroundColor};">\n${html}\n</body>`;
+        wrappedHtml = `<body style="background-color: ${globalBackgroundColor};">\n${html}\n</body>`;
       } else {
-          wrappedHtml = "<!-- 렌더된 내용이 없습니다. -->";
+        wrappedHtml = "<!-- 렌더된 내용이 없습니다. -->";
       }
       const pretty = beautifyHtml(wrappedHtml, { indent_size: 2 });
       setCodeText(pretty);
-  };
-  const ws = Blockly.getMainWorkspace();
-  ws && ws.addChangeListener(updateCode);
-  updateCode();
-  return () => { ws && ws.removeChangeListener(updateCode); };
-}, [codeOpen, renderRef, globalBackgroundColor]);
+    };
+    const ws = Blockly.getMainWorkspace();
+    ws && ws.addChangeListener(updateCode);
+    updateCode();
+    return () => { ws && ws.removeChangeListener(updateCode); };
+  }, [codeOpen, renderRef, globalBackgroundColor]);
 
   // 리사이즈, injectionDiv 스크롤 시 위치 보정
   useEffect(() => {
@@ -398,8 +398,8 @@ export default function App() {
       });
     }
   }, []);
-  
-  
+
+
 
   const parseXmlToJSX = (block) => {
     const xml = Blockly.Xml.blockToDom(block);
@@ -444,40 +444,77 @@ export default function App() {
     return null;
   };
 
-    const parseBlockChainToJSX = (block) => {
-        const jsxList = [];
-        let current = block;
+  // const parseBlockChainToJSX = (block) => {
+  //     const jsxList = [];
+  //     let current = block;
 
-        while (current) {
-            let jsx;
+  //     while (current) {
+  //         let jsx;
 
-            if (current.type === "container_box") {
-                // 요구사항 1: container_box라면 직접 parseLayoutXmlToJSX 호출
-                const xml = Blockly.Xml.blockToDom(current);
-                const xmlText = Blockly.Xml.domToText(xml);
-                jsx = parseLayoutXmlToJSX(xmlText);
-            } else if(current.type === "list_item"|| current.type === "ordered_list_item"){
-                jsx=parseListXmlToJSX(current);
-            } else {
-                jsx = parseXmlToJSX(current);
-                if (jsx) {
-                    jsxList.push(...(Array.isArray(jsx) ? jsx : [jsx]));
-                }
-                break;
-            }
+  //         if (current.type === "container_box") {
+  //             // 요구사항 1: container_box라면 직접 parseLayoutXmlToJSX 호출
+  //             const xml = Blockly.Xml.blockToDom(current);
+  //             const xmlText = Blockly.Xml.domToText(xml);
+  //             jsx = parseLayoutXmlToJSX(xmlText);
+  //         } else if(current.type === "list_item"|| current.type === "ordered_list_item"){
+  //             jsx=parseListXmlToJSX(current);
+  //         } else {
+  //             jsx = parseXmlToJSX(current);
+  //             if (jsx) {
+  //                 jsxList.push(...(Array.isArray(jsx) ? jsx : [jsx]));
+  //             }
+  //             break;
+  //         }
 
-            if (jsx) {
-                jsxList.push(...(Array.isArray(jsx) ? jsx : [jsx]));
-            }
+  //         if (jsx) {
+  //             jsxList.push(...(Array.isArray(jsx) ? jsx : [jsx]));
+  //         }
 
-            // next 블럭 재귀 탐색
-            current = current.getNextBlock();
-        }
+  //         // next 블럭 재귀 탐색
+  //         current = current.getNextBlock();
+  //     }
 
-        return jsxList;
-    };
+  //     return jsxList;
+  // };
 
-    const jsxOutput = useMemo(() => {
+  const parseBlockChainToJSX = (block) => {
+    const jsxList = [];
+    let current = block;
+
+    while (current) {
+      let jsx;
+
+      if (current.type === "container_box") {
+        // 이 호출이 container + next 체인을 전부 렌더함
+        const xml = Blockly.Xml.blockToDom(current);
+        const xmlText = Blockly.Xml.domToText(xml);
+        jsx = parseLayoutXmlToJSX(xmlText);
+        if (jsx) jsxList.push(...(Array.isArray(jsx) ? jsx : [jsx]));
+        // 더 내려가면 중복 렌더 → 여기서 종료
+        break;
+
+      } else if (current.type === "list_item" || current.type === "ordered_list_item") {
+        const xml = Blockly.Xml.blockToDom(current);
+        const xmlText = Blockly.Xml.domToText(xml);
+        jsx = parseListXmlToJSX(xmlText);
+        if (jsx) jsxList.push(...(Array.isArray(jsx) ? jsx : [jsx]));
+        break; // 체인 밖(top)에서만 쓰는 함수라면 여기서 끊는 편이 안전
+      } else {
+        const xml = Blockly.Xml.blockToDom(current);
+        const xmlText = Blockly.Xml.domToText(xml);
+        jsx = parseXmlToJSX(current);
+        if (jsx) jsxList.push(...(Array.isArray(jsx) ? jsx : [jsx]));
+        break; // non-container는 한 블록만 처리하고 종료 (기존 로직 유지)
+      }
+
+      // 위에서 모두 break 처리됨. 여기에 도달하지 않음.
+    }
+
+    return jsxList;
+  };
+
+
+  const jsxOutput = useMemo(() => {
     const workspace = Blockly.getMainWorkspace();
     if (!workspace) return [];
     const topBlocks = workspace.getTopBlocks(true);
@@ -638,8 +675,8 @@ export default function App() {
                 minHeight: '100%',
                 borderBottomLeftRadius: '16px',   // 왼쪽 아래
                 borderBottomRightRadius: '16px',  // 오른쪽 아래
-                  overflow: 'auto', // 스크롤바 자동 생성
-                  boxSizing: 'border-box', // padding 포함해서 크기 계산
+                overflow: 'auto', // 스크롤바 자동 생성
+                boxSizing: 'border-box', // padding 포함해서 크기 계산
               }}
             >
               {jsxOutput}
