@@ -91,7 +91,7 @@ import {
 import {
   getListTabToolbox,
   registerListBlocks,
-    parseSingleListBlock,
+    parseListXmlToJSX,
 } from "../tabs/ListTab.jsx";
 import {
   registerNavigationBlocks,
@@ -407,7 +407,7 @@ export default function App() {
     const type = block.type;
 
     if (type === "list_bulleted" || type === "list_numbered") {
-      return parseSingleListBlock(xmlText);
+      return parseListXmlToJSX(xmlText);
     }
     else if (
       [
@@ -437,7 +437,7 @@ export default function App() {
     ) {
       return parseImageXmlToJSX(xmlText);
     } else if (["list_item", "ordered_list_item"].includes(type)) {
-      return parseSingleListBlock(xmlText);
+      return parseListXmlToJSX(xmlText);
     } else if (["navigation_button"].includes(type)) {
       return parseNavigationXmlToJSX(xmlText);
     }
@@ -456,8 +456,14 @@ export default function App() {
                 const xml = Blockly.Xml.blockToDom(current);
                 const xmlText = Blockly.Xml.domToText(xml);
                 jsx = parseLayoutXmlToJSX(xmlText);
+            } else if(current.type === "list_item"|| current.type === "ordered_list_item"){
+                jsx=parseListXmlToJSX(current);
             } else {
                 jsx = parseXmlToJSX(current);
+                if (jsx) {
+                    jsxList.push(...(Array.isArray(jsx) ? jsx : [jsx]));
+                }
+                break;
             }
 
             if (jsx) {

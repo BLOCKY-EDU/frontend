@@ -492,9 +492,9 @@ import {
   getStyleTabToolbox,
 } from "../tabs/StyleTab.jsx";
 import {
-  getListTabToolbox,
-  registerListBlocks,
-  parseSingleListBlock,
+    getListTabToolbox,
+    registerListBlocks,
+    parseSingleListBlock, parseListXmlToJSX,
 } from "../tabs/ListTab.jsx";
 import {
   registerNavigationBlocks,
@@ -950,76 +950,81 @@ export default function EditorShell() {
     }
   }, [tabXmlMap]);
 
-  const parseXmlToJSX = (block) => {
-    const xml = Blockly.Xml.blockToDom(block);
-    const xmlText = Blockly.Xml.domToText(xml);
-    const type = block.type;
-
-    if (type === "list_bulleted" || type === "list_numbered") {
-      return parseSingleListBlock(xmlText);
-    }
-    if (
-      [
-        "text_title",
-        "text_small_title",
-        "small_content",
-        "recipe_step",
-        "toggle_input",
-        "highlight_text",
-        "paragraph",
-      ].includes(type)
-    ) {
-      return parseWritingXmlToJSX(xmlText);
-    } else if (
-      [
-        "normal_button",
-        "submit_button",
-        "text_input",
-        "email_input",
-        "checkbox_block",
-        "select_box",
-      ].includes(type)
-    ) {
-      return parseButtonXmlToJSX(xmlText);
-    } else if (
-      ["insert_image", "insert_video", "youtube_link"].includes(type)
-    ) {
-      return parseImageXmlToJSX(xmlText);
-    } else if (["list_item", "ordered_list_item"].includes(type)) {
-      return parseSingleListBlock(xmlText);
-    } else if (["navigation_button"].includes(type)) {
-      return parseNavigationXmlToJSX(xmlText);
-    }
-    return null;
-  };
-
-  const parseBlockChainToJSX = (block) => {
-    const jsxList = [];
-    let current = block;
-
-    while (current) {
-      let jsx;
-
-      if (current.type === "container_box") {
-        // 요구사항 1: container_box라면 직접 parseLayoutXmlToJSX 호출
-        const xml = Blockly.Xml.blockToDom(current);
+    const parseXmlToJSX = (block) => {
+        const xml = Blockly.Xml.blockToDom(block);
         const xmlText = Blockly.Xml.domToText(xml);
-        jsx = parseLayoutXmlToJSX(xmlText);
+        const type = block.type;
 
-        if (jsx) jsxList.push(...(Array.isArray(jsx) ? jsx : [jsx]));
-        break;
-      }
+        if (type === "list_bulleted" || type === "list_numbered") {
+            return parseListXmlToJSX(xmlText);
+        }
+        else if (
+            [
+                "text_title",
+                "text_small_title",
+                "small_content",
+                "recipe_step",
+                "toggle_input",
+                "highlight_text",
+                "paragraph",
+            ].includes(type)
+        ) {
+            return parseWritingXmlToJSX(xmlText);
+        } else if (
+            [
+                "normal_button",
+                "submit_button",
+                "text_input",
+                "email_input",
+                "checkbox_block",
+                "select_box",
+            ].includes(type)
+        ) {
+            return parseButtonXmlToJSX(xmlText);
+        } else if (
+            ["insert_image", "insert_video", "youtube_link"].includes(type)
+        ) {
+            return parseImageXmlToJSX(xmlText);
+        } else if (["list_item", "ordered_list_item"].includes(type)) {
+            return parseListXmlToJSX(xmlText);
+        } else if (["navigation_button"].includes(type)) {
+            return parseNavigationXmlToJSX(xmlText);
+        }
+        return null;
+    };
 
-      else {
-        jsx = parseXmlToJSX(current);
-        if (jsx) jsxList.push(...(Array.isArray(jsx) ? jsx : [jsx]));
-      }
+    const parseBlockChainToJSX = (block) => {
+        const jsxList = [];
+        let current = block;
 
-      current = current.getNextBlock();
-    }
+        while (current) {
+            let jsx;
 
-    return jsxList;
-  };
+            if (current.type === "container_box") {
+                // 요구사항 1: container_box라면 직접 parseLayoutXmlToJSX 호출
+                const xml = Blockly.Xml.blockToDom(current);
+                const xmlText = Blockly.Xml.domToText(xml);
+                jsx = parseLayoutXmlToJSX(xmlText);
+            } else if(current.type === "list_item"|| current.type === "ordered_list_item"){
+                jsx=parseListXmlToJSX(current);
+            } else {
+                jsx = parseXmlToJSX(current);
+                if (jsx) {
+                    jsxList.push(...(Array.isArray(jsx) ? jsx : [jsx]));
+                }
+                break;
+            }
+
+            if (jsx) {
+                jsxList.push(...(Array.isArray(jsx) ? jsx : [jsx]));
+            }
+
+            // next 블럭 재귀 탐색
+            current = current.getNextBlock();
+        }
+
+        return jsxList;
+    };
 
   const jsxOutput = useMemo(() => {
     const workspace = Blockly.getMainWorkspace();

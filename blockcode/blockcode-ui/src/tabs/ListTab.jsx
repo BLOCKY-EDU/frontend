@@ -72,39 +72,113 @@ export function getListTabToolbox() {
   };
 }
 
-export const parseListXmlToJSX = (xmlText) => {
-  const parser = new DOMParser();
-  const xml = parser.parseFromString(xmlText, 'text/xml');
-  const block = xml.firstChild;
-  if (!block) return null;
+// 파일 맨 위(혹은 적절한 위치)에 전역 카운터 추가
+let _listKeyCounter = 0;
 
-  const type = block.getAttribute('type');
-  if (type === "list_bulleted" || type === "list_numbered") {
-    // 자식 statement(ITEMS) 찾기
-    const statement = block.querySelector('statement[name="ITEMS"]');
-    const items = [];
-    if (statement) {
-      let current = statement.firstElementChild; // <block ...>
-      while (current) {
-        // list_item 또는 ordered_list_item
-        const field = current.querySelector('field[name="TEXT"]');
-        const text = field?.textContent || '';
-        items.push(<li key={text + Math.random()}>{text}</li>);
-        current = current.querySelector('next > block');
-      }
+/**
+ * parseSingleListBlock
+ * - xmlInput: string (xml), 또는 DOM Element (block), 또는 Document
+ * - parseLayoutXmlToJSX와 같은 방식으로 top-level block들을 찾아 각 block의 next 체인을 따라 처리
+ * - 반환: null | React.Element | React.Element[]  (parseLayoutXmlToJSX의 unwrapParsed와 호환)
+ */
+export function parseListXmlToJSX(xmlInput) {
+    if (!xmlInput) return null;
+
+    // 1) 입력을 root element 수준으로 정리
+    let rootEl = null;
+    if (typeof xmlInput === 'string') {
+        const doc = new DOMParser().parseFromString(xmlInput, 'text/xml');
+        rootEl = doc.documentElement;
+    } else if (xmlInput instanceof Document) {
+        rootEl = xmlInput.documentElement;
+    } else if (xmlInput && xmlInput.nodeType) {
+        // block Element 혹은 다른 Element 전달된 경우
+        rootEl = xmlInput;
+    } else {
+        return null;
     }
-    if (type === "list_bulleted") return <ul className="ul-block-list">{items}</ul>;
-    if (type === "list_numbered") return <ol className="ol-block-list">{items}</ol>;
-    return null;
-  }
-  // 항목 블록
-  if (type === "list_item" || type === "ordered_list_item") {
-    const field = block.querySelector('field[name="TEXT"]');
-    const text = field?.textContent || '';
-    return <li>{text}</li>;
-  }
-  return null;
-};
+
+    // 2) top-level block들 수집 (xml 내부에 여러 block이 있을 수 있으므로 안전하게 추출)
+    let topBlocks = [];
+    if (rootEl.tagName === 'xml') {
+        topBlocks = Array.from(rootEl.childNodes).filter(n => n.nodeType === 1 && n.tagName === 'block');
+    } else if (rootEl.tagName === 'block') {
+        topBlocks = [rootEl];
+    } else {
+        // 다른 element가 넘어왔을 경우: 그 안의 직계 block들 우선 추출
+        topBlocks = Array.from(rootEl.getElementsByTagName('block')).filter(b => b.parentNode === rootEl);
+        if (topBlocks.length === 0) {
+            // fallback: 문서 전체에서 바깥 블록들만
+            topBlocks = Array.from(rootEl.getElementsByTagName('block')).filter(b => !b.parentNode || b.parentNode.tagName === 'xml');
+        }
+    }
+
+    const out = [];
+
+    // 3) 각 topBlock에 대해 next 체인을 따라 처리
+    for (const b of topBlocks) {
+        let current = b;
+
+        while (current) {
+            const type = current.getAttribute('type');
+
+            // --- 리스트 컨테이너 처리 (ITEMS statement 내부의 체인)
+            if (type === 'list_bulleted' || type === 'list_numbered') {
+                const statement = Array.from(current.children).find(el => el.tagName === 'statement' && el.getAttribute('name') === 'ITEMS');
+                const items = [];
+
+                if (statement) {
+                    // statement 내부의 첫 block부터 next 체인 따라 항목 수집
+                    let inner = Array.from(statement.children).find(el => el.tagName === 'block');
+
+                    while (inner) {
+                        const innerType = inner.getAttribute('type');
+
+                        const isValidItem =
+                            (type === 'list_bulleted' && innerType === 'list_item') ||
+                            (type === 'list_numbered' && innerType === 'ordered_list_item');
+
+                        if (isValidItem) {
+                            const field = Array.from(inner.children).find(el => el.tagName === 'field' && el.getAttribute('name') === 'TEXT');
+                            const text = field?.textContent?.trim() || '';
+                            if (text) {
+                                const id = inner.getAttribute('id') || `list-item-${++_listKeyCounter}`;
+                                items.push(<li key={id}>{text}</li>);
+                            }
+                        }
+
+                        // inner의 next chain으로 이동
+                        const nextEl = Array.from(inner.children).find(el => el.tagName === 'next');
+                        inner = nextEl ? Array.from(nextEl.children).find(el => el.tagName === 'block') : null;
+                    }
+                }
+
+                const Tag = type === 'list_bulleted' ? 'ul' : 'ol';
+                const key = b.getAttribute('id') || `list-container-${++_listKeyCounter}`;
+                const className = type === 'list_bulleted' ? 'ul-block-list' : 'ol-block-list';
+                out.push(<Tag key={key} className={className}>{items}</Tag>);
+
+                // --- 단일 리스트 항목(최상위에 item 블록만 있을 때)
+            } else if (type === 'list_item' || type === 'ordered_list_item') {
+                const field = Array.from(current.children).find(el => el.tagName === 'field' && el.getAttribute('name') === 'TEXT');
+                const text = field?.textContent?.trim();
+                if (text) {
+                    const id = current.getAttribute('id') || `list-item-${++_listKeyCounter}`;
+                    out.push(<li key={id}>{text}</li>);
+                }
+            }
+
+            // 다음 top-level 체인으로 이동
+            const nextNode = Array.from(current.children).find(el => el.tagName === 'next');
+            current = nextNode ? Array.from(nextNode.children).find(el => el.tagName === 'block') : null;
+        }
+    }
+
+    if (out.length === 0) return null;
+    if (out.length === 1) return out[0]; // 기존 호출부와 호환되도록 단일 element는 element 자체 반환
+    return out; // 여러 element일 경우 배열 반환 (parseLayout의 unwrapParsed와 호환)
+}
+
 
 export function parseSingleListBlock(blockXml) {
     if (!blockXml) return null;
