@@ -212,9 +212,9 @@ export const ADVANCED_PROBLEMS = [
         { selector: "div", prop: "box-shadow", value: "#c0c0c0", mode: "includes" },
         { selector: "div", prop: "justify-content", value: "center", mode: "includes" },
         { selector: "div", prop: "height", value: "200px", mode: "includes" },
-        { selector: "div", prop: "margin-top", value: ".*", mode: "includes" },
-        // { selector: "div", prop: "gap", value: ".*", mode: "includes" },
-        { selector: "div", prop: "gap", value: ".*", mode: "includes" }
+        { selector: "div", prop: "margin-top", value: ".*", mode: "regex" },
+        // { selector: "div", prop: "gap", value: ".*", mode: "regex" },
+        { selector: "div", prop: "gap", value: ".*", mode: "regex" }
       ],
       requireAttributesAt: [
         { selector: "img", attr: "src", value: "/images/bakery_banner.png", mode: "includes" },
@@ -330,9 +330,9 @@ export const ADVANCED_PROBLEMS = [
         // 로고 컨테이너의 width 200 (px 붙임 보정 허용)
         { selector: "div", prop: "width", value: "200", mode: "includes" },
         // 영역들의 배경색이 실제 들어갔는지만 확인 (색상 값 느슨)
-        { selector: "div", prop: "background-color", value: ".*", mode: "includes" },
+        { selector: "div", prop: "background-color", value: ".*", mode: "regex" },
         // 버튼 묶음 간격
-        { selector: "div", prop: "gap", value: ".*", mode: "includes" }
+        { selector: "div", prop: "gap", value: ".*", mode: "regex" }
       ],
 
       // 로고 이미지 경로는 포함 매칭으로 (쿼리스트링 허용)
@@ -489,12 +489,12 @@ export const ADVANCED_PROBLEMS = [
         "background-color", "border-radius", "padding", "margin"
       ],
       requireInlineStylesAt: [
-        { selector: "div", prop: "background-color", value: ".*", mode: "includes" },
-        { selector: "div", prop: "border-top-left-radius", value: ".*", mode: "includes" },
-        { selector: "div", prop: "border-top-right-radius", value: ".*", mode: "includes" },
+        { selector: "div", prop: "background-color", value: ".*", mode: "regex" },
+        { selector: "div", prop: "border-top-left-radius", value: ".*", mode: "regex" },
+        { selector: "div", prop: "border-top-right-radius", value: ".*", mode: "regex" },
         // 말풍선 여백/패딩
-        { selector: "div", prop: "padding", value: ".*", mode: "includes" },
-        { selector: "div", prop: "margin", value: ".*", mode: "includes" }
+        { selector: "div", prop: "padding", value: ".*", mode: "regex" },
+        { selector: "div", prop: "margin", value: ".*", mode: "regex" }
       ],
 
       // 이동 버튼(링크) — href는 도메인 포함 매칭만
