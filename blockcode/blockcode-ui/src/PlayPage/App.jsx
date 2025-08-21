@@ -69,12 +69,12 @@ function AlertModal({ open, onClose, message }) {
 import {
   getWritingTabToolbox,
   registerWritingBlocks,
-  parseWritingXmlToJSX,
+  parseSingleWritingBlock,
 } from "../tabs/WritingTab.jsx";
 import {
   getImageTabToolbox,
   registerImageBlocks,
-  parseImageXmlToJSX,
+  parseSingleImageBlock,
 } from "../tabs/ImageTab.jsx";
 import {
   getLayoutTabToolbox,
@@ -83,7 +83,7 @@ import {
 import {
   registerButtonBlocks,
   getButtonTabToolbox,
-  parseButtonXmlToJSX,
+  parseSingleButtonBlock,
 } from "../tabs/ButtonTab.jsx";
 import {
   registerStyleBlocks,
@@ -92,12 +92,12 @@ import {
 import {
   getListTabToolbox,
   registerListBlocks,
-  parseListXmlToJSX,
+  parseSingleListBlock,
 } from "../tabs/ListTab.jsx";
 import {
   registerNavigationBlocks,
   getNavigationTabToolbox,
-  parseNavigationXmlToJSX,
+  parseSingleNavigationBlock,
 } from "../tabs/NavigationTab.jsx";
 
 registerStyleBlocks();
@@ -408,167 +408,124 @@ export default function App() {
 
 
 
-  const parseXmlToJSX = (block) => {
-    const xml = Blockly.Xml.blockToDom(block);
-    const xmlText = Blockly.Xml.domToText(xml);
-    const type = block.type;
-
-    if (type === "list_bulleted" || type === "list_numbered") {
-      return parseListXmlToJSX(xmlText);
-    }
-    else if (
-      [
-        "text_title",
-        "text_small_title",
-        "small_content",
-        "recipe_step",
-        "toggle_input",
-        "highlight_text",
-        "paragraph",
-      ].includes(type)
-    ) {
-      return parseWritingXmlToJSX(xmlText);
-    } else if (
-      [
-        "normal_button",
-        "submit_button",
-        "text_input",
-        "email_input",
-        "checkbox_block",
-        "select_box",
-      ].includes(type)
-    ) {
-      return parseButtonXmlToJSX(xmlText);
-    } else if (
-      ["insert_image", "insert_video", "youtube_link"].includes(type)
-    ) {
-      return parseImageXmlToJSX(xmlText);
-    } else if (["list_item", "ordered_list_item"].includes(type)) {
-      return parseListXmlToJSX(xmlText);
-    } else if (["navigation_button"].includes(type)) {
-      return parseNavigationXmlToJSX(xmlText);
-    }
-    return null;
-  };
-
-  // const parseBlockChainToJSX = (block) => {
-  //     const jsxList = [];
-  //     let current = block;
-
-  //     while (current) {
-  //         let jsx;
-
-  //         if (current.type === "container_box") {
-  //             // 요구사항 1: container_box라면 직접 parseLayoutXmlToJSX 호출
-  //             const xml = Blockly.Xml.blockToDom(current);
-  //             const xmlText = Blockly.Xml.domToText(xml);
-  //             jsx = parseLayoutXmlToJSX(xmlText);
-  //         } else if(current.type === "list_item"|| current.type === "ordered_list_item"){
-  //             jsx=parseListXmlToJSX(current);
-  //         } else {
-  //             jsx = parseXmlToJSX(current);
-  //             if (jsx) {
-  //                 jsxList.push(...(Array.isArray(jsx) ? jsx : [jsx]));
-  //             }
-  //             break;
-  //         }
-
-  //         if (jsx) {
-  //             jsxList.push(...(Array.isArray(jsx) ? jsx : [jsx]));
-  //         }
-
-  //         // next 블럭 재귀 탐색
-  //         current = current.getNextBlock();
-  //     }
-
-  //     return jsxList;
-  // };
-
-  const parseBlockChainToJSX = (block) => {
-    const jsxList = [];
-    let current = block;
-
-    while (current) {
-      let jsx;
-
-      if (current.type === "container_box") {
-        // 이 호출이 container + next 체인을 전부 렌더함
-        const xml = Blockly.Xml.blockToDom(current);
+    const parseXmlToJSX = (block) => {
+        const xml = Blockly.Xml.blockToDom(block);
         const xmlText = Blockly.Xml.domToText(xml);
-        jsx = parseLayoutXmlToJSX(xmlText);
-        if (jsx) jsxList.push(...(Array.isArray(jsx) ? jsx : [jsx]));
-        // 더 내려가면 중복 렌더 → 여기서 종료
-        break;
+        const type = block.type;
 
-      } else if (current.type === "list_item" || current.type === "ordered_list_item") {
-        const xml = Blockly.Xml.blockToDom(current);
-        const xmlText = Blockly.Xml.domToText(xml);
-        jsx = parseListXmlToJSX(xmlText);
-        if (jsx) jsxList.push(...(Array.isArray(jsx) ? jsx : [jsx]));
-        break; // 체인 밖(top)에서만 쓰는 함수라면 여기서 끊는 편이 안전
-      } else {
-        const xml = Blockly.Xml.blockToDom(current);
-        const xmlText = Blockly.Xml.domToText(xml);
-        jsx = parseXmlToJSX(current);
-        if (jsx) jsxList.push(...(Array.isArray(jsx) ? jsx : [jsx]));
-        break; // non-container는 한 블록만 처리하고 종료 (기존 로직 유지)
-      }
-
-      // 위에서 모두 break 처리됨. 여기에 도달하지 않음.
-    }
-
-    return jsxList;
-  };
-
-
-  const jsxOutput = useMemo(() => {
-    const workspace = Blockly.getMainWorkspace();
-    if (!workspace) return [];
-    const topBlocks = workspace.getTopBlocks(true);
-
-    // 배경색 블록 바깥에 있을 때 전체 배경색상 적용
-    const bgBlock = topBlocks.find((b) => b.type === "style_background");
-    if (bgBlock && !bgBlock.getParent()) {
-      const colorField = bgBlock.getFieldValue("COLOR");
-      if (colorField && globalBackgroundColor !== colorField) {
-        setGlobalBackgroundColor(colorField);
-      }
-    } else {
-      if (globalBackgroundColor !== "#ffffff") {
-        setGlobalBackgroundColor("#ffffff");
-      }
-    }
-
-    // const boxBlocks = topBlocks.filter(
-    //   (block) => block.type === "container_box"
-    // );
-    // if (boxBlocks.length === 0) {
-    //   if (!alertOpen) setAlertOpen(true);
-    //   if (alertMsg !== "상자 안에 블록을 넣어주세요.")
-    //     setAlertMsg("상자 안에 블록을 넣어주세요.");
-    //   return [];
-    // }
-    // if (alertOpen) setAlertOpen(false);
-
-    topBlocks.sort(
-      (a, b) => a.getRelativeToSurfaceXY().y - b.getRelativeToSurfaceXY().y
-    );
-
-    const jsxList = [];
-    const visited = new Set();
-
-    topBlocks.forEach((block) => {
-      if (!visited.has(block.id)) {
-        const jsx = parseBlockChainToJSX(block);
-        if (jsx) {
-          jsxList.push(...(Array.isArray(jsx) ? jsx : [jsx]));
+        if (type === "list_bulleted" || type === "list_numbered") {
+            return parseSingleListBlock(xmlText);
         }
-      }
-    });
+        else if (
+            [
+                "text_title",
+                "text_small_title",
+                "small_content",
+                "recipe_step",
+                "toggle_input",
+                "highlight_text",
+                "paragraph",
+            ].includes(type)
+        ) {
+            return parseSingleWritingBlock(xmlText);
+        } else if (
+            [
+                "normal_button",
+                "submit_button",
+                "text_input",
+                "email_input",
+                "checkbox_block",
+                "select_box",
+            ].includes(type)
+        ) {
+            return parseSingleButtonBlock(xmlText);
+        } else if (
+            ["insert_image", "insert_video", "youtube_link"].includes(type)
+        ) {
+            return parseSingleImageBlock(xmlText);
+        } else if (["list_item", "ordered_list_item"].includes(type)) {
+            return parseSingleListBlock(xmlText);
+        } else if (["navigation_button"].includes(type)) {
+            return parseSingleNavigationBlock(xmlText);
+        }
+        return null;
+    };
 
-    return jsxList.map((jsx, i) => <React.Fragment key={i}>{jsx}</React.Fragment>);
-    // eslint-disable-next-line
-  }, [tabXmlMap]);
+    const parseBlockChainToJSX = (block) => {
+        const jsxList = [];
+        let current = block;
+
+        while (current) {
+            let jsx;
+
+            if (current.type === "container_box") {
+                // 요구사항 1: container_box라면 직접 parseLayoutXmlToJSX 호출
+                const xml = Blockly.Xml.blockToDom(current);
+                const xmlText = Blockly.Xml.domToText(xml);
+                jsx = parseLayoutXmlToJSX(xmlText);
+            } else {
+                jsx = parseXmlToJSX(current);
+            }
+
+            if (jsx) {
+                jsxList.push(...(Array.isArray(jsx) ? jsx : [jsx]));
+            }
+
+            // next 블럭 재귀 탐색
+            current = current.getNextBlock();
+        }
+
+        return jsxList;
+    };
+
+    const jsxOutput = useMemo(() => {
+        const workspace = Blockly.getMainWorkspace();
+        if (!workspace) return [];
+        const topBlocks = workspace.getTopBlocks(true);
+
+        // 배경색 블록 바깥에 있을 때 전체 배경색상 적용
+        const bgBlock = topBlocks.find((b) => b.type === "style_background");
+        if (bgBlock && !bgBlock.getParent()) {
+            const colorField = bgBlock.getFieldValue("COLOR");
+            if (colorField && globalBackgroundColor !== colorField) {
+                setGlobalBackgroundColor(colorField);
+            }
+        } else {
+            if (globalBackgroundColor !== "#ffffff") {
+                setGlobalBackgroundColor("#ffffff");
+            }
+        }
+
+        // const boxBlocks = topBlocks.filter(
+        //   (block) => block.type === "container_box"
+        // );
+        // if (boxBlocks.length === 0) {
+        //   if (!alertOpen) setAlertOpen(true);
+        //   if (alertMsg !== "상자 안에 블록을 넣어주세요.")
+        //     setAlertMsg("상자 안에 블록을 넣어주세요.");
+        //   return [];
+        // }
+        // if (alertOpen) setAlertOpen(false);
+
+        topBlocks.sort(
+            (a, b) => a.getRelativeToSurfaceXY().y - b.getRelativeToSurfaceXY().y
+        );
+
+        const jsxList = [];
+        const visited = new Set();
+
+        topBlocks.forEach((block) => {
+            if (!visited.has(block.id)) {
+                const jsx = parseBlockChainToJSX(block);
+                if (jsx) {
+                    jsxList.push(...(Array.isArray(jsx) ? jsx : [jsx]));
+                }
+            }
+        });
+
+        return jsxList.map((jsx, i) => <React.Fragment key={i}>{jsx}</React.Fragment>);
+        // eslint-disable-next-line
+    }, [tabXmlMap]);
 
   const handleTabChange = (newTab) => {
     const workspace = Blockly.getMainWorkspace();
